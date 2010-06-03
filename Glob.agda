@@ -114,7 +114,7 @@ infixr 4 ⟨_,_⟩×
         b₁' : a₁ ≡ a₂ → obj (B a₂)
         b₁' a₁≡a₂ = subst (obj |∘| B) a₁≡a₂ b₁
 
-infixr 4 ⟨_,_⟩Σ
+infixr 4 ⟨_,_⟩Σ                                             -- brackets are \<, \>
 ⟨_,_⟩Σ : ∀ {A} (B : A → Glob) → (a : A) → B a ⇒ Σ A B
 ⟨_,_⟩Σ {A} B a = record
   { obj→ = λ b → a |,| b
