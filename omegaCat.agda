@@ -90,14 +90,20 @@ _∘_ {G₁ = G₁} {G₃ = G₃} g f = record
 infixr 2 _×_
 _×_ : Glob → Glob → Glob
 G₁ × G₂ = record
-  { obj = obj G₁ |×| obj G₂
-  ; hom = λ αβ α′β′ → ♯ (♭ (hom G₁ (proj₁ αβ) (proj₁ α′β′)) × ♭ (hom G₂ (proj₂ αβ) (proj₂ α′β′)))
+  { obj = obj×
+  ; hom = hom×
   }
   where
     open Glob
     open Prod
       renaming
         ( _×_ to _|×|_ )
+
+    obj× : Set
+    obj× = obj G₁ |×| obj G₂
+
+    hom× : obj× → obj× → ∞ Glob
+    hom× (α₁ , β₁) (α₂ , β₂) = ♯ (♭ (hom G₁ α₁ α₂) × ♭ (hom G₂ β₁ β₂))
 
 infixr 4 ⟨_,_⟩×
 ⟨_,_⟩× : ∀ {G₁ G₂ G₃} → G₃ ⇒ G₁ → G₃ ⇒ G₂ → G₃ ⇒ G₁ × G₂
