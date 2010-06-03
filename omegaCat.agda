@@ -1,97 +1,164 @@
-{-# OPTIONS --type-in-type
-  #-}
-{- Type:Type for simplicity, it is easy to stratify the stuff below. -}
 module omegaCat where
-
-open import Data.Empty
-open import Data.Unit
-open import Data.Product
-open import Relation.Binary.PropositionalEquality
 
 open import Coinduction
 
+import Data.Empty
+  as Empty
+import Data.Product
+  as Prod
+import Data.Unit
+  as Unit
+import Function
+  as Fun
+open import Relation.Binary.PropositionalEquality
+
 {- coinductive definition of globular sets -}
-data Glob : Set where
-  glob : (set : Set)
-         → (hom : set → set → ∞ Glob)
-         → Glob
-
-_$set : Glob → Set
-glob set hom $set = set  
-
-_$hom : (A : Glob) → A $set → A $set → ∞ Glob
-glob set hom $hom = hom
+record Glob : Set₁ where
+  field
+    obj : Set₀
+    hom : obj → obj → ∞ Glob
 
 {- the category of globular sets -}
+infixr 1 _⇒_
+record _⇒_ (G₁ G₂ : Glob) : Set where
+  open Glob
+  field
+    obj→ : obj G₁ → obj G₂
+    hom→ : ∀ {α β} → ∞ (♭ (hom G₁ α β) ⇒ ♭ (hom G₂ (obj→ α) (obj→ β)))
 
-data GlobM : Glob → Glob → Set where
-  globM : {A B : Glob}
-         → (fset : A $set → B $set)
-         → (fhom : ∀ {a b} → ∞ (GlobM (♭ ((A $hom) a b)) (♭ ((B $hom) (fset a) (fset b)))))
-         → GlobM A B 
+id : ∀ {G} → G ⇒ G
+id = record
+  { obj→ = Fun.id
+  ; hom→ = ♯   id
+  }
 
-idG : ∀ {A} → GlobM A A
-idG {glob set hom} = globM (λ a → a) (λ {a} {b} → ♯ idG)
-
-_○M_ : ∀ {A B C} → GlobM B C → GlobM A B → GlobM A C
-globM fset fhom ○M globM gset ghom = globM (λ a → fset (gset a)) (λ {a} {b} 
-                                                → ♯ ((♭ fhom) ○M (♭ ghom)))
-
+infixr 9 _∘_
+_∘_ : ∀ {G₁ G₂ G₃} → G₂ ⇒ G₃ → G₁ ⇒ G₂ → G₁ ⇒ G₃
+_∘_ {G₁ = G₁} {G₃ = G₃} g f = record
+  { obj→ =       obj→ g  |∘|    obj→ f
+  ; hom→ = ♯ (♭ (hom→ g)  ∘  ♭ (hom→ f))
+  }
+  where
+    open Fun
+      renaming
+        ( _∘_ to _|∘|_ )
+    open Glob
+    open _⇒_
 
 {- finite products and infinite products -}
-⊤G : Glob
-⊤G = glob ⊤ (λ _ _ → ♯ ⊤G)
+⊥ : Glob
+⊥ = record
+  { obj = Empty.⊥
+  ; hom = Empty.⊥-elim
+  }
 
-bang : ∀ {A} → GlobM A ⊤G
-bang {A} = globM (λ x → tt) (λ {a} {b} → ♯ bang)
+⊤ : Glob
+⊤ = record
+  { obj =      Unit.⊤
+  ; hom = λ _ _ → ♯ ⊤
+  }
 
-_×G_ : Glob → Glob → Glob
-(glob Aset Ahom) ×G (glob Bset Bhom) = glob (Aset × Bset) 
-                                       (λ ab ab' → ♯ ♭ (Ahom (proj₁ ab) (proj₁ ab')) 
-                                                    ×G ♭ (Bhom (proj₂ ab) (proj₂ ab')))
+! : ∀ {G} → G ⇒ ⊤
+! {G} = record
+  { obj→ = λ _ → Unit.tt
+  ; hom→ = λ {_} {_} → ♯ !
+  }
 
-pairG : ∀ {A B C} → GlobM C A → GlobM C B → GlobM C (A ×G B)
-pairG {glob Aset Ahom} {glob Bset Bhom} {glob Cset Chom} (globM fset fhom) (globM gset ghom) =
-  globM (λ c → fset c , gset c) (λ {c} {c'} → ♯ pairG (♭ fhom) (♭ ghom))
+Σ : (α : Set) → (α → Glob) → Glob
+Σ α β = record
+  { obj = objΣ
+  ; hom = homΣ 
+  }
+  where
+    open Fun
+      renaming
+        ( _∘_ to _|∘|_ )
+    open Glob
+    open Prod
+      renaming
+        ( Σ   to |Σ|   )
 
-⊥G : Glob
-⊥G = glob ⊥ ⊥-elim
+    objΣ : Set
+    objΣ = |Σ| α (obj |∘| β)
 
-ΣG : (A : Set) → (A → Glob) → Glob
-ΣG A B = glob (Σ A (λ a → B a $set)) 
-              (λ ab ab' → ♯ ΣG (proj₁ ab ≡ proj₁ ab') 
-                                (λ aa' → ♭ ((B (proj₁ ab') $hom) 
-                                              (subst ((λ a → B a $set)) aa' (proj₂ ab)) 
-                                              (proj₂ ab'))))
+    homΣ : objΣ → objΣ → ∞ Glob
+    homΣ (a₁ , b₁) (a₂ , b₂) = ♯ Σ (a₁ ≡ a₂) λ a₁≡a₂ → ♭ (hom (β a₂) (b₁' a₁≡a₂) b₂)
+      where
+        b₁' : a₁ ≡ a₂ → obj (β a₂)
+        b₁' a₁≡a₂ = subst (obj |∘| β) a₁≡a₂ b₁
 
-pairΣG : ∀ {A} (B : A → Glob) → (a : A) → GlobM (B a) (ΣG A B)
-pairΣG {A} B a = globM (λ b → a , b) (λ {x} {y} → ♯ pairΣG (λ aa → ♭ ((B a $hom) 
-                                                                     (subst ((λ a → B a $set)) aa x) 
-                                                                     y)) refl)
+infixr 2 _×_
+_×_ : Glob → Glob → Glob
+G₁ × G₂ = record
+  { obj = obj×
+  ; hom = hom×
+  }
+  where
+    open Glob
+    open Prod
+      renaming
+        ( _×_ to _|×|_ )
+
+    obj× : Set
+    obj× = obj G₁ |×| obj G₂
+
+    hom× : obj× → obj× → ∞ Glob
+    hom× (α₁ , β₁) (α₂ , β₂) = ♯ (♭ (hom G₁ α₁ α₂) × ♭ (hom G₂ β₁ β₂))
+
+infixr 4 ⟨_,_⟩×
+⟨_,_⟩× : ∀ {G₁ G₂ G₃} → G₃ ⇒ G₁ → G₃ ⇒ G₂ → G₃ ⇒ G₁ × G₂
+⟨_,_⟩× {G₁ = G₁} {G₂ = G₂} {G₃ = G₃} f g = record
+  { obj→ = |⟨ obj→ f , obj→ g ⟩|
+  ; hom→ = λ {_} {_} → ♯ ⟨ ♭ (hom→ f) , ♭ (hom→ g) ⟩×
+  }
+  where
+    open _⇒_
+    open Prod
+      renaming
+        ( <_,_> to |⟨_,_⟩| )
+
+infixr 4 ⟨_,_⟩Σ
+⟨_,_⟩Σ : ∀ {α} (β : α → Glob) → (a : α) → β a ⇒ Σ α β
+⟨_,_⟩Σ {α} β a = record
+  { obj→ = λ b → a |,| b
+  ; hom→ = λ {x} {y} → ♯ ⟨ (λ a≡a → ♭ (hom (β a) (subst (obj |∘| β) a≡a x) y)) , refl ⟩Σ
+  }
+  where
+    open Fun
+      renaming
+        ( _∘_ to _|∘|_ )
+    open Glob
+    open Prod
+      renaming
+        ( _,_ to _|,|_ )
 
 {- definition of the monad T, assigning the free ω category to a globular set -}
-
 ∇ : Set → Glob
-∇ A = glob A (λ x x' → ♯ ⊤G)
+∇ α = record
+  { obj = α
+  ; hom = λ _ _ → ♯ ⊤
+  }
 
-data Path {A : Set} : A → A → Set where
-  refl : (a : A) → Path a a
-  step : (a : A) → ∀ b c → Path b c → Path a c
+data Path {α : Set} : α → α → Set where
+  refl : (a : α) → Path a a
+  step : (a : α) → ∀ b c → Path b c → Path a c
 
 mutual
-
-  walk : (X : Glob) → {x y : X $set} → Path x y → Glob
-  walk X {.y} {y} (refl .y) = ⊤G
-  walk X {a} (step .a b c bc) = (T (♭ ((X $hom) a b))) ×G walk X bc
+  walk : (G : Glob) → {x y : Glob.obj G} → Path x y → Glob
+  walk G {.y} {y} (refl .y)         = ⊤
+  walk G {a}      (step .a b c bPc) = T (♭ (Glob.hom G a b) × walk G bPc)
 
   T : Glob → Glob
-  T (glob set hom) = glob set (λ a b → ♯ ΣG (Path a b) (λ ab → walk (glob set hom) ab))
+  T G = record
+    { obj = Glob.obj G
+    ; hom = λ a b → ♯ (Σ (Path a b) (walk G))
+    }
 
-ηset : {X : Glob} → X $set → (T X) $set
-ηset {glob set hom} x = x
+η-obj : ∀ {G : Glob} → Glob.obj G → Glob.obj (T G)
+η-obj x = x
 
-ηT : (X : Glob) → GlobM X (T X)
-ηT (glob Xset Xhom) = globM (ηset {glob Xset Xhom}) (λ {a} {b} → 
-                            ♯ pairΣG (walk (glob Xset Xhom)) 
-                                  (step a _ b (refl b)) ○M pairG (ηT _) bang)
-
+η-T : (G : Glob) → G ⇒ T G
+η-T G = record
+  { obj→ = η-obj {G = G}
+  ; hom→ = λ {a} {b} → ♯ (⟨ walk G , {!!} ⟩Σ ∘ ⟨ η-T _ , ! ⟩×)
+  }
