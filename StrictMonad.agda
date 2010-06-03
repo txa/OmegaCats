@@ -21,10 +21,10 @@ import Data.Unit
 import Function
   as Fun
 open Fun
-  hiding
-    ( id )
   renaming
-    ( _∘_ to _|∘|_ )
+    ( id to |id| 
+    ; _∘_ to _|∘|_ )
+
 open import Relation.Binary.PropositionalEquality
 
 data Path {α : Set} : α → α → Set where
@@ -51,8 +51,23 @@ mutual
   ; hom→ = λ {a} {b} → ♯ (⟨ walk G , step a (refl b) ⟩Σ ∘ ⟨ η-T _ , ! ⟩×)
   }
 
+{- Kleisli formulation of monad multiplication -}
+
 _* : {G H : Glob} → G ⇒ T H → T G ⇒ T H
 f * = record
   { obj→ = obj→ f
   ; hom→ = {!!}
   }
+
+{- μ fom of monad multiplication -}
+
+mutual 
+  μ-T : (X : Glob) → T (T X) ⇒ (T X)
+  μ-T X = record
+    { obj→ = |id|
+    ; hom→ = λ {x} {y} → ♯ elimΣ (walk (T X)) (♭ ((Glob.hom (T X)) x y)) (mult X {x} {y})
+    }
+
+  mult :  (X : Glob) → {x y : Glob.obj X} → (xPy : Path x y) → ( (walk (T X) xPy) ⇒ (♭ ((Glob.hom (T X)) x y)) )
+  mult X {.a} {a} (refl .a) =  ⟨ walk X , refl a ⟩Σ 
+  mult X {a}      (step .a {b} {c} bPc) =  {!!} ∘ {!!}
