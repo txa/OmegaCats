@@ -150,9 +150,16 @@ elimΣ {A} B C F = record
         b-at-a′ : a ≡ a′ → obj (B a′)
         b-at-a′ a≡a′ = subst (obj |∘| B) a≡a′ b
 
-{- definition of the monad T, assigning the free ω category to a globular set -}
+{- the "discrete" functor Δ : Set --> Glob -}
+
 Δ : Set → Glob
-Δ α = record
-  { obj = α
+Δ A = record
+  { obj = A
   ; hom = λ _ _ → ♯ ⊤
+  }
+
+Δ-map : {A B : Set} → (A → B) → ((Δ A) ⇒ (Δ B))
+Δ-map f = record
+  { obj→ = f
+  ; hom→ = ♯ !
   }
