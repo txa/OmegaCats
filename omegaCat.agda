@@ -1,3 +1,4 @@
+{-# OPTIONS --no-termination-check #-}
 module omegaCat where
 
 open import Coinduction
@@ -163,3 +164,6 @@ mutual
   { obj→ = η-obj {G = G}
   ; hom→ = λ {a} {b} → ♯ (⟨ walk G , step a (refl b) ⟩Σ ∘ ⟨ η-T _ , ! ⟩×)
   }
+
+_* : {G H : Glob} → G ⇒ T H → T G ⇒ T H
+f * = record {obj→ = _⇒_.obj→ f; hom→ = {!!}}
