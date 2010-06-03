@@ -11,7 +11,10 @@ open Prod
     (   Σ   to   |Σ|
     ;  _×_  to  _|×|_
     ;  _,_  to  _|,|_
-    ; <_,_> to |⟨_,_⟩| )
+    ; <_,_> to |⟨_,_⟩|
+    ; proj₁ to |proj₁|
+    ; proj₂ to |proj₂|
+    )
 import Data.Unit
   as Unit
 import Function
@@ -91,6 +94,21 @@ infixr 4 ⟨_,_⟩×
   ; hom→ = λ {_} {_} → ♯ ⟨ ♭ (hom→ f) , ♭ (hom→ g) ⟩×
   }
 
+proj₁ : ∀ {G H} → G × H ⇒ G
+proj₁ {G} {H} = record {obj→ = |proj₁|; hom→ = λ {α} {β} → proj₁hom {α} {β}}
+                where proj₁hom : {α β : obj (G × H)}
+                         → ∞ (♭ (hom (G × H) α β) ⇒ ♭ (hom G (|proj₁| α) (|proj₁| β)))
+                      proj₁hom {a |,| b} {a' |,| b'} = ♯ proj₁
+
+proj₂ : ∀ {G H} → G × H ⇒ H
+proj₂ {G} {H} = record {obj→ = |proj₂|; hom→ = λ {α} {β} → proj₂hom {α} {β}}
+                where proj₂hom : {α β : obj (G × H)}
+                         → ∞ (♭ (hom (G × H) α β) ⇒ ♭ (hom H (|proj₂| α) (|proj₂| β)))
+                      proj₂hom {a |,| b} {a' |,| b'} = ♯ proj₂
+
+_×m_ : ∀ {G G' H H'} → G ⇒ G' → H ⇒ H' → G × H ⇒ G' × H'
+f ×m g = ⟨ f ∘ proj₁ , g ∘ proj₂ ⟩× 
+
 Σ : (A : Set) → (B : A → Glob) → Glob
 Σ A B = record
   { obj = objΣ
@@ -150,7 +168,10 @@ elimΣ {A} B C F = record
         b-at-a′ : a ≡ a′ → obj (B a′)
         b-at-a′ a≡a′ = subst (obj |∘| B) a≡a′ b
 
-{- definition of the monad T, assigning the free ω category to a globular set -}
+postulate
+  distr×Σ : ∀ {G A} → (F : A → Glob) → G × Σ A F ⇒ Σ A (λ a → G × F a)
+
+
 Δ : Set → Glob
 Δ α = record
   { obj = α

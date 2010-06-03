@@ -1,5 +1,6 @@
 {-# OPTIONS --no-termination-check #-}
 module StrictMonad where
+{- definition of the monad T, assigning the free ω category to a globular set -}
 
 open import Glob
 open _⇒_
@@ -51,8 +52,13 @@ mutual
   ; hom→ = λ {a} {b} → ♯ (⟨ walk G , step a (refl b) ⟩Σ ∘ ⟨ η-T _ , ! ⟩×)
   }
 
-_* : {G H : Glob} → G ⇒ T H → T G ⇒ T H
-f * = record
-  { obj→ = obj→ f
-  ; hom→ = {!!}
-  }
+mutual
+
+  _* : {G H : Glob} → G ⇒ T H → T G ⇒ T H
+  _* {G} {H} f = record
+    { obj→ = obj→ f
+    ; hom→ = λ {α} {β} → ♯ elimΣ _ _ aux*
+    }
+    where aux* : ∀ {a} {b} → (ab : Path a b) → walk G ab ⇒ Σ (Path (obj→ f a) (obj→ f b)) (walk H)
+          aux* {.b} {b} (refl .b) = ⟨ walk H , refl (obj→ f b) ⟩Σ ∘ !
+          aux* {a} {c} (step .a bc) = {!!} ∘ {!!} ×m {!!}
