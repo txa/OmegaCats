@@ -64,29 +64,6 @@ _∘_ {G₁ = G₁} {G₃ = G₃} g f = record
   ; hom→ = λ {_} {_} → ♯ !
   }
 
-Σ : (α : Set) → (β : α → Glob) → Glob
-Σ α β = record
-  { obj = objΣ
-  ; hom = homΣ 
-  }
-  where
-    open Fun
-      renaming
-        ( _∘_ to _|∘|_ )
-    open Glob
-    open Prod
-      renaming
-        ( Σ   to |Σ|   )
-
-    objΣ : Set
-    objΣ = |Σ| α (obj |∘| β)
-
-    homΣ : objΣ → objΣ → ∞ Glob
-    homΣ (a₁ , b₁) (a₂ , b₂) = ♯ Σ (a₁ ≡ a₂) λ a₁≡a₂ → ♭ (hom (β a₂) (b₁' a₁≡a₂) b₂)
-      where
-        b₁' : a₁ ≡ a₂ → obj (β a₂)
-        b₁' a₁≡a₂ = subst (obj |∘| β) a₁≡a₂ b₁
-
 infixr 2 _×_
 _×_ : Glob → Glob → Glob
 G × G′ = record
@@ -117,11 +94,34 @@ infixr 4 ⟨_,_⟩×
       renaming
         ( <_,_> to |⟨_,_⟩| )
 
+Σ : (A : Set) → (B : A → Glob) → Glob
+Σ A B = record
+  { obj = objΣ
+  ; hom = homΣ 
+  }
+  where
+    open Fun
+      renaming
+        ( _∘_ to _|∘|_ )
+    open Glob
+    open Prod
+      renaming
+        ( Σ   to |Σ| )
+
+    objΣ : Set
+    objΣ = |Σ| A (obj |∘| B)
+
+    homΣ : objΣ → objΣ → ∞ Glob
+    homΣ (a₁ , b₁) (a₂ , b₂) = ♯ Σ (a₁ ≡ a₂) λ a₁≡a₂ → ♭ (hom (B a₂) (b₁' a₁≡a₂) b₂)
+      where
+        b₁' : a₁ ≡ a₂ → obj (B a₂)
+        b₁' a₁≡a₂ = subst (obj |∘| B) a₁≡a₂ b₁
+
 infixr 4 ⟨_,_⟩Σ
-⟨_,_⟩Σ : ∀ {α} (β : α → Glob) → (a : α) → β a ⇒ Σ α β
-⟨_,_⟩Σ {α} β a = record
+⟨_,_⟩Σ : ∀ {A} (B : A → Glob) → (a : A) → B a ⇒ Σ A B
+⟨_,_⟩Σ {A} B a = record
   { obj→ = λ b → a |,| b
-  ; hom→ = λ {x} {y} → ♯ ⟨ (λ a≡a → ♭ (hom (β a) (subst (obj |∘| β) a≡a x) y)) , refl ⟩Σ
+  ; hom→ = λ {x} {y} → ♯ ⟨ (λ a≡a → ♭ (hom (B a) (subst (obj |∘| B) a≡a x) y)) , refl ⟩Σ
   }
   where
     open Fun
@@ -132,6 +132,35 @@ infixr 4 ⟨_,_⟩Σ
     open Prod
       renaming
         ( _,_ to _|,|_ )
+
+elimΣ : {A : Set} → (B : A → Glob) → (C : Glob) → (F : (a : A) → (B a) ⇒ C) → Σ A B ⇒ C
+elimΣ {A} B C F = record 
+  { obj→ = elimΣobj
+  ; hom→ = λ {a} {a'} → elimΣhom {a} {a'}
+  }
+  where
+    open Glob
+    open _⇒_
+    open Fun
+      renaming
+        ( _∘_ to _|∘|_ )
+    open Prod
+      renaming
+        ( Σ to |Σ| )
+
+    elimΣobj : ((|Σ| A (λ x → obj (B x)))) → obj C
+    elimΣobj (a , b) = (obj→ (F a)) b
+
+    elimΣhom-aux : {a a′ : A} (a=a′ : a ≡ a′) (b : (obj (B a))) (b′ : (obj (B a′))) →
+                         ♭ (hom (B a′) (subst (λ x → obj (B x)) a=a′ b) b′) ⇒
+                         ♭ (hom C (obj→ (F a) b) (obj→ (F a′) b′))
+    elimΣhom-aux {.a} {a} refl b b′ = ♭ (hom→ (F a))
+
+    elimΣhom : {a a′ : obj (Σ A B)} → ∞ ((♭ (hom (Σ A B) a a′)) ⇒ (♭ (hom C (elimΣobj a) (elimΣobj a′))))
+    elimΣhom {a , b} {a′ , b′} = ♯ elimΣ ( λ a≡a′ → ♭ (hom (B a′) (b-at-a′ a≡a′) b′)) (♭ (hom C (obj→ (F a) b) (obj→ (F a′) b′))) (λ a=a′ → elimΣhom-aux a=a′ b b′)
+      where
+        b-at-a′ : a ≡ a′ → obj (B a′)
+        b-at-a′ a≡a′ = subst (obj |∘| B) a≡a′ b
 
 {- definition of the monad T, assigning the free ω category to a globular set -}
 Δ : Set → Glob
