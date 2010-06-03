@@ -7,10 +7,21 @@ import Data.Empty
   as Empty
 import Data.Product
   as Prod
+open Prod
+  renaming
+    (   Σ   to   |Σ|
+    ;  _×_  to  _|×|_
+    ;  _,_  to  _|,|_
+    ; <_,_> to |⟨_,_⟩| )
 import Data.Unit
   as Unit
 import Function
   as Fun
+open Fun
+  hiding
+    ( id )
+  renaming
+    ( _∘_ to _|∘|_ )
 open import Relation.Binary.PropositionalEquality
 
 {- coinductive definition of globular sets -}
@@ -18,6 +29,7 @@ record Glob : Set₁ where
   field
     obj : Set₀
     hom : obj → obj → ∞ Glob
+open Glob
 
 {- the category of globular sets -}
 infixr 1 _⇒_                               -- ⇒ is \r= or \Rightarrow
@@ -26,6 +38,7 @@ record _⇒_ (G₁ G₂ : Glob) : Set where
   field
     obj→ : obj G₁ → obj G₂
     hom→ : ∀ {α β} → ∞ (♭ (hom G₁ α β) ⇒ ♭ (hom G₂ (obj→ α) (obj→ β)))
+open _⇒_
 
 id : ∀ {G} → G ⇒ G
 id = record
@@ -39,12 +52,6 @@ _∘_ {G₁ = G₁} {G₃ = G₃} g f = record
   { obj→ =       obj→ g  |∘|    obj→ f
   ; hom→ = ♯ (♭ (hom→ g)  ∘  ♭ (hom→ f))
   }
-  where
-    open Fun
-      renaming
-        ( _∘_ to _|∘|_ )
-    open Glob
-    open _⇒_
 
 {- finite products and infinite products -}
 ⊥ : Glob
@@ -71,19 +78,11 @@ _∘_ {G₁ = G₁} {G₃ = G₃} g f = record
   ; hom = homΣ 
   }
   where
-    open Fun
-      renaming
-        ( _∘_ to _|∘|_ )
-    open Glob
-    open Prod
-      renaming
-        ( Σ   to |Σ|   )
-
     objΣ : Set
     objΣ = |Σ| α (obj |∘| β)
 
     homΣ : objΣ → objΣ → ∞ Glob
-    homΣ (a₁ , b₁) (a₂ , b₂) = ♯ Σ (a₁ ≡ a₂) λ a₁≡a₂ → ♭ (hom (β a₂) (b₁' a₁≡a₂) b₂)
+    homΣ (a₁ |,| b₁) (a₂ |,| b₂) = ♯ Σ (a₁ ≡ a₂) λ a₁≡a₂ → ♭ (hom (β a₂) (b₁' a₁≡a₂) b₂)
       where
         b₁' : a₁ ≡ a₂ → obj (β a₂)
         b₁' a₁≡a₂ = subst (obj |∘| β) a₁≡a₂ b₁
@@ -95,16 +94,11 @@ G × G′ = record
   ; hom = hom×
   }
   where
-    open Glob
-    open Prod
-      renaming
-        ( _×_ to _|×|_ )
-
     obj× : Set
     obj× = obj G |×| obj G′
 
     hom× : obj× → obj× → ∞ Glob
-    hom× (α₁ , β₁) (α₂ , β₂) = ♯ (♭ (hom G α₁ α₂) × ♭ (hom G′ β₁ β₂))
+    hom× (α₁ |,| β₁) (α₂ |,| β₂) = ♯ (♭ (hom G α₁ α₂) × ♭ (hom G′ β₁ β₂))
 
 infixr 4 ⟨_,_⟩×
 ⟨_,_⟩× : ∀ {G G′ G′′} → G′′ ⇒ G → G′′ ⇒ G′ → G′′ ⇒ G × G′
@@ -112,11 +106,6 @@ infixr 4 ⟨_,_⟩×
   { obj→ = |⟨ obj→ f , obj→ g ⟩|
   ; hom→ = λ {_} {_} → ♯ ⟨ ♭ (hom→ f) , ♭ (hom→ g) ⟩×
   }
-  where
-    open _⇒_
-    open Prod
-      renaming
-        ( <_,_> to |⟨_,_⟩| )
 
 infixr 4 ⟨_,_⟩Σ
 ⟨_,_⟩Σ : ∀ {α} (β : α → Glob) → (a : α) → β a ⇒ Σ α β
@@ -124,15 +113,6 @@ infixr 4 ⟨_,_⟩Σ
   { obj→ = λ b → a |,| b
   ; hom→ = λ {x} {y} → ♯ ⟨ (λ a≡a → ♭ (hom (β a) (subst (obj |∘| β) a≡a x) y)) , refl ⟩Σ
   }
-  where
-    open Fun
-      renaming
-        ( _∘_ to _|∘|_ )
-    open Glob
-    open import Level
-    open Prod
-      renaming
-        ( _,_ to _|,|_ )
 
 {- definition of the monad T, assigning the free ω category to a globular set -}
 Δ : Set → Glob
@@ -166,4 +146,7 @@ mutual
   }
 
 _* : {G H : Glob} → G ⇒ T H → T G ⇒ T H
-f * = record {obj→ = _⇒_.obj→ f; hom→ = {!!}}
+f * = record
+  { obj→ = obj→ f
+  ; hom→ = {!!}
+  }
