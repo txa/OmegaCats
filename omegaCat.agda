@@ -19,7 +19,7 @@ record Glob : Set₁ where
     hom : obj → obj → ∞ Glob
 
 {- the category of globular sets -}
-infixr 1 _⇒_
+infixr 1 _⇒_                               -- ⇒ is \r= or \Rightarrow
 record _⇒_ (G₁ G₂ : Glob) : Set where
   open Glob
   field
@@ -64,7 +64,7 @@ _∘_ {G₁ = G₁} {G₃ = G₃} g f = record
   ; hom→ = λ {_} {_} → ♯ !
   }
 
-Σ : (α : Set) → (α → Glob) → Glob
+Σ : (α : Set) → (β : α → Glob) → Glob
 Σ α β = record
   { obj = objΣ
   ; hom = homΣ 
@@ -89,7 +89,7 @@ _∘_ {G₁ = G₁} {G₃ = G₃} g f = record
 
 infixr 2 _×_
 _×_ : Glob → Glob → Glob
-G₁ × G₂ = record
+G × G′ = record
   { obj = obj×
   ; hom = hom×
   }
@@ -100,14 +100,14 @@ G₁ × G₂ = record
         ( _×_ to _|×|_ )
 
     obj× : Set
-    obj× = obj G₁ |×| obj G₂
+    obj× = obj G |×| obj G′
 
     hom× : obj× → obj× → ∞ Glob
-    hom× (α₁ , β₁) (α₂ , β₂) = ♯ (♭ (hom G₁ α₁ α₂) × ♭ (hom G₂ β₁ β₂))
+    hom× (α₁ , β₁) (α₂ , β₂) = ♯ (♭ (hom G α₁ α₂) × ♭ (hom G′ β₁ β₂))
 
 infixr 4 ⟨_,_⟩×
-⟨_,_⟩× : ∀ {G₁ G₂ G₃} → G₃ ⇒ G₁ → G₃ ⇒ G₂ → G₃ ⇒ G₁ × G₂
-⟨_,_⟩× {G₁ = G₁} {G₂ = G₂} {G₃ = G₃} f g = record
+⟨_,_⟩× : ∀ {G G′ G′′} → G′′ ⇒ G → G′′ ⇒ G′ → G′′ ⇒ G × G′
+⟨_,_⟩× f g = record
   { obj→ = |⟨ obj→ f , obj→ g ⟩|
   ; hom→ = λ {_} {_} → ♯ ⟨ ♭ (hom→ f) , ♭ (hom→ g) ⟩×
   }
@@ -128,25 +128,26 @@ infixr 4 ⟨_,_⟩Σ
       renaming
         ( _∘_ to _|∘|_ )
     open Glob
+    open import Level
     open Prod
       renaming
         ( _,_ to _|,|_ )
 
 {- definition of the monad T, assigning the free ω category to a globular set -}
-∇ : Set → Glob
-∇ α = record
+Δ : Set → Glob
+Δ α = record
   { obj = α
   ; hom = λ _ _ → ♯ ⊤
   }
 
 data Path {α : Set} : α → α → Set where
   refl : (a : α) → Path a a
-  step : (a : α) → ∀ b c → Path b c → Path a c
+  step : (a : α) → ∀ {b c} → Path b c → Path a c
 
 mutual
   walk : (G : Glob) → {x y : Glob.obj G} → Path x y → Glob
   walk G {.y} {y} (refl .y)         = ⊤
-  walk G {a}      (step .a b c bPc) = T (♭ (Glob.hom G a b) × walk G bPc)
+  walk G {a}      (step .a {b} {c} bPc) = (T (♭ (Glob.hom G a b))) × walk G bPc
 
   T : Glob → Glob
   T G = record
@@ -160,5 +161,5 @@ mutual
 η-T : (G : Glob) → G ⇒ T G
 η-T G = record
   { obj→ = η-obj {G = G}
-  ; hom→ = λ {a} {b} → ♯ (⟨ walk G , {!!} ⟩Σ ∘ ⟨ η-T _ , ! ⟩×)
+  ; hom→ = λ {a} {b} → ♯ (⟨ walk G , step a (refl b) ⟩Σ ∘ ⟨ η-T _ , ! ⟩×)
   }
