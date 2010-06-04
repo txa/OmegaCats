@@ -1,5 +1,3 @@
-{-# OPTIONS --type-in-type  #-}
-
 module Graphs where
 
 import Data.Empty
@@ -28,7 +26,7 @@ open import Relation.Binary.PropositionalEquality
 
 {- graphs and basic constructions on them -}
 
-record Graph : Set where
+record Graph : Set₁ where
   field
     obj : Set
     hom : obj → obj → Set
