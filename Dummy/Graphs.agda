@@ -1,4 +1,5 @@
 {-# OPTIONS --type-in-type  #-}
+
 module Graphs where
 
 import Data.Empty
@@ -165,13 +166,19 @@ postulate
 Δ-map : {A B : Set} → (A → B) → ((Δ A) ⇒ (Δ B))
 Δ-map f = record
   { obj→ = f
-  ; hom→ = λ {_} {_} _ → {!Unit.tt!}
+  ; hom→ = λ {_} {_} _ → Unit.tt
   } 
 
-
-
 {- Dependent families of graphs, and basic constructions on them -}
-{- in the non-Dummy case, this maybe should be a separate module? -}
+
+{-
+I tried to make FamGraphs a separate module, but somehow wasn't managing to import this module correctly --- I had 
+  open import Graphs
+at the start, but I got an error
+  Set != suc _1
+  when checking that the expression Graph has type _1
+as soon as I tried to use a Graph!  --- pll, 4.6.10
+-}
 
 record Fam (G : Graph) : Set where
   field
@@ -180,12 +187,98 @@ record Fam (G : Graph) : Set where
 
 open Fam
 
+Σfam : ∀ {X : Graph} → (Fam X) → Graph
+Σfam {X} Ys = record
+  { obj = |Σ| (obj X) (objs Ys)
+  ; hom = λ xy x′y′ → |Σ| (hom X (|proj₁| xy) (|proj₁| x′y′)) (homs Ys (|proj₂| xy) (|proj₂| x′y′))
+  }
+
+projfam : ∀ {X : Graph} → (Ys : Fam X) → (Σfam Ys) ⇒ X
+projfam {X} Ys = record
+  { obj→ = |proj₁|
+  ; hom→ = λ {xy} {x′y′} → |proj₁|
+  }
+
+{- the "free category" monad T on Graphs -}
+
+data Paths (X : Graph) : (obj X) → (obj X) → Set where
+  refl : (a : (obj X)) → Paths X a a
+  step : ∀ {a b c}→ (hom X b c) → Paths X a b  → Paths X a c
+  -- step is ordered like composition, maybe this is a bad idea?
+
+pathcomp : ∀ {X : Graph} → ∀ {x y z : obj X} → (Paths X y z) → (Paths X x y) → (Paths X x z)
+pathcomp (refl _) = λ q → q
+pathcomp (step f p) = λ q → (step f (pathcomp p q))
+
+{-
+an older version of Is-atomic; it's perhaps slightly clearer in itself, but the current 
+version is more unified with subdivision:
+ 
+Is-refl : ∀ {X : Graph} → ∀ {x y : obj X } → (Paths X x y) → Set
+Is-refl (refl a) = Unit.⊤
+Is-refl (step f p) = Empty.⊥
+
+Is-atomic : ∀ {X : Graph} → ∀ {x y : obj X } → (Paths X x y) → Set
+Is-atomic (refl a) = Empty.⊥
+Is-atomic (step f p) = Is-refl p
+-}
+
+T : Graph → Graph
+T X = record
+  { obj = obj X
+  ; hom = Paths X
+  }
+
+data Is-atomic {X : Graph} : ∀ {x y : obj X } → (p : Paths X x y) → Set where
+  atom : ∀ {x y : obj X} → (f : hom X x y) → Is-atomic (step f (refl x))
+
+Es : (X : Graph) → Fam (T X)   -- the unit η of T, seen as a family
+Es X = record
+  { objs = λ x → Unit.⊤
+  ; homs = λ x y p → Is-atomic p
+  } 
+
+ΣEtoX : (X : Graph) → Σfam (Es X) ⇒ X  -- bad form to include "X" in name, any ideas for a better name?
+ΣEtoX X = record 
+  { obj→ = |proj₁|
+  ; hom→ =  λ pw → extract-atom (|proj₂| pw)
+  }
+    where
+      extract-atom :  ∀ {X : Graph} → ∀ {x y : obj X } → ∀ {p : Paths X x y} → (w : Is-atomic p) → (hom X x y)
+      extract-atom (atom f) = f
+
+-- add XtoΣE if needed
+
+data Subdivisions {X : Graph} : ∀ {x y : obj X } → (p : Paths X x y) → Set where
+  refl-subd : (x : obj X) → Subdivisions (refl x)
+  step-subd : ∀ {x y z : obj X} → (p : Paths X y z) → ∀ {q : Paths X x y} → (Subdivisions q) → (Subdivisions (pathcomp p q))
+
+Ms : (X : Graph) → Fam (T X)   -- the multiplication μ of T, seen as a family
+Ms X = record
+  { objs = λ x → Unit.⊤
+  ; homs = λ x y p → Subdivisions p
+  } 
+
+-- add ΣMtoT² and T²toΣM if needed
+
+data FamPathSubs {X : Graph} (Ys : Fam (T X)) : ∀ {x x′ : obj X } → (y : objs Ys x) → (y′ : objs Ys x′) → (p : Paths X x x′) → Set where
+  refl-famsubd : ∀ {x : obj X} → (y : objs Ys x) → FamPathSubs Ys y y (refl x)
+  step-famsubd : ∀ {x x′ x′′ : obj X} → ∀ {y : objs Ys x} → ∀ {y′ : objs Ys x′} → ∀ {y′′ : objs Ys x′′} → ∀ {p : Paths X x′ x′′} → (f : homs Ys y′ y′′ p) → ∀ {q : Paths X x x′} → (FamPathSubs Ys y y′ q) → (FamPathSubs Ys y y′′ (pathcomp p q))
+
+TFamKl : {X : Graph} → Fam (T X) → Fam (T X)  -- the Kleisli mult of T, as it acts on families
+TFamKl Ys = record
+  { objs = objs Ys
+  ; homs = {!FamPathSubs Ys!}
+  }
+
+{- the bicategory of T-Spans -}
+
+
+
+
 {- Contractions on families of graphs -}
  
 record Contr (G : Graph) (F : Fam G) : Set where
   field
     χobjs : (v : obj G) → objs F v
     χhoms : ∀ {v v'} → (vv : objs F v) → (vv' : objs F v') → (e : hom G v v') → homs F vv vv' e
-
-
-
