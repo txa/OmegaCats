@@ -43,6 +43,9 @@ mutual
     ; hom = λ a b → ♯ (Σ (Path a b) (walk G))
     }
 
+TMap : ∀ {X Y : Glob} → (X ⇒ Y) → ((T X) ⇒ (T Y))
+TMap {X} {Y} F = {!!}
+
 η-obj : ∀ {G : Glob} → Glob.obj G → Glob.obj (T G)
 η-obj x = x
 
@@ -51,7 +54,7 @@ mutual
   { obj→ = η-obj {G = G}
   ; hom→ = λ {a} {b} → ♯ (⟨ walk G , step a (refl b) ⟩Σ ∘ ⟨ η-T _ , ! ⟩×)
   }
-
+  
 {- Kleisli formulation of monad multiplication -}
 
 mutual
@@ -71,9 +74,15 @@ mutual
   μ-T : (X : Glob) → T (T X) ⇒ (T X)
   μ-T X = record
     { obj→ = |id|
-    ; hom→ = λ {x} {y} → ♯ elimΣ (walk (T X)) (♭ ((Glob.hom (T X)) x y)) (mult X {x} {y})
+    ; hom→ = λ {x} {y} → ♯ elimΣ (walk (T X)) (♭ ((Glob.hom (T X)) x y)) (μmult X {x} {y})
     }
 
-  mult :  (X : Glob) → {x y : Glob.obj X} → (xPy : Path x y) → ( (walk (T X) xPy) ⇒ (♭ ((Glob.hom (T X)) x y)) )
-  mult X {.a} {a} (refl .a) =  ⟨ walk X , refl a ⟩Σ 
-  mult X {a}      (step .a {b} {c} bPc) =  {!!} ∘ {!!}
+  μmult :  (X : Glob) → {x y : Glob.obj X} → (xPy : Path x y) → ( (walk (T X) xPy) ⇒ (♭ ((Glob.hom (T X)) x y)) )
+  μmult X {.a} {a} (refl .a) =  ⟨ walk X , refl a ⟩Σ 
+  μmult X {a}      (step .a {b} {c} bPc) =  μhorizT ∘  {!μvertT!} ×m μmult X bPc
+    where
+      μvertT : (T (♭ (Glob.hom (T X) a b))) ⇒ (♭ (Glob.hom (T X) a b))
+      μvertT = {!!}
+
+      μhorizT : ( (♭ (Glob.hom (T X) a b)) × (♭ (Glob.hom (T X) b c)) ⇒ (♭ (Glob.hom (T X) a c)))
+      μhorizT = {!!}
