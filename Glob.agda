@@ -11,7 +11,10 @@ open Prod
     (   Σ   to   |Σ|
     ;  _×_  to  _|×|_
     ;  _,_  to  _|,|_
-    ; <_,_> to |⟨_,_⟩| )
+    ; <_,_> to |⟨_,_⟩|
+    ; proj₁ to |proj₁|
+    ; proj₂ to |proj₂|
+    )
 import Data.Unit
   as Unit
 import Function
@@ -91,15 +94,20 @@ infixr 4 ⟨_,_⟩×
   ; hom→ = λ {_} {_} → ♯ ⟨ ♭ (hom→ f) , ♭ (hom→ g) ⟩×
   }
 
-infixr 2 _×map_
-_×map_ : ∀ {X X′ Y Y′} → (X ⇒ X′) → (Y ⇒ Y′) → ( (X × Y) ⇒ (X′ × Y′) )
-_×map_ {X} {X′} {Y} {Y′} F G = record
-  { obj→ = map (obj→ F) (obj→ G)
-  ; hom→ = {!!}
-  }
-  where
-    hom×map : ∀ {xy x′y′ : (obj X) |×| (obj Y)} → ∞ (♭ (hom (X × Y) xy x′y′) ⇒ ♭ {!!})
-    hom×map = {!!}
+proj₁ : ∀ {G H} → G × H ⇒ G
+proj₁ {G} {H} = record {obj→ = |proj₁|; hom→ = λ {α} {β} → proj₁hom {α} {β}}
+                where proj₁hom : {α β : obj (G × H)}
+                         → ∞ (♭ (hom (G × H) α β) ⇒ ♭ (hom G (|proj₁| α) (|proj₁| β)))
+                      proj₁hom {a |,| b} {a' |,| b'} = ♯ proj₁
+
+proj₂ : ∀ {G H} → G × H ⇒ H
+proj₂ {G} {H} = record {obj→ = |proj₂|; hom→ = λ {α} {β} → proj₂hom {α} {β}}
+                where proj₂hom : {α β : obj (G × H)}
+                         → ∞ (♭ (hom (G × H) α β) ⇒ ♭ (hom H (|proj₂| α) (|proj₂| β)))
+                      proj₂hom {a |,| b} {a' |,| b'} = ♯ proj₂
+
+_×m_ : ∀ {G G' H H'} → G ⇒ G' → H ⇒ H' → G × H ⇒ G' × H'
+f ×m g = ⟨ f ∘ proj₁ , g ∘ proj₂ ⟩× 
 
 Σ : (A : Set) → (B : A → Glob) → Glob
 Σ A B = record
@@ -159,6 +167,9 @@ elimΣ {A} B C F = record
       where
         b-at-a′ : a ≡ a′ → obj (B a′)
         b-at-a′ a≡a′ = subst (obj |∘| B) a≡a′ b
+
+postulate
+  distr×Σ : ∀ {G A} → (F : A → Glob) → G × Σ A F ⇒ Σ A (λ a → G × F a)
 
 {- the "discrete" functor Δ : Set --> Glob -}
 
