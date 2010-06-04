@@ -87,7 +87,7 @@ G × G′ = record
     hom× (α₁ |,| β₁) (α₂ |,| β₂) = ♯ (♭ (hom G α₁ α₂) × ♭ (hom G′ β₁ β₂))
 
 infixr 4 ⟨_,_⟩×
-⟨_,_⟩× : ∀ {G G′ G′′} → G′′ ⇒ G → G′′ ⇒ G′ → G′′ ⇒ G × G′
+⟨_,_⟩× : ∀ {G G′ G″} → G″ ⇒ G → G″ ⇒ G′ → G″ ⇒ G × G′
 ⟨_,_⟩× f g = record
   { obj→ = |⟨ obj→ f , obj→ g ⟩|
   ; hom→ = ♯ ⟨ ♭ (hom→ f) , ♭ (hom→ g) ⟩×
@@ -101,7 +101,7 @@ proj₁ {G} {H} = record
   where
     proj₁hom : {α β : obj (G × H)}
              → ∞ (♭ (hom (G × H) α β) ⇒ ♭ (hom G (|proj₁| α) (|proj₁| β)))
-    proj₁hom {a |,| b} {a' |,| b'} = ♯ proj₁
+    proj₁hom {a |,| b} {a′ |,| b′} = ♯ proj₁
 
 proj₂ : ∀ {G H} → G × H ⇒ H
 proj₂ {G} {H} = record
@@ -111,9 +111,9 @@ proj₂ {G} {H} = record
   where
     proj₂hom : {α β : obj (G × H)}
              → ∞ (♭ (hom (G × H) α β) ⇒ ♭ (hom H (|proj₂| α) (|proj₂| β)))
-    proj₂hom {a |,| b} {a' |,| b'} = ♯ proj₂
+    proj₂hom {a |,| b} {a′ |,| b′} = ♯ proj₂
 
-_×m_ : ∀ {G G' H H'} → G ⇒ G' → H ⇒ H' → G × H ⇒ G' × H'
+_×m_ : ∀ {G G′ H H′} → G ⇒ G′ → H ⇒ H′ → G × H ⇒ G′ × H′
 f ×m g = ⟨ f ∘ proj₁ , g ∘ proj₂ ⟩× 
 
 Σ : (A : Set) → (B : A → Glob) → Glob
@@ -126,10 +126,10 @@ f ×m g = ⟨ f ∘ proj₁ , g ∘ proj₂ ⟩×
     objΣ = |Σ| A (obj |∘| B)
 
     homΣ : objΣ → objΣ → ∞ Glob
-    homΣ (a₁ |,| b₁) (a₂ |,| b₂) = ♯ Σ (a₁ ≡ a₂) λ a₁≡a₂ → ♭ (hom (B a₂) (b₁' a₁≡a₂) b₂)
+    homΣ (a₁ |,| b₁) (a₂ |,| b₂) = ♯ Σ (a₁ ≡ a₂) λ a₁≡a₂ → ♭ (hom (B a₂) (b₁′ a₁≡a₂) b₂)
       where
-        b₁' : a₁ ≡ a₂ → obj (B a₂)
-        b₁' a₁≡a₂ = subst (obj |∘| B) a₁≡a₂ b₁
+        b₁′ : a₁ ≡ a₂ → obj (B a₂)
+        b₁′ a₁≡a₂ = subst (obj |∘| B) a₁≡a₂ b₁
 
 infixr 4 ⟨_,_⟩Σ                                             -- brackets are \<, \>
 ⟨_,_⟩Σ : ∀ {A} (B : A → Glob) → (a : A) → B a ⇒ Σ A B
@@ -141,7 +141,7 @@ infixr 4 ⟨_,_⟩Σ                                             -- brackets are
 elimΣ : {A : Set} (B : A → Glob) (C : Glob) (F : (a : A) → (B a) ⇒ C) → Σ A B ⇒ C
 elimΣ {A} B C F = record 
   { obj→ = elimΣobj
-  ; hom→ = λ {a} {a'} → elimΣhom {a} {a'}
+  ; hom→ = λ {a} {a′} → elimΣhom {a} {a′}
   }
   where
 

@@ -115,7 +115,7 @@ proj₂ {G} {H} = record
              → hom H (|proj₂| x) (|proj₂| y)
     proj₂hom {_ |,| _} {_ |,| _} = |proj₂|
 
-_×m_ : ∀ {G G' H H'} → G ⇒ G' → H ⇒ H' → G × H ⇒ G' × H'
+_×m_ : ∀ {G G′ H H′} → G ⇒ G′ → H ⇒ H′ → G × H ⇒ G′ × H′
 f ×m g = ⟨ f ∘ proj₁ , g ∘ proj₂ ⟩× 
 
 
@@ -129,10 +129,10 @@ f ×m g = ⟨ f ∘ proj₁ , g ∘ proj₂ ⟩×
     objΣ = |Σ| A (obj |∘| B)
 
     homΣ : objΣ → objΣ → Set
-    homΣ (a₁ |,| b₁) (a₂ |,| b₂) = |Σ| (a₁ ≡ a₂) λ a₁≡a₂ → hom (B a₂) (b₁' a₁≡a₂) b₂
+    homΣ (a₁ |,| b₁) (a₂ |,| b₂) = |Σ| (a₁ ≡ a₂) λ a₁≡a₂ → hom (B a₂) (b₁′ a₁≡a₂) b₂
       where
-        b₁' : a₁ ≡ a₂ → obj (B a₂)
-        b₁' a₁≡a₂ = subst (obj |∘| B) a₁≡a₂ b₁
+        b₁′ : a₁ ≡ a₂ → obj (B a₂)
+        b₁′ a₁≡a₂ = subst (obj |∘| B) a₁≡a₂ b₁
 
 infixr 4 ⟨_,_⟩Σ                         -- brackets are \<, \>
 ⟨_,_⟩Σ : ∀ {A} (B : A → Graph) → (a : A) → B a ⇒ Σ A B
@@ -144,7 +144,7 @@ infixr 4 ⟨_,_⟩Σ                         -- brackets are \<, \>
 elimΣ : {A : Set} → (B : A → Graph) → (C : Graph) → (F : (a : A) → (B a) ⇒ C) → Σ A B ⇒ C
 elimΣ {A} B C F = record 
   { obj→ = elimΣobj
-  ; hom→ = λ {a} {a'} → elimΣhom {a} {a'}
+  ; hom→ = λ {a} {a′} → elimΣhom {a} {a′}
   }
   where
     elimΣobj : |Σ| A (λ x → obj (B x)) → obj C
