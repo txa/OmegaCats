@@ -79,7 +79,7 @@ mutual
 
   μmult :  (X : Glob) → {x y : Glob.obj X} → (xPy : Path x y) → ( (walk (T X) xPy) ⇒ (♭ ((Glob.hom (T X)) x y)) )
   μmult X {.a} {a} (refl .a) =  ⟨ walk X , refl a ⟩Σ 
-  μmult X {a}      (step .a {b} {c} bPc) =  μhorizT ∘  {!μvertT!} ×m μmult X bPc
+  μmult X {a}      (step .a {b} {c} bPc) =  μhorizT ∘  μvertT ×m μmult X bPc
     where
       μvertT : (T (♭ (Glob.hom (T X) a b))) ⇒ (♭ (Glob.hom (T X) a b))
       μvertT = {!!}
