@@ -36,7 +36,6 @@ open Glob
 {- the category of globular sets -}
 infixr 1 _⇒_                               -- ⇒ is \r= or \Rightarrow
 record _⇒_ (G₁ G₂ : Glob) : Set where
-  open Glob
   field
     obj→ : obj G₁ → obj G₂
     hom→ : ∀ {α β} → ∞ (♭ (hom G₁ α β) ⇒ ♭ (hom G₂ (obj→ α) (obj→ β)))
@@ -115,19 +114,11 @@ f ×m g = ⟨ f ∘ proj₁ , g ∘ proj₂ ⟩×
   ; hom = homΣ 
   }
   where
-    open Fun
-      renaming
-        ( _∘_ to _|∘|_ )
-    open Glob
-    open Prod
-      renaming
-        ( Σ   to |Σ| )
-
     objΣ : Set
     objΣ = |Σ| A (obj |∘| B)
 
     homΣ : objΣ → objΣ → ∞ Glob
-    homΣ (a₁ , b₁) (a₂ , b₂) = ♯ Σ (a₁ ≡ a₂) λ a₁≡a₂ → ♭ (hom (B a₂) (b₁' a₁≡a₂) b₂)
+    homΣ (a₁ |,| b₁) (a₂ |,| b₂) = ♯ Σ (a₁ ≡ a₂) λ a₁≡a₂ → ♭ (hom (B a₂) (b₁' a₁≡a₂) b₂)
       where
         b₁' : a₁ ≡ a₂ → obj (B a₂)
         b₁' a₁≡a₂ = subst (obj |∘| B) a₁≡a₂ b₁
@@ -145,17 +136,9 @@ elimΣ {A} B C F = record
   ; hom→ = λ {a} {a'} → elimΣhom {a} {a'}
   }
   where
-    open Glob
-    open _⇒_
-    open Fun
-      renaming
-        ( _∘_ to _|∘|_ )
-    open Prod
-      renaming
-        ( Σ to |Σ| )
 
     elimΣobj : ((|Σ| A (λ x → obj (B x)))) → obj C
-    elimΣobj (a , b) = (obj→ (F a)) b
+    elimΣobj (a |,| b) = (obj→ (F a)) b
 
     elimΣhom-aux : {a a′ : A} (a=a′ : a ≡ a′) (b : (obj (B a))) (b′ : (obj (B a′))) →
                          ♭ (hom (B a′) (subst (λ x → obj (B x)) a=a′ b) b′) ⇒
@@ -163,7 +146,7 @@ elimΣ {A} B C F = record
     elimΣhom-aux {.a} {a} refl b b′ = ♭ (hom→ (F a))
 
     elimΣhom : {a a′ : obj (Σ A B)} → ∞ ((♭ (hom (Σ A B) a a′)) ⇒ (♭ (hom C (elimΣobj a) (elimΣobj a′))))
-    elimΣhom {a , b} {a′ , b′} = ♯ elimΣ ( λ a≡a′ → ♭ (hom (B a′) (b-at-a′ a≡a′) b′)) (♭ (hom C (obj→ (F a) b) (obj→ (F a′) b′))) (λ a=a′ → elimΣhom-aux a=a′ b b′)
+    elimΣhom {a |,| b} {a′ |,| b′} = ♯ elimΣ ( λ a≡a′ → ♭ (hom (B a′) (b-at-a′ a≡a′) b′)) (♭ (hom C (obj→ (F a) b) (obj→ (F a′) b′))) (λ a=a′ → elimΣhom-aux a=a′ b b′)
       where
         b-at-a′ : a ≡ a′ → obj (B a′)
         b-at-a′ a≡a′ = subst (obj |∘| B) a≡a′ b
