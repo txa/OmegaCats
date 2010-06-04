@@ -8,7 +8,11 @@ open Prod
 import Data.Unit
   as Unit
 
-open import Graphs
+import Graphs
+open Graphs
+  using
+    ( Graph
+    ; _⇒_ )
 
 module FamGraphs where
 
@@ -23,21 +27,21 @@ at the start, but I got an error
 as soon as I tried to use a Graph!  --- pll, 4.6.10
 -}
 
-record Fam (G : Graphs.Graph) : Set₁ where
+record Fam (G : Graph) : Set₁ where
   field
     obj : Graph.obj G  → Set
     hom : ∀ {v v'} → obj v → obj v' → Graph.hom G v v' → Set
 
 open Fam
 
-Σ-fam : ∀ {X : Graph} → (Fam X) → Graph
-Σ-fam {X} Ys = record
+Σ : ∀ {X : Graph} → (Fam X) → Graph
+Σ {X} Ys = record
   { obj = |Σ| (Graph.obj X) (obj Ys)
   ; hom = λ xy x′y′ → |Σ| (Graph.hom X (|proj₁| xy) (|proj₁| x′y′)) (hom Ys (|proj₂| xy) (|proj₂| x′y′))
   }
 
-projFam : ∀ {X : Graph} → (Ys : Fam X) → Σ-fam Ys ⇒ X
-projFam {X} Ys = record
+proj : ∀ {X : Graph} → (Ys : Fam X) → Σ Ys ⇒ X
+proj {X} Ys = record
   { obj→ = |proj₁|
   ; hom→ = |proj₁|
   }
@@ -49,9 +53,11 @@ data Paths (X : Graph) : (Graph.obj X) → (Graph.obj X) → Set where
   step : ∀ {a b c} → Graph.hom X b c → Paths X a b → Paths X a c
   -- step is ordered like composition, maybe this is a bad idea?
 
-pathcomp : ∀ {X : Graph} {x y z : Graph.obj X} → Paths X y z → Paths X x y → Paths X x z
-pathcomp (refl _)   q = q
-pathcomp (step f p) q = step f (pathcomp p q)
+-- ∘↝ is '\comp\leadsto'
+infixr 9 _∘↝_
+_∘↝_ : ∀ {X : Graph} {x y z : Graph.obj X} → Paths X y z → Paths X x y → Paths X x z
+(refl _)   ∘↝ q = q
+(step f p) ∘↝ q = step f (p ∘↝ q)
 
 {-
 an older version of Is-atomic; it's perhaps slightly clearer in itself, but the current 
@@ -78,13 +84,14 @@ data isAtomic {X : Graph} : ∀ {x y : Graph.obj X } (p : Paths X x y) → Set w
 unAtom : ∀ {X : Graph} {x y : Graph.obj X } {p : Paths X x y} (w : isAtomic p) → Graph.hom X x y
 unAtom (atom f) = f
 
+-- Can we maybe come up with a more descriptive name? :) --dwm
 Es : (X : Graph) → Fam (T X) -- the unit η of T, seen as a family
 Es X = record
   { obj = λ x     → Unit.⊤
   ; hom = λ x y p → isAtomic p
   } 
 
-ΣEtoX : (X : Graph) → Σ-fam (Es X) ⇒ X -- bad form to include "X" in name, any ideas for a better name?
+ΣEtoX : (X : Graph) → Σ (Es X) ⇒ X -- bad form to include "X" in name, any ideas for a better name?
 ΣEtoX X = record 
   { obj→ =                 |proj₁|
   ; hom→ =  λ pw → unAtom (|proj₂| pw)
@@ -92,14 +99,19 @@ Es X = record
 
 -- add XtoΣE if needed
 
-data Subdivisions {X : Graph} : ∀ {x y : Graph.obj X } → (p : Paths X x y) → Set where
-  refl-subd : ∀ (x : Graph.obj X) → Subdivisions (refl x)
-  step-subd : ∀ {x y z : Graph.obj X} → (p : Paths X y z) → ∀ {q : Paths X x y} → (Subdivisions q) → (Subdivisions (pathcomp p q))
+data Subdivs {X : Graph} : ∀ {x y : Graph.obj X } (p : Paths X x y) → Set where
+  refl : ∀ (x : Graph.obj X)
+       → Subdivs (refl x)
 
+  step : ∀ {x y z : Graph.obj X} (p : Paths X y z) {q : Paths X x y}
+       → Subdivs q
+       → Subdivs (p ∘↝ q)
+
+-- Can we maybe come up with a more descriptive name? :) --dwm
 Ms : (X : Graph) → Fam (T X) -- the multiplication μ of T, seen as a family
 Ms X = record
   { obj = λ x   → Unit.⊤
-  ; hom = λ x y → Subdivisions
+  ; hom = λ x y → Subdivs
   } 
 
 -- add ΣMtoT² and T²toΣM if needed
@@ -111,9 +123,9 @@ data FamPathSubs {X : Graph} (Ys : Fam (T X)) : ∀ {x x′ : Graph.obj X } (y :
   refl : ∀ {x : Graph.obj X} (y : obj Ys x)
        → FamPathSubs Ys y y (refl x)
 
-  step : ∀ {x x′ x′′ : Graph.obj X} {y : obj Ys x} {y′ : obj Ys x′} {y′′ : obj Ys x′′} {p : Paths X x′ x′′} (f : hom Ys y′ y′′ p) {q : Paths X x x′}
-       → FamPathSubs Ys y y′ q
-       → FamPathSubs Ys y y′′ (pathcomp p q)
+  step : ∀ {x x′ x″ : Graph.obj X} {y : obj Ys x} {y′ : obj Ys x′} {y″ : obj Ys x″} {p : Paths X x′ x″} (f : hom Ys y′ y″ p) {q : Paths X x x′}
+       → FamPathSubs Ys y y′   q
+       → FamPathSubs Ys y y″  (p ∘↝ q)
 
 TFamKl : {X : Graph} → Fam (T X) → Fam (T X)  -- the Kleisli mult of T, as it acts on families
 TFamKl Ys = record
