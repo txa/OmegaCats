@@ -45,7 +45,7 @@ id = record
   ; hom→ = ♯   id
   }
 
-infixr 9 _∘_
+infixr 9 _∘_                                       -- the dot ∘ is \circ
 _∘_ : ∀ {G₁ G₂ G₃} → G₂ ⇒ G₃ → G₁ ⇒ G₂ → G₁ ⇒ G₃
 _∘_ {G₁ = G₁} {G₃ = G₃} g f = record
   { obj→ =       obj→ g  |∘|    obj→ f
@@ -90,6 +90,16 @@ infixr 4 ⟨_,_⟩×
   { obj→ = |⟨ obj→ f , obj→ g ⟩|
   ; hom→ = λ {_} {_} → ♯ ⟨ ♭ (hom→ f) , ♭ (hom→ g) ⟩×
   }
+
+infixr 2 _×map_
+_×map_ : ∀ {X X′ Y Y′} → (X ⇒ X′) → (Y ⇒ Y′) → ( (X × Y) ⇒ (X′ × Y′) )
+_×map_ {X} {X′} {Y} {Y′} F G = record
+  { obj→ = map (obj→ F) (obj→ G)
+  ; hom→ = {!!}
+  }
+  where
+    hom×map : ∀ {xy x′y′ : (obj X) |×| (obj Y)} → ∞ (♭ (hom (X × Y) xy x′y′) ⇒ ♭ {!!})
+    hom×map = {!!}
 
 Σ : (A : Set) → (B : A → Glob) → Glob
 Σ A B = record
