@@ -4,6 +4,7 @@ import FamGraphs
 open FamGraphs
   using
     ( Fam
+    ; _⇒Fam_
     ; FamComp )
 import Graphs
 open Graphs
@@ -13,6 +14,7 @@ open Graphs
     ; _∘_ )
 open Graphs._⇒_
 open import T
+open import Relation.Binary.PropositionalEquality
 
 {- the bicategory of T-Spans -}
 
@@ -29,9 +31,19 @@ open TSpan
 -- to work with, mainly since I couldn't see a way to separate out the action of T from the other component of the 
 -- product.  Still not sure that that double dependency mightn't be better though.  -- pll
 
-id : (X : Graph) → TSpan X X
-id X = record
-  { ops     = Etas X
+record ⇒TSpan {X Y : Graph} (F G : TSpan X Y) : Set where
+  field
+    ops→ : F ⇒Fam G
+    outputs= : (outputs G) ∘ (FamGraphs.ΣMap ops→) ≡ outputs F
+-- leaving the commutativity condition out until I can ask you a bit more about how Agda handles ≡.  (in particular:
+-- is it extensional for function types??)   This is where it would def have been nicer using the doubly dependent
+-- definition of TSpan!
+
+-- exercise: add ∘TSpan, idTSpan
+
+id : (X : Graph) → TSpan X X -- damn, should find a new name for this, since id should probably be the identity 2-cell
+id X = record                -- on a TSpan!  the ideal thing would be some variation of 1 since that's standard as a unit
+  { ops     = Etas X         -- for ⊗, but I don't know any simple variants of 1 in unicode?
   ; outputs = ΣE-to-X X
   }
 

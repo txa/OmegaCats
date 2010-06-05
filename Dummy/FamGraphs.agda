@@ -19,7 +19,11 @@ open Graphs
   using
     ( Graph
     ; _⇒_ )
-open Graphs._⇒_
+-- open Graphs._⇒_
+-- not opening this for the same reason we're not opening Graph: we want to reuse its field identifiers
+-- for ⇒Fam.  But writing _⇒_.obj→ and so on is rather unreadable; is there a way to rename these a bit more nicely,
+-- say to Graphs.obj→ or something like that?
+
 
 {- Dependent families of graphs, and basic constructions on them -}
 
@@ -30,6 +34,16 @@ record Fam (G : Graph) : Set₁ where
 
 open Fam
 
+infixr 1 _⇒Fam_                            -- ⇒ is \r= or \Rightarrow
+record _⇒Fam_ {X : Graph} (Ys Zs : Fam X) : Set where
+  field
+    obj→ : ∀ {x} → obj Ys x → obj Zs x
+    hom→ : ∀ {x x′} → ∀ {y} → ∀ {y′} → ∀ {f : Graph.hom X x x′} → hom Ys y y′ f → hom Zs (obj→ y) (obj→ y′) f
+open _⇒Fam_
+
+-- exercise or as needed: add ∘Fam and idFam here
+
+
 Σ : ∀ {X : Graph} → (Fam X) → Graph
 Σ {X} Ys = record
   { obj = |Σ| (Graph.obj X) (obj Ys)
@@ -37,13 +51,19 @@ open Fam
   }
 
 proj : ∀ {X : Graph} → (Ys : Fam X) → Σ Ys ⇒ X
-proj {X} Ys = record
-  { obj→ = |proj₁|
+proj {X} Ys = record 
+  {obj→ = |proj₁|
   ; hom→ = |proj₁|
   }
 
+ΣMap : ∀ {X : Graph} → {Ys Zs : Fam X} → (Ys ⇒Fam Zs) → (Σ Ys ⇒ Σ Zs)
+ΣMap F = record 
+  {obj→ = Prod.map Fun.id (obj→ F) 
+  ; hom→ = Prod.map Fun.id (hom→ F)
+  } 
+
 -- notation note: I think a name like FamComp makes more sense than an infix notation, since generally our notation
--- for families talks about them as "dependent objects" rather than as morphisms.  Otoh, I'm not dead set on FamComp
+-- for families talks about them as dependent objects rather than as morphisms.  Otoh, I'm not dead set on FamComp
 -- for that name.  Something based around "Σ" would make sense, since in eg topos-theoretic terms this is defining the
 -- _pushforward_ / _dependent sum_ functors
 --        Σ_(proj Ys) : Fam (Σfam Ys) --> Fam X
@@ -65,14 +85,14 @@ FamComp Ys Zs = record
 
 Pullback : ∀ {X Y : Graph} → Fam Y → (X ⇒ Y) → Fam X
 Pullback Zs F = record
-  { obj = obj Zs |∘| obj→ F
-  ; hom = λ z z′ f → hom Zs z z′ (hom→ F f)
+  { obj = obj Zs |∘| _⇒_.obj→ F
+  ; hom = λ z z′ f → hom Zs z z′ (_⇒_.hom→ F f)
   }
 
 ΣPullback-to-Σ : ∀ {X Y : Graph} (Zs : Fam Y) (F : X ⇒ Y) → Σ (Pullback Zs F) ⇒ Σ Zs
 ΣPullback-to-Σ Zs F = record
-  { obj→ = λ xz → obj→ F (|proj₁| xz) |,| |proj₂| xz
-  ; hom→ = λ fh → hom→ F (|proj₁| fh) |,| |proj₂| fh
+  { obj→ = λ xz → _⇒_.obj→ F (|proj₁| xz) |,| |proj₂| xz
+  ; hom→ = λ fh → _⇒_.hom→ F (|proj₁| fh) |,| |proj₂| fh
   }
 
 {- Contractions on families of graphs -}
