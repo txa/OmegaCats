@@ -1,6 +1,5 @@
 module TSpans where
 
-import FamGraphs
 import Graphs
 open Graphs
   using
@@ -13,23 +12,24 @@ open Graphs._⇒_
     ( obj→ to obj→Graph
     ; hom→ to hom→Graph
     )
-open FamGraphs
+open import FamGraphs
   using
     ( Fam
     ; FamComp )
   renaming
-    ( _⇒_ to _⇒Fam_ )
+    ( _⇒_ to _⇒Fam_ 
+    ; id to idFam 
+    )
 
 open import T
 open import Relation.Binary.PropositionalEquality
 
 {- the bicategory of T-Spans -}
 
-record TSpan (X Y : Graph) : Set₁ where -- explanation for the field names:
-  field                                 -- see a T-span as like the data of a multicategory
-    ops     : Fam (T X)                 -- with "arrows"/"operations" at the top in Σ Arrs,
-    outputs : FamGraphs.Σ ops ⇒Graph Y       -- with their sources on the left in TX, targets on the right in Y.
-
+record TSpan (X Y : Graph) : Set₁ where    -- explanation for the field names:
+  field                                   -- see a T-span as like the data of a multicategory
+    ops     : Fam (T X)                   -- with "arrows"/"operations" at the top in Σ Arrs,
+    outputs : FamGraphs.Σ ops ⇒Graph Y    -- with their sources on the left in TX, targets on the right in Y.
 
 open TSpan
 
@@ -42,15 +42,21 @@ record _⇒_ {X Y : Graph} (F G : TSpan X Y) : Set where
   field
     ops→ : (ops F) ⇒Fam (ops G)
 --    outputs= : (outputs G) ∘Graph (FamGraphs.ΣMap ops→) ≡ outputs F
+
 -- leaving the commutativity condition out until I can ask you a bit more about how Agda handles ≡.  (in particular:
 -- is it extensional for function types??)   This is where it would def have been nicer using the doubly dependent
 -- definition of TSpan!
+open _⇒_
+
+id : {X Y : Graph} → (F : TSpan X Y) → F ⇒ F
+id {X} {Y} F = record 
+  { ops→ = idFam (ops F) }
 
 -- exercise: add ∘TSpan, idTSpan
 
-id : (X : Graph) → TSpan X X -- damn, should find a new name for this, since id should probably be the identity 2-cell
-id X = record                -- on a TSpan!  the ideal thing would be some variation of 1 since that's standard as a unit
-  { ops     = Etas X         -- for ⊗, but I don't know any simple variants of 1 in unicode?
+1TSpan : (X : Graph) → TSpan X X -- should maybe find a better name for this?  the ideal thing would be just some
+1TSpan X = record                -- variant of 1 (eg bold), since that's standard as a unit for ⊗, but I don't
+  { ops     = Etas X             -- know any appropriate variants of 1 in unicode...
   ; outputs = ΣE-to-X X
   }
 
@@ -69,3 +75,10 @@ _⊗_ {X} {Y} {Z} G F = record
 
 -- exercise for when one of us is feeling brave: give the isomorphisms witnessing associativity and unitality
 -- of composition of T-Spans!
+
+{-
+ 1⊗F-to-F : {X Y : Graph} → (F : TSpan X Y) → (1TSpan Y) ⊗ F ⇒ F
+ 1⊗F-to-F F = record
+  {ops→ = {!!}}
+-- drat; I can't see how to give this (or the analogous right unitality map) without getting into equality of maps of families
+-}

@@ -12,7 +12,8 @@ import Function
   as Fun
 open Fun
   renaming
-    ( _∘_ to _|∘|_ )
+    ( _∘_ to _|∘|_ 
+    ; id to |id| )
 
 import Graphs
 open Graphs
@@ -42,6 +43,11 @@ record _⇒_ {X : Graph} (Ys Zs : Fam X) : Set where
     hom→ : ∀ {x x′} → ∀ {y} → ∀ {y′} → ∀ {f : Graph.hom X x x′} → hom Ys y y′ f → hom Zs (obj→ y) (obj→ y′) f
 open _⇒_
 
+id : ∀ {X : Graph} → (Ys : Fam X) → Ys ⇒ Ys
+id Ys = record 
+  { obj→ = |id|
+  ; hom→ = |id|
+  }
 -- exercise or as needed: add ∘ and id here
 
 
