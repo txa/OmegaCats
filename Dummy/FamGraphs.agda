@@ -42,16 +42,23 @@ proj {X} Ys = record
   ; hom→ = |proj₁|
   }
 
-infixr 9 _∘Fam_
-_∘Fam_ : ∀ {X : Graph} (Ys : Fam X) (Zs : Fam (Σ Ys)) → Fam X
-Ys ∘Fam Zs = record
+-- notation note: I think a name like FamComp makes more sense than an infix notation, since generally our notation
+-- for families talks about them as "dependent objects" rather than as morphisms.  Otoh, I'm not dead set on FamComp
+-- for that name.  Something based around "Σ" would make sense, since in eg topos-theoretic terms this is defining the
+-- _pushforward_ / _dependent sum_ functors
+--        Σ_(proj Ys) : Fam (Σfam Ys) --> Fam X
+-- (which is of course composition, but regarded slightly differently) --- however, I can't think of anything based
+-- around Σ that isn't too close to something we've used already...
+
+FamComp : ∀ {X : Graph} (Ys : Fam X) (Zs : Fam (Σ Ys)) → Fam X
+FamComp Ys Zs = record
   { obj = λ x         → |Σ| (obj Ys x) (λ y → (obj Zs (x |,| y))) 
   ; hom = λ yz y′z′ f → |Σ| (hom Ys (|proj₁| yz) (|proj₁| y′z′) f)
                             (λ g → (hom Zs (|proj₂| yz) (|proj₂| y′z′) (f |,| g))) 
   }
 
-Σ∘-to-Σ : ∀ {X : Graph} (Ys : Fam X) (Zs : Fam (Σ Ys)) → Σ (Ys ∘Fam Zs) ⇒ Σ Zs
-Σ∘-to-Σ Ys Zs = record
+ΣComp-to-Σ : ∀ {X : Graph} (Ys : Fam X) (Zs : Fam (Σ Ys)) → Σ (FamComp Ys Zs) ⇒ Σ Zs
+ΣComp-to-Σ Ys Zs = record
   { obj→ = λ x-yz → (|proj₁| x-yz |,| |proj₁| (|proj₂| x-yz)) |,| |proj₂| (|proj₂| x-yz)
   ; hom→ = λ f-gh → (|proj₁| f-gh |,| |proj₁| (|proj₂| f-gh)) |,| |proj₂| (|proj₂| f-gh)
   }
