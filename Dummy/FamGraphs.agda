@@ -17,13 +17,14 @@ open Fun
 import Graphs
 open Graphs
   using
-    ( Graph
-    ; _⇒_ )
--- open Graphs._⇒_
--- not opening this for the same reason we're not opening Graph: we want to reuse its field identifiers
--- for ⇒Fam.  But writing _⇒_.obj→ and so on is rather unreadable; is there a way to rename these a bit more nicely,
--- say to Graphs.obj→ or something like that?
-
+    ( Graph )
+  renaming
+    ( _⇒_ to _⇒Graph_ )
+open Graphs._⇒_
+  renaming
+    ( obj→ to obj→Graph
+    ; hom→ to hom→Graph
+    )
 
 {- Dependent families of graphs, and basic constructions on them -}
 
@@ -34,14 +35,14 @@ record Fam (G : Graph) : Set₁ where
 
 open Fam
 
-infixr 1 _⇒Fam_                            -- ⇒ is \r= or \Rightarrow
-record _⇒Fam_ {X : Graph} (Ys Zs : Fam X) : Set where
+infixr 1 _⇒_                            -- ⇒ is \r= or \Rightarrow
+record _⇒_ {X : Graph} (Ys Zs : Fam X) : Set where
   field
     obj→ : ∀ {x} → obj Ys x → obj Zs x
     hom→ : ∀ {x x′} → ∀ {y} → ∀ {y′} → ∀ {f : Graph.hom X x x′} → hom Ys y y′ f → hom Zs (obj→ y) (obj→ y′) f
-open _⇒Fam_
+open _⇒_
 
--- exercise or as needed: add ∘Fam and idFam here
+-- exercise or as needed: add ∘ and id here
 
 
 Σ : ∀ {X : Graph} → (Fam X) → Graph
@@ -50,13 +51,13 @@ open _⇒Fam_
   ; hom = λ xy x′y′ → |Σ| (Graph.hom X (|proj₁| xy) (|proj₁| x′y′)) (hom Ys (|proj₂| xy) (|proj₂| x′y′))
   }
 
-proj : ∀ {X : Graph} → (Ys : Fam X) → Σ Ys ⇒ X
+proj : ∀ {X : Graph} → (Ys : Fam X) → Σ Ys ⇒Graph X
 proj {X} Ys = record 
   {obj→ = |proj₁|
   ; hom→ = |proj₁|
   }
 
-ΣMap : ∀ {X : Graph} → {Ys Zs : Fam X} → (Ys ⇒Fam Zs) → (Σ Ys ⇒ Σ Zs)
+ΣMap : ∀ {X : Graph} → {Ys Zs : Fam X} → (Ys ⇒ Zs) → (Σ Ys ⇒Graph Σ Zs)
 ΣMap F = record 
   {obj→ = Prod.map Fun.id (obj→ F) 
   ; hom→ = Prod.map Fun.id (hom→ F)
@@ -77,22 +78,22 @@ FamComp Ys Zs = record
                             (λ g → (hom Zs (|proj₂| yz) (|proj₂| y′z′) (f |,| g))) 
   }
 
-ΣComp-to-Σ : ∀ {X : Graph} (Ys : Fam X) (Zs : Fam (Σ Ys)) → Σ (FamComp Ys Zs) ⇒ Σ Zs
+ΣComp-to-Σ : ∀ {X : Graph} (Ys : Fam X) (Zs : Fam (Σ Ys)) → Σ (FamComp Ys Zs) ⇒Graph Σ Zs
 ΣComp-to-Σ Ys Zs = record
   { obj→ = λ x-yz → (|proj₁| x-yz |,| |proj₁| (|proj₂| x-yz)) |,| |proj₂| (|proj₂| x-yz)
   ; hom→ = λ f-gh → (|proj₁| f-gh |,| |proj₁| (|proj₂| f-gh)) |,| |proj₂| (|proj₂| f-gh)
   }
 
-Pullback : ∀ {X Y : Graph} → Fam Y → (X ⇒ Y) → Fam X
+Pullback : ∀ {X Y : Graph} → Fam Y → (X ⇒Graph Y) → Fam X
 Pullback Zs F = record
-  { obj = obj Zs |∘| _⇒_.obj→ F
-  ; hom = λ z z′ f → hom Zs z z′ (_⇒_.hom→ F f)
+  { obj = obj Zs |∘| obj→Graph F
+  ; hom = λ z z′ f → hom Zs z z′ (hom→Graph F f)
   }
 
-ΣPullback-to-Σ : ∀ {X Y : Graph} (Zs : Fam Y) (F : X ⇒ Y) → Σ (Pullback Zs F) ⇒ Σ Zs
+ΣPullback-to-Σ : ∀ {X Y : Graph} (Zs : Fam Y) (F : X ⇒Graph Y) → Σ (Pullback Zs F) ⇒Graph Σ Zs
 ΣPullback-to-Σ Zs F = record
-  { obj→ = λ xz → _⇒_.obj→ F (|proj₁| xz) |,| |proj₂| xz
-  ; hom→ = λ fh → _⇒_.hom→ F (|proj₁| fh) |,| |proj₂| fh
+  { obj→ = λ xz → obj→Graph F (|proj₁| xz) |,| |proj₂| xz
+  ; hom→ = λ fh → hom→Graph F (|proj₁| fh) |,| |proj₂| fh
   }
 
 {- Contractions on families of graphs -}

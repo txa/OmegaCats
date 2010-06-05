@@ -1,18 +1,25 @@
 module TSpans where
 
 import FamGraphs
-open FamGraphs
-  using
-    ( Fam
-    ; _⇒Fam_
-    ; FamComp )
 import Graphs
 open Graphs
   using
-    ( Graph
-    ; _⇒_
-    ; _∘_ )
+    ( Graph )
+  renaming
+    ( _⇒_ to _⇒Graph_ 
+    ; _∘_ to _∘Graph_)
 open Graphs._⇒_
+  renaming
+    ( obj→ to obj→Graph
+    ; hom→ to hom→Graph
+    )
+open FamGraphs
+  using
+    ( Fam
+    ; FamComp )
+  renaming
+    ( _⇒_ to _⇒Fam_ )
+
 open import T
 open import Relation.Binary.PropositionalEquality
 
@@ -21,9 +28,8 @@ open import Relation.Binary.PropositionalEquality
 record TSpan (X Y : Graph) : Set₁ where -- explanation for the field names:
   field                                 -- see a T-span as like the data of a multicategory
     ops     : Fam (T X)                 -- with "arrows"/"operations" at the top in Σ Arrs,
-    outputs : FamGraphs.Σ ops ⇒ Y       -- with their sources on the left in TX, targets on the right in Y.
--- are these renamings OK? -- dwm
--- yep, seem good to me! -- pll
+    outputs : FamGraphs.Σ ops ⇒Graph Y       -- with their sources on the left in TX, targets on the right in Y.
+
 
 open TSpan
 
@@ -31,10 +37,11 @@ open TSpan
 -- to work with, mainly since I couldn't see a way to separate out the action of T from the other component of the 
 -- product.  Still not sure that that double dependency mightn't be better though.  -- pll
 
-record ⇒TSpan {X Y : Graph} (F G : TSpan X Y) : Set where
+infixr 3 _⇒_
+record _⇒_ {X Y : Graph} (F G : TSpan X Y) : Set where
   field
-    ops→ : F ⇒Fam G
-    outputs= : (outputs G) ∘ (FamGraphs.ΣMap ops→) ≡ outputs F
+    ops→ : (ops F) ⇒Fam (ops G)
+--    outputs= : (outputs G) ∘Graph (FamGraphs.ΣMap ops→) ≡ outputs F
 -- leaving the commutativity condition out until I can ask you a bit more about how Agda handles ≡.  (in particular:
 -- is it extensional for function types??)   This is where it would def have been nicer using the doubly dependent
 -- definition of TSpan!
@@ -51,11 +58,11 @@ infixr 9 _⊗_                            -- ⊗ is \otimes
 _⊗_ : ∀ {X Y Z} → TSpan Y Z → TSpan X Y → TSpan X Z
 _⊗_ {X} {Y} {Z} G F = record
   { ops     = FamComp (KleisliMulT (ops F)) G⊗F-over-TF
-  ; outputs = outputs G ∘ FamGraphs.ΣPullback-to-Σ (ops G) TF-to-TY ∘ FamGraphs.ΣComp-to-Σ (KleisliMulT (ops F)) G⊗F-over-TF
+  ; outputs = outputs G ∘Graph FamGraphs.ΣPullback-to-Σ (ops G) TF-to-TY ∘Graph FamGraphs.ΣComp-to-Σ (KleisliMulT (ops F)) G⊗F-over-TF
   }
   where
-    TF-to-TY    : FamGraphs.Σ (KleisliMulT (ops F) ) ⇒ T Y
-    TF-to-TY    = TMap (outputs F) ∘ ΣKleisliMulT-to-TΣ (ops F)
+    TF-to-TY    : FamGraphs.Σ (KleisliMulT (ops F) ) ⇒Graph T Y
+    TF-to-TY    = TMap (outputs F) ∘Graph ΣKleisliMulT-to-TΣ (ops F)
 
     G⊗F-over-TF : Fam (FamGraphs.Σ (KleisliMulT (ops F)))
     G⊗F-over-TF = FamGraphs.Pullback (ops G) TF-to-TY
