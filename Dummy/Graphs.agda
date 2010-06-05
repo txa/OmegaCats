@@ -199,7 +199,32 @@ projfam {X} Ys = record
   ; hom→ = λ {xy} {x′y′} → |proj₁|
   }
 
+FamComp : ∀ {X : Graph} → (Ys : Fam X) → (Zs : Fam (Σfam Ys)) → (Fam X)
+FamComp Ys Zs = record
+  { objs = λ x → |Σ| (objs Ys x) (λ y → (objs Zs (x |,| y))) 
+  ; homs = λ yz y′z′ f → |Σ| (homs Ys (|proj₁| yz) (|proj₁| y′z′) f) (λ g → (homs Zs (|proj₂| yz) (|proj₂| y′z′) (f |,| g))) 
+  }
+
+ΣComp-to-Σ : ∀ {X : Graph} → (Ys : Fam X) → (Zs : Fam (Σfam Ys)) → (Σfam (FamComp Ys Zs)) ⇒ (Σfam Zs)
+ΣComp-to-Σ Ys Zs = record
+  { obj→ = λ x-yz → (( (|proj₁| x-yz) |,| |proj₁| (|proj₂| x-yz)) |,| |proj₂| (|proj₂| x-yz))
+  ; hom→ =  λ f-gh → (( (|proj₁| f-gh) |,| |proj₁| (|proj₂| f-gh)) |,| |proj₂| (|proj₂| f-gh))
+  }
+
+FamPB : ∀ {X Y : Graph} → Fam Y → (X ⇒ Y) → Fam X
+FamPB Zs F = record
+  { objs = (objs Zs) |∘| (obj→ F)
+  ; homs = λ z z′ f → (homs Zs z z′ (hom→ F f))
+  }
+
+ΣPB-to-Σ : ∀ {X Y : Graph} → (Zs : Fam Y) → (F : X ⇒ Y) → ( Σfam (FamPB Zs F) ⇒ Σfam Zs )
+ΣPB-to-Σ Zs F = record
+  { obj→ = λ xz → ( (obj→ F (|proj₁| xz)) |,| |proj₂| xz)
+  ; hom→ = λ fh → ( (hom→ F (|proj₁| fh)) |,| |proj₂| fh)
+  }
+
 {- the "free category" monad T on Graphs -}
+{- again, this could quite reasonably have its own module? -}
 
 data Paths (X : Graph) : (obj X) → (obj X) → Set where
   refl : (a : (obj X)) → Paths X a a
@@ -210,9 +235,13 @@ pathcomp : ∀ {X : Graph} → ∀ {x y z : obj X} → (Paths X y z) → (Paths 
 pathcomp (refl _) = λ q → q
 pathcomp (step f p) = λ q → (step f (pathcomp p q))
 
-{-
-an older version of Is-atomic; it's perhaps slightly clearer in itself, but the current 
-version is more unified with subdivision:
+pathsM : ∀ {X Y : Graph} → (F : X ⇒ Y) → {x x′ : obj X} → (Paths X x x′) → (Paths Y (obj→ F x) (obj→ F x′))
+pathsM F (refl x) = refl (obj→ F x)
+pathsM F (step f p) = step (hom→ F f) (pathsM F p)
+
+
+{- an older version of Is-atomic; it's perhaps slightly clearer in itself, but the current 
+version is more unified with Subdivision:
  
 Is-refl : ∀ {X : Graph} → ∀ {x y : obj X } → (Paths X x y) → Set
 Is-refl (refl a) = Unit.⊤
@@ -229,17 +258,25 @@ T X = record
   ; hom = Paths X
   }
 
+TM : ∀ {X Y : Graph} → (X ⇒ Y) → (T X ⇒ T Y)
+TM F = record
+  { obj→ = obj→ F
+  ; hom→ = pathsM F
+  }
+
+{- the unit η of T, seen as a family -}
+
 data Is-atomic {X : Graph} : ∀ {x y : obj X } → (p : Paths X x y) → Set where
   atom : ∀ {x y : obj X} → (f : hom X x y) → Is-atomic (step f (refl x))
 
-Es : (X : Graph) → Fam (T X)   -- the unit η of T, seen as a family
+Es : (X : Graph) → Fam (T X) 
 Es X = record
   { objs = λ x → Unit.⊤
   ; homs = λ x y p → Is-atomic p
   } 
 
-ΣEtoX : (X : Graph) → Σfam (Es X) ⇒ X  -- bad form to include "X" in name, any ideas for a better name?
-ΣEtoX X = record 
+ΣE-to-X : (X : Graph) → Σfam (Es X) ⇒ X  -- seems bad to include "X" in name, any ideas for a better name?
+ΣE-to-X X = record 
   { obj→ = |proj₁|
   ; hom→ =  λ pw → extract-atom (|proj₂| pw)
   }
@@ -247,33 +284,80 @@ Es X = record
       extract-atom :  ∀ {X : Graph} → ∀ {x y : obj X } → ∀ {p : Paths X x y} → (w : Is-atomic p) → (hom X x y)
       extract-atom (atom f) = f
 
--- add XtoΣE if needed
+-- exercise [or if needed]: add X-to-ΣE
+
+
+{- the multiplication μ of T, seen as a family: -}
 
 data Subdivisions {X : Graph} : ∀ {x y : obj X } → (p : Paths X x y) → Set where
   refl-subd : (x : obj X) → Subdivisions (refl x)
   step-subd : ∀ {x y z : obj X} → (p : Paths X y z) → ∀ {q : Paths X x y} → (Subdivisions q) → (Subdivisions (pathcomp p q))
 
-Ms : (X : Graph) → Fam (T X)   -- the multiplication μ of T, seen as a family
+Ms : (X : Graph) → Fam (T X)  
 Ms X = record
   { objs = λ x → Unit.⊤
   ; homs = λ x y p → Subdivisions p
   } 
 
--- add ΣMtoT² and T²toΣM if needed
+-- exercise: add ΣM-to-T² and T²-to-ΣM
+
+
+{- the Kleisli multiplication of T, as it acts on families -}
 
 data FamPathSubs {X : Graph} (Ys : Fam (T X)) : ∀ {x x′ : obj X } → (y : objs Ys x) → (y′ : objs Ys x′) → (p : Paths X x x′) → Set where
-  refl-famsubd : ∀ {x : obj X} → (y : objs Ys x) → FamPathSubs Ys y y (refl x)
-  step-famsubd : ∀ {x x′ x′′ : obj X} → ∀ {y : objs Ys x} → ∀ {y′ : objs Ys x′} → ∀ {y′′ : objs Ys x′′} → ∀ {p : Paths X x′ x′′} → (f : homs Ys y′ y′′ p) → ∀ {q : Paths X x x′} → (FamPathSubs Ys y y′ q) → (FamPathSubs Ys y y′′ (pathcomp p q))
+  refl-fps : (x : obj X) → (y : objs Ys x) → FamPathSubs Ys y y (refl x)
+  step-fps : ∀ {x x′ x′′ : obj X} → ∀ {y : objs Ys x} → ∀ {y′ : objs Ys x′} → ∀ {y′′ : objs Ys x′′} → (p : Paths X x′ x′′) → (f : homs Ys y′ y′′ p) → (q : Paths X x x′) → (FamPathSubs Ys y y′ q) → (FamPathSubs Ys y y′′ (pathcomp p q))
 
-TFamKl : {X : Graph} → Fam (T X) → Fam (T X)  -- the Kleisli mult of T, as it acts on families
-TFamKl Ys = record
+TfamKl : {X : Graph} → Fam (T X) → Fam (T X)
+TfamKl Ys = record
   { objs = objs Ys
-  ; homs = {!FamPathSubs Ys!}
+  ; homs = FamPathSubs Ys
   }
+
+ΣTfamKl-to-TΣ : {X : Graph} → (Ys : Fam (T X)) → Σfam (TfamKl Ys) ⇒ (T (Σfam Ys))
+ΣTfamKl-to-TΣ Ys = record
+  { obj→ = Fun.id
+  ; hom→ = λ {xy} {x′y′} pq → extract-path Ys (|proj₂| pq)
+  }
+    where
+      extract-path : {X : Graph} → (Ys : Fam (T X)) → ∀ {x x′ : obj X } → ∀ {y : objs Ys x} → ∀ {y′ : objs Ys x′} → ∀ {p : Paths X x x′} → (q : FamPathSubs Ys y y′ p) → (Paths (Σfam Ys) (x |,| y) (x′ |,| y′))
+      extract-path Ys (refl-fps x y) = refl (x |,| y)
+      extract-path Ys (step-fps p f q fs) = step (p |,| f) (extract-path Ys fs)
+
+-- exercise: add TΣ-to-ΣTFamKl
+
 
 {- the bicategory of T-Spans -}
 
+record TSpan (X Y : Graph) : Set where     -- explanation for the field names:
+  field                                    -- see a T-span as like the data of a multicategory
+    Arrs : Fam (T X)                       -- with "arrows"/"operations" at the top in Σfam Arrs,
+    tgt : Σfam Arrs ⇒ Y                    -- with their sources on the left in TX, targets on the right in Y.
 
+open TSpan
+-- I tried going a little way with the alternative definition TSpan X Y = Fam ((T X) × Y), but it seemed much nastier to
+-- work with, mainly since I couldn't see a way to separate out the action of T from the other component of the product.
+
+id-TSpan : (X : Graph) → TSpan X X
+id-TSpan X = record
+  { Arrs = Es X
+  ; tgt = ΣE-to-X X
+  }
+
+infixr 9 _⊗_                                       -- ⊗ is \otimes
+_⊗_ : ∀ {X Y Z} → (TSpan Y Z) → (TSpan X Y) → (TSpan X Z)
+_⊗_ {X} {Y} {Z} G F = record
+  { Arrs = FamComp (TfamKl (Arrs F)) G⊗F-over-TF
+  ; tgt = (tgt G) ∘ (ΣPB-to-Σ (Arrs G) TF-to-TY) ∘ (ΣComp-to-Σ (TfamKl (Arrs F)) G⊗F-over-TF)
+  }
+    where
+      TF-to-TY : Σfam (TfamKl (Arrs F) ) ⇒ (T Y)
+      TF-to-TY = ( (TM (tgt F)) ∘ (ΣTfamKl-to-TΣ (Arrs F)) )
+      G⊗F-over-TF : Fam (Σfam (TfamKl (Arrs F))) 
+      G⊗F-over-TF = (FamPB (Arrs G) TF-to-TY)
+
+-- exercise for when one of us is feeling brave: give the isomorphisms witnessing associativity and unitality
+-- of composition of T-Spans!
 
 
 {- Contractions on families of graphs -}
