@@ -33,6 +33,7 @@ record Graph : Set₁ where
 open Graph
 
 {- the category of graphs -}
+
 infixr 1 _⇒_                            -- ⇒ is \r= or \Rightarrow
 record _⇒_ (G G′ : Graph) : Set where
   field
