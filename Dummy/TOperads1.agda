@@ -1,10 +1,10 @@
-module TOperads where
+module TOperads1 where
 
 import Graphs
 open import T
   using
     ( T )
-open import TSpans
+open import TSpans1
   using
     ( TSpan 
     ; _⊗_ 
@@ -15,7 +15,7 @@ open import TSpans
     ; id to idTSpan
     )
 
-open TSpans.TSpan
+open TSpans1.TSpan
   renaming
     ( ops to opsTSpan )
 

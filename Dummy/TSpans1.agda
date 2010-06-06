@@ -1,4 +1,4 @@
-module TSpans where
+module TSpans1 where
 
 import Graphs
 open Graphs
