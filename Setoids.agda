@@ -32,4 +32,4 @@ FunSetoid A B = record
   }
 
 _∘_ : ∀ {A B C : Setoid₀} → Setoid.Carrier (FunSetoid B C) → Setoid.Carrier (FunSetoid A B) → Setoid.Carrier (FunSetoid A C)
-g ∘ f = proj₁ g ∣∘∣ proj₁ f , λ a₁ a₂ x → proj₂ g (proj₁ f a₁) (proj₁ f a₂) (proj₂ f a₁ a₂ x)
+g ∘ f = proj₁ g ∣∘∣ proj₁ f , λ a₁ a₂ → proj₂ g (proj₁ f a₁) (proj₁ f a₂) ∣∘∣ (proj₂ f a₁ a₂)
