@@ -1,4 +1,3 @@
-{-# OPTIONS --type-in-type  #-}
 module Graphs where
 
 import Data.Empty
@@ -26,16 +25,16 @@ open Fun
 open import Relation.Binary.PropositionalEquality
 
 {- graphs and basic constructions on them -}
-
-record Graph : Set where
+record Graph : Set₁ where
   field
     obj : Set
     hom : obj → obj → Set
-
 open Graph
 
 {- the category of graphs -}
-infixr 1 _⇒_                               -- ⇒ is \r= or \Rightarrow
+
+-- _⇒_ is \r= or \Rightarrow
+infixr 1 _⇒_
 record _⇒_ (G G′ : Graph) : Set where
   field
     obj→ : obj G → obj G′
@@ -48,11 +47,12 @@ id = record
   ; hom→ = Fun.id
   }
 
-infixr 9 _∘_                                       -- the dot ∘ is \circ
+-- _∘_ is \comp
+infixr 9 _∘_
 _∘_ : ∀ {G₁ G₂ G₃} → G₂ ⇒ G₃ → G₁ ⇒ G₂ → G₁ ⇒ G₃
 _∘_ {G₁ = G₁} {G₃ = G₃} g f = record
-  { obj→ = obj→ g  |∘|    obj→ f
-  ; hom→ = (hom→ g) |∘|  (hom→ f) 
+  { obj→ = obj→ g |∘| obj→ f
+  ; hom→ = hom→ g |∘| hom→ f
   }
 
 {- finite products and infinite products -}
@@ -65,14 +65,14 @@ _∘_ {G₁ = G₁} {G₃ = G₃} g f = record
 
 ⊤ : Graph
 ⊤ = record
-  { obj =      Unit.⊤
-  ; hom = λ _ _ →  Unit.⊤
+  { obj =         Unit.⊤
+  ; hom = λ _ _ → Unit.⊤
   }
 
 ! : ∀ {G} → G ⇒ ⊤
 ! {G} = record
   { obj→ = λ _ → Unit.tt
-  ; hom→ = λ {_} {_} → λ _ → Unit.tt
+  ; hom→ = λ _ → Unit.tt
   }
 
 infixr 2 _×_
@@ -86,28 +86,38 @@ G × G′ = record
     obj× = obj G |×| obj G′
 
     hom× : obj× → obj× → Set
-    hom× (x₁ |,| y₁) (x₂ |,| y₂) = (hom G x₁ x₂) |×| (hom G′ y₁ y₂)
+    hom× (x₁ |,| y₁) (x₂ |,| y₂) = hom G x₁ x₂ |×| hom G′ y₁ y₂
 
 infixr 4 ⟨_,_⟩×
-⟨_,_⟩× : ∀ {G G′ G′′} → G′′ ⇒ G → G′′ ⇒ G′ → G′′ ⇒ G × G′
+⟨_,_⟩× : ∀ {G G′ G″} → G″ ⇒ G → G″ ⇒ G′ → G″ ⇒ G × G′
 ⟨_,_⟩× f g = record
   { obj→ = |⟨ obj→ f , obj→ g ⟩|
-  ; hom→ = λ {_} {_} → |⟨ (hom→ f) , (hom→ g) ⟩|
+  ; hom→ = |⟨ hom→ f , hom→ g ⟩|
   }
 
 proj₁ : ∀ {G H} → G × H ⇒ G
-proj₁ {G} {H} = record {obj→ = |proj₁|; hom→ = λ {x} {y} → proj₁hom {x} {y}}
-                where proj₁hom : {x y : obj (G × H)}
-                         → (hom (G × H) x y) → (hom G (|proj₁| x) (|proj₁| y))
-                      proj₁hom {a |,| b} {a' |,| b'} = |proj₁|
-
-{- constructions imported from Glob.agda, adapting them back for the dummy world:
+proj₁ {G} {H} = record
+  { obj→ = |proj₁|
+  ; hom→ = λ {x} {y} → proj₁hom {x} {y}
+  }
+  where
+    proj₁hom : {x y : obj (G × H)}
+             → (hom (G × H) x y)
+             → (hom G (|proj₁| x) (|proj₁| y))
+    proj₁hom {_ |,| _} {_ |,| _} = |proj₁|
 
 proj₂ : ∀ {G H} → G × H ⇒ H
-proj₂ {G} {H} = record {obj→ = |proj₂|; hom→ = λ {x} {y} → proj₂hom {x} {y}}
-                where proj₂hom : {x y : obj (G × H)}
-                         → ∞ (♭ (hom (G × H) x y) ⇒ ♭ (hom H (|proj₂| x) (|proj₂| y)))
-                      proj₂hom {a |,| b} {a' |,| b'} = ♯ proj₂
+proj₂ {G} {H} = record
+  { obj→ = |proj₂|
+  ; hom→ = λ {x} {y} → proj₂hom {x} {y}
+  }
+  where
+    proj₂hom : {x y : obj (G × H)}
+             → (hom (G × H) x y)
+             → (hom H (|proj₂| x) (|proj₂| y))
+    proj₂hom {_ |,| _} {_ |,| _} = |proj₂|
+
+{- constructions imported from Glob.agda, adapting them back for the dummy world:
 
 _×m_ : ∀ {G G' H H'} → G ⇒ G' → H ⇒ H' → G × H ⇒ G' × H'
 f ×m g = ⟨ f ∘ proj₁ , g ∘ proj₂ ⟩× 
@@ -196,7 +206,7 @@ postulate
 {- Dependent families of graphs, and basic constructions on them -}
 {- in the non-Dummy case, this maybe should be a separate module? -}
 
-record Fam (G : Graph) : Set where
+record Fam (G : Graph) : Set₁ where
   field
     objs : obj G  → Set
     homs : ∀ {v v'} → objs v → objs v' → hom G v v' → Set
