@@ -51,6 +51,7 @@ open import T
     ; TMap
     ; Paths
     ; _•_
+    ; p≡p•refl
     )
 open T.Paths
 
@@ -99,15 +100,22 @@ _⊗_ {X} {Y} {Z} B A = B ⊗Span (TSpanKlMult A)
       obj-aux : ∀ {x} → ∀ {z} → (obj ((1TSpan Y) ⊗ A) x z) → (obj A x z)
       obj-aux {x} {z} y,y≡z,a = obj-aux-1 {x} {proj₁ y,y≡z,a} {z} (proj₁ (proj₂ y,y≡z,a)) (proj₂ (proj₂ y,y≡z,a)) -- split/reorder arguments to eliminate on y≡z
 
+--      hom-aux-3 ∀ {X Y A x x′ y y′ a a′ p k r
+      
       hom-aux-2 : ∀ {x x′ } → ∀ {y y′} → ∀ {a : obj A x y} → ∀ {a′ : obj A x′ y′} → ∀ {p : Paths X x x′} → ∀ {h : Graph.hom Y y y′}
                   → (r : KleisliPaths A a a′ p (step h (refl y)))
                   → (hom A a a′ p h)
-      hom-aux-2 = {!!}                              
--- damn --- now we need some kind of an inversion/injectivity principle to conclude that given
--- r : KleisliPaths A a a′ p (step h (refl y))
--- we must have that r = (step k (refl a)) for some k : hom A a a′ p h
--- and oh gawd, this depends on injectivity not only of the constructors step and refl
--- but also of the defined path composition _•_!  eep!
+        -- in case we need to write similar functions again: this was built by pattern-matching on r, then on p, then on r again!
+        -- the other orders we tried didn't work.
+      hom-aux-2 {x} {x′} {y} {y′} {a} {a′} {.(p • refl x)} {h} (step p .h k (refl .x) .(refl y) (refl .x .y .a)) = subst (λ q → (hom A a a′ q h)) (p≡p•refl p) k 
+        -- first case: now we know r is refl, it lies over p • refl, which is equal to p itself so gives us what we need
+      hom-aux-2 {x} {x′} {y} {y′} {a} {a′} {.(p′ • step y' y0)} {h} (step p′ .h k (step y' y0) .(refl y) ()) 
+        -- second case is impossible: since r is over refl, it must be refl
+
+{-
+      hom-aux-2 {.x} {x′} {y} {y′} {.a} {a′} {.(p • refl x)} {h} (step {.x} {x} {.x′} {.y} {.y} {.y′} {.a} {a} p .h k (refl .x) .(refl y) (refl .x .y .a)) = subst (λ q → (hom A a a′ q h)) (p≡p•refl p) k
+      hom-aux-2 {x} {x′} {y} {y′} {a} {a′} {.(p′ • step y' y0)} {h} (step p′ .h k (step y' y0) .(refl y) ())
+-}
 
       hom-aux-1 : ∀ {y z} → {y≡z : y ≡ z} → ∀ {y′ z′} → {y′≡z′ : y′ ≡ z′} → {q : Paths Y y y′} → {h : Graph.hom Y z z′} → (s : IsAtomOf y≡z y′≡z′ q h)
                   → ∀ {x x′} → {p : Paths X x x′}→ {a : obj A x y} → {a′ : obj A x′ y′} → (r : KleisliPaths A a a′ p q)

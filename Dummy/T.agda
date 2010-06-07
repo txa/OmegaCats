@@ -16,6 +16,8 @@ open Fun
   renaming
     ( _∘_ to _|∘|_ )
 
+open import Relation.Binary.PropositionalEquality
+
 import FamGraphs
 open FamGraphs
   using
@@ -53,6 +55,13 @@ _•_ : ∀ {X : Graph} {x y z : Graph.obj X} → Paths X y z → Paths X x y �
 -- (is that too hard to tell from ∘ (\circ) at small resolution?  ● (\ci) could be better that way but is ugly? 
 -- another option is · (\cdot).)  --pll
 
+p•refl≡p : ∀ {X x y} → (p : Paths X x y) → (p • (refl x) ≡ p)
+p•refl≡p {X} {.y} {y} (refl .y) = refl
+p•refl≡p (step f q) = cong (step f) (p•refl≡p q)
+
+p≡p•refl : ∀ {X x y} → (p : Paths X x y) → (p ≡ p • (refl x))
+p≡p•refl {X} {.y} {y} (refl .y) = refl
+p≡p•refl (step f q) = cong (step f) (p≡p•refl q)
 
 pathsMap : ∀ {X Y : Graph} (F : X ⇒ Y) {x x′ : Graph.obj X}
          → Paths X x x′
