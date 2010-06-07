@@ -2,6 +2,8 @@ module TOperads2 where
 
 open import TSpans2
 open import Spans2
+  using
+    ( )
   renaming
     ( _⊗_ to _⊗Span_ 
     ; _⇒_ to _⇒Span_
