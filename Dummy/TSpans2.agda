@@ -51,6 +51,7 @@ open import Dummy.Spans2 as Spans2
   renaming
     ( _⊗_ to _⊗Span_ 
     ; _⊗Map_ to _⊗MapSpan_ 
+    ; C⊗BA-to-CB⊗A to C⊗BA-to-CB⊗ASpan
     )
 open Spans2.Span
 open Spans2._⇒_
@@ -130,7 +131,7 @@ A-to-A⊗1 {X} {Y} A = record
   }
  
 1⊗A-to-A : ∀ {X Y : Graph} → (A : TSpan X Y) → ((1TSpan Y) ⊗ A) ⇒ A
-1⊗A-to-A {X} {Y} A = record 
+1⊗A-to-A {X} {Y} A = record            
   { obj→ = obj-aux
   ; hom→ = hom-aux
   }
@@ -171,3 +172,12 @@ A-to-A⊗1 {X} {Y} A = record
           q = proj₁ q,s,r
           s = proj₁ (proj₂ q,s,r)
           r = proj₂ (proj₂ q,s,r)
+
+Kl-B⊗A-to-KlB⊗KlA : ∀ {X Y Z} (B : TSpan Y Z) (A : TSpan X Y) → TSpanKlMult (B ⊗ A) ⇒ ((TSpanKlMult B) ⊗Span (TSpanKlMult A))
+Kl-B⊗A-to-KlB⊗KlA B A = record
+  { obj→ = |id|
+  ; hom→ = {!!}
+  }
+
+C⊗BA-to-CB⊗A : ∀ {X Y Z W : Graph} → (C : TSpan Z W) → (B : TSpan Y Z) → (A : TSpan X Y) → (C ⊗ (B ⊗ A)) ⇒ ((C ⊗ B) ⊗ A)
+C⊗BA-to-CB⊗A C B A = {!!}

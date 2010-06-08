@@ -228,3 +228,29 @@ _⊗Map_ {X} {Y} {Z} {B} {B′} {A} {A′} G F = record
           y′≡z′ = proj₁ (proj₂ y′,y′≡z′,a′)
           a′ = proj₂ (proj₂ y′,y′≡z′,a′)
 
+CB⊗A-to-C⊗BA : ∀ {X Y Z W : Graph} → (C : Span Z W) → (B : Span Y Z) → (A : Span X Y) → ((C ⊗ B) ⊗ A) ⇒ (C ⊗ (B ⊗ A))
+CB⊗A-to-C⊗BA C B A = record 
+  { obj→ = obj-aux
+  ; hom→ = λ {x} {x′} {y} {y′} {yzcba} {yzcba′} → hom-aux yzcba yzcba′         -- make these explicit to pattern-match
+  }
+    where 
+      obj-aux : ∀ {x w} → (yzcba : obj ((C ⊗ B) ⊗ A) x w) → obj (C ⊗ (B ⊗ A)) x w
+      obj-aux (y , ((z , (c , b)) , a)) = (z , (c , (y , (b , a))))
+
+        -- to see what the variable name convention is: draw out the trio of spans and match the variables to the graphs 
+      hom-aux : ∀ {x x′ w w′} (yzcba : obj ((C ⊗ B) ⊗ A) x w) (yzcba′ : obj ((C ⊗ B) ⊗ A) x′ w′) {f i} (ghmlk : hom ((C ⊗ B) ⊗ A) yzcba yzcba′ f i) 
+                  → hom (C ⊗ (B ⊗ A)) (obj-aux yzcba) (obj-aux yzcba′) f i
+      hom-aux (y , ((z , (c , b)) , a)) (y′ , ((z′ , (c′ , b′)) , a′)) (g , ((h , (m , l)) , k)) = (h , (m , (g , (l , k))))
+
+C⊗BA-to-CB⊗A : ∀ {X Y Z W : Graph} → (C : Span Z W) → (B : Span Y Z) → (A : Span X Y) → (C ⊗ (B ⊗ A)) ⇒ ((C ⊗ B) ⊗ A)
+C⊗BA-to-CB⊗A C B A = record 
+  { obj→ = obj-aux
+  ; hom→ = λ {x} {x′} {y} {y′} {yzcba} {yzcba′} → hom-aux yzcba yzcba′         -- make these explicit to pattern-match
+  }
+    where 
+      obj-aux : ∀ {x w} → (zcyba : obj (C ⊗ (B ⊗ A)) x w) → obj ((C ⊗ B) ⊗ A) x w
+      obj-aux  (z , (c , (y , (b , a)))) = (y , ((z , (c , b)) , a))
+
+      hom-aux : ∀ {x x′ w w′} (zcyba : obj (C ⊗ (B ⊗ A)) x w) (zcyba′ : obj (C ⊗ (B ⊗ A)) x′ w′) {f i} (hmglk : hom (C ⊗ (B ⊗ A)) zcyba zcyba′ f i) 
+                  → hom ((C ⊗ B) ⊗ A) (obj-aux zcyba) (obj-aux zcyba′) f i
+      hom-aux (_ , (_ , (_ , (_ , _)))) (_ , (_ , (_ , (_ , _)))) (h , (m , (g , (l , k)))) = (g , ((h , (m , l)) , k))
