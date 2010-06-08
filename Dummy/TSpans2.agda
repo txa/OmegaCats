@@ -46,6 +46,7 @@ open import Dummy.Spans2 as Spans2
   using
     ( Span 
     ; _⇒_
+    ; _∘_
     ; id
     )
   renaming
@@ -62,6 +63,7 @@ open import Dummy.T as T
     ; Paths
     ; _•_
     ; p≡p•refl
+    ; r•qp≡rq•p
     )
 open T.Paths
 
@@ -87,6 +89,14 @@ data KleisliPaths {X Y : Graph} (A : TSpan X Y) : ∀ {x x′} {y y′} (a : obj
        → {p′ : Paths X x′ x′′} → {f : Graph.hom Y y′ y′′} → (k : hom A a′ a′′ p′ f)
        → {p : Paths X x x′} → {q : Paths Y y y′} → (r : KleisliPaths A a a′ p q) 
        → KleisliPaths A a a′′ (p′ • p) (step f q)
+
+infixr 9 _•Kl_
+_•Kl_ : ∀ {X Y : Graph} {A : TSpan X Y} {x x′ x′′ y y′ y′′} {a : obj A x y} {a′ : obj A x′ y′} {a′′ : obj A x′′ y′′} {p′ p} {q′ q}
+          → (r′ : KleisliPaths A a′ a′′ p′ q′) → (r : KleisliPaths A a a′ p q) → KleisliPaths A a a′′ (p′ • p) (q′ • q)
+(refl _) •Kl r = r
+_•Kl_ {A = A} {a = a} {a′′ = a′′} {p = p} {q = q} (step {p′ = p′′} {f = g} k {p = p′} {q = q′} r′) r 
+           = subst (λ pp → (KleisliPaths A a a′′ pp (step g (q′ • q)))) (r•qp≡rq•p p′′ p′ p) (step k (r′ •Kl r))
+  -- looks more complicated than it is: just have to coerce (p′′ • (p′ • p)) to ((p′′ • p′) • p) in the type of (step k (r′ •Kl r))
 
 KleisliPathsMap : ∀ {X Y : Graph} {A B : TSpan X Y} (F : A ⇒ B)
                   → (∀ {x x′ y y′} {a : obj A x y} {a′ : obj A x′ y′} {p q} → (KleisliPaths A a a′ p q) → (KleisliPaths B (obj→ F a) (obj→ F a′) p q))
@@ -162,8 +172,17 @@ A-to-A⊗1 {X} {Y} A = record
 Kl-B⊗A-to-KlB⊗KlA : ∀ {X Y Z} (B : TSpan Y Z) (A : TSpan X Y) → TSpanKlMult (B ⊗ A) ⇒ ((TSpanKlMult B) ⊗Span (TSpanKlMult A))
 Kl-B⊗A-to-KlB⊗KlA B A = record
   { obj→ = |id|
-  ; hom→ = {!!}
+  ; hom→ = KlPathMult
   }
+    where
+      KlPathMult : ∀ {x x′ z z′} {yba : obj (TSpanKlMult (B ⊗ A)) x z} {y′b′a′ : obj (TSpanKlMult (B ⊗ A)) x′ z′} {p} {r}
+                  → (v : hom (TSpanKlMult (B ⊗ A)) yba y′b′a′ p r) → hom ((TSpanKlMult B) ⊗Span (TSpanKlMult A)) yba y′b′a′ p r
+      KlPathMult (refl _) = (refl _ , (refl _ , refl _))
+      KlPathMult (step (q , (l , s)) v′) = (q • q′ , ( step l t′ , s •Kl s′))
+        where
+          q′ = proj₁ (KlPathMult v′) 
+          t′ = proj₁ (proj₂ (KlPathMult v′))
+          s′ = proj₂ (proj₂ (KlPathMult v′)) 
 
 C⊗BA-to-CB⊗A : ∀ {X Y Z W : Graph} → (C : TSpan Z W) → (B : TSpan Y Z) → (A : TSpan X Y) → (C ⊗ (B ⊗ A)) ⇒ ((C ⊗ B) ⊗ A)
-C⊗BA-to-CB⊗A C B A = {!!}
+C⊗BA-to-CB⊗A C B A = C⊗BA-to-CB⊗ASpan C (TSpanKlMult B) (TSpanKlMult A) ∘ (id C ⊗MapSpan Kl-B⊗A-to-KlB⊗KlA B A)

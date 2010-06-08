@@ -39,8 +39,8 @@ data Paths (X : Graph) : (Graph.obj X) → (Graph.obj X) → Set where
 
 infixr 9 _•_
 _•_ : ∀ {X : Graph} {x y z : Graph.obj X} → Paths X y z → Paths X x y → Paths X x z
-(refl _)   • q = q
-(step f p) • q = step f (p • q)
+(refl _)   • p = p
+(step f q) • p = step f (q • p)
 
 -- ∘↝ is '\comp\leadsto' --dwm
 
@@ -62,6 +62,10 @@ p•refl≡p (step f q) = cong (step f) (p•refl≡p q)
 p≡p•refl : ∀ {X x y} → (p : Paths X x y) → (p ≡ p • (refl x))
 p≡p•refl {X} {.y} {y} (refl .y) = refl
 p≡p•refl (step f q) = cong (step f) (p≡p•refl q)
+
+r•qp≡rq•p : ∀ {X x y z w} → (r : Paths X z w) → (q : Paths X y z) → (p : Paths X x y) → (r • (q • p) ≡ (r • q) • p)
+r•qp≡rq•p (refl _) q p = refl
+r•qp≡rq•p (step f r′) q p = cong (step f) (r•qp≡rq•p r′ q p)
 
 pathsMap : ∀ {X Y : Graph} (F : X ⇒ Y) {x x′ : Graph.obj X}
          → Paths X x x′
