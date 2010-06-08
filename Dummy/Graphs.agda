@@ -1,4 +1,4 @@
-module Graphs where
+module Dummy.Graphs where
 
 import Data.Empty
   as Empty

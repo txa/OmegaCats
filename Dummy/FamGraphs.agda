@@ -1,4 +1,4 @@
-module FamGraphs where
+module Dummy.FamGraphs where
 
 import Data.Product
   as Prod
@@ -15,7 +15,7 @@ open Fun
     ( _∘_ to _|∘|_ 
     ; id to |id| )
 
-import Graphs
+import Dummy.Graphs as Graphs
 open Graphs
   using
     ( Graph )

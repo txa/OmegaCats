@@ -1,6 +1,6 @@
-module TSpans1 where
+module Dummy.TSpans1 where
 
-import Graphs
+import Dummy.Graphs as Graphs
 open Graphs
   using
     ( Graph )
@@ -12,7 +12,7 @@ open Graphs._⇒_
     ( obj→ to obj→Graph
     ; hom→ to hom→Graph
     )
-open import FamGraphs
+open import Dummy.FamGraphs as FamGraphs
   using
     ( Fam
     ; FamComp )
@@ -21,7 +21,7 @@ open import FamGraphs
     ; id to idFam 
     )
 
-open import T
+open import Dummy.T as T
 open import Relation.Binary.PropositionalEquality
 
 {- the bicategory of T-Spans -}

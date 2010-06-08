@@ -1,4 +1,4 @@
-module T where
+module Dummy.T where
 
 import Data.Product
   as Prod
@@ -18,11 +18,11 @@ open Fun
 
 open import Relation.Binary.PropositionalEquality
 
-import FamGraphs
+import Dummy.FamGraphs as FamGraphs
 open FamGraphs
   using
     ( Fam )
-import Graphs
+import Dummy.Graphs as Graphs
 open Graphs
   using
     ( Graph

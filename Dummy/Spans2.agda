@@ -1,17 +1,4 @@
-module Spans2 where
-
-import Graphs
-open Graphs
-  using
-    ( Graph )
-  renaming
-    ( _⇒_ to _⇒Graph_ 
-    ; _∘_ to _∘Graph_)
-open Graphs._⇒_
-  renaming
-    ( obj→ to obj→Graph
-    ; hom→ to hom→Graph
-    )
+module Dummy.Spans2 where
 
 import Data.Product
   as Prod
@@ -23,15 +10,6 @@ open Prod
     ; proj₂
     ; _×_
     )
-{-
-  renaming
-    (   Σ   to   |Σ|
-    ;  _,_  to  _|,|_
-    ; proj₁ to |proj₁|
-    ; proj₂ to |proj₂| 
-    ; _×_ to _|×|_
-    )
--}
 import Function
   as Fun
 open Fun
@@ -40,6 +18,29 @@ open Fun
     ; id to |id| )
 
 open import Relation.Binary.PropositionalEquality
+
+open import Setoids
+  using
+    ( Setoid₀ )
+  renaming
+    ( _⇒_ to _⇒Setoid_
+    ; _⇛_ to _⇛Setoid_
+    )
+
+import Dummy.Graphs as Graphs
+open Graphs
+  using
+    ( Graph )
+  renaming
+    ( _⇒_ to _⇒Graph_ 
+    ; _∘_ to _∘Graph_
+    )
+open Graphs._⇒_
+  renaming
+    ( obj→ to obj→Graph
+    ; hom→ to hom→Graph
+    )
+
 
 {- Spans are the 1-cells of a bicategory _Span_ (the 0-cells are graphs) -}
 
@@ -65,8 +66,60 @@ id Zs = record
   { obj→ = |id|
   ; hom→ = |id|
   }
- 
--- exercise: add ∘ here
+
+infixr 8 _∘_
+_∘_ : ∀ {X Y : Graph} {A B C : Span X Y} → (G : B ⇒ C) → (F : A ⇒ B) → (A ⇒ C)
+G ∘ F = record
+  { obj→ = obj→ G |∘| obj→ F 
+  ; hom→ = hom→ G |∘| hom→ F
+  }
+
+{- BUT we're Setoid-enriched! -}
+
+infixr 1 _⇛_
+_⇛_ : ∀ {X Y : Graph} (A B : Span X Y) → Setoid₀
+_⇛_ {X} {Y} A B = record 
+  { Carrier = A ⇒ B
+  ; _≈_ = λ F G → Σ (≈-obj F G) (≈-hom F G)
+  ; isEquivalence = record 
+    { refl = λ {F} → ( (λ a → refl) , λ k → refl )
+    ; sym = λ {F G} F≈G → ( (λ a → sym (proj₁ F≈G a)) , λ k → sym-hom-aux (proj₁ F≈G _) (proj₁ F≈G _) (hom→ F k) (hom→ G k) (proj₂ F≈G k) )
+    ; trans = λ {F G H} F≈G G≈H → 
+      ( (λ a → trans (proj₁ F≈G a) (proj₁ G≈H a))
+      , (λ k → trans-hom-aux (proj₁ F≈G _) (proj₁ G≈H _) (proj₁ F≈G _) (proj₁ G≈H _) (hom→ F k) (hom→ G k) (hom→ H k) (proj₂ F≈G k) (proj₂ G≈H k))
+      )
+    }
+  }
+  where
+    ≈-obj : (F G : A ⇒ B) → Set
+    ≈-obj F G = ∀ {x y} (a : obj A x y) → ((obj→ F a) ≡ (obj→ G a))
+
+    ≈-hom-aux : ∀ {x x′ y y′} {b c : obj B x y} (b≡c : b ≡ c) {b′ c′ : obj B x′ y′} (b′≡c′ : b′ ≡ c′) {f g} → (hom B b b′ f g) → (hom B c c′ f g) → Set 
+    ≈-hom-aux refl refl = _≡_  -- to see thru the thicket of implict variables here, compare the definitions of this, sym-hom-aux and trans-hom-aux 
+
+    ≈-hom : (F G : A ⇒ B) → ( xya→Fa≈Ga : ≈-obj F G ) → Set
+    ≈-hom F G a→Fa≈Ga = ∀ {x x′ y y′} {a : obj A x y} {a′ : obj A x′ y′} {f g} (k : hom A a a′ f g)
+                            → ≈-hom-aux (a→Fa≈Ga a) (a→Fa≈Ga a′) (hom→ F k) (hom→ G k)
+
+    sym-hom-aux : ∀ {x x′ y y′} {b c : obj B x y} (b≡c : b ≡ c) {b′ c′ : obj B x′ y′} (b′≡c′ : b′ ≡ c′) {f g} (l : hom B b b′ f g) (m : hom B c c′ f g) →
+                   (≈-hom-aux b≡c b′≡c′ l m ) → (≈-hom-aux (sym b≡c) (sym b′≡c′) m l)
+    sym-hom-aux refl refl l m = sym
+    
+    trans-hom-aux : ∀ {x x′ y y′} {b c d : obj B x y} (b≡c : b ≡ c) (c≡d : c ≡ d) 
+                                 {b′ c′ d′ : obj B x′ y′} (b′≡c′ : b′ ≡ c′) (c′≡d′ : c′ ≡ d′) {f g}
+                                 (l : hom B b b′ f g) (m : hom B c c′ f g) (n : hom B d d′ f g) →
+                                  (≈-hom-aux b≡c b′≡c′ l m ) → (≈-hom-aux c≡d c′≡d′ m n) → (≈-hom-aux (trans b≡c c≡d) (trans b′≡c′ c′≡d′) l n)
+    trans-hom-aux refl refl refl refl l m n = trans
+
+-- Two alternatives to current use of ≈-hom-aux follow.
+--      ( subst (λ b′ → hom B (obj→ G a) b′ f g) (xya→Fa≈Ga a′) (subst (λ b → hom B b (obj→ F a′) f g) (xya→Fa≈Ga a) (hom→ F k)) ≡ hom→ G k )
+{-
+        ≈hom-aux : ∀ {x x′ y y′} {a : obj A x y} {a′ : obj A x′ y′} {f g} (k : hom A a a′ f g)
+                  → (xya→Fa≈Ga : {x' : Graphs.Graph.obj X} {y' : Graphs.Graph.obj Y} (a' : obj A x' y') → obj→ F a' ≡ obj→ G a')
+                  → {!!}
+         ≈hom-aux {a = a} {a′ = a′} k xya→Fa≈Ga with xya→Fa≈Ga a | xya→Fa≈Ga a′
+         ... | foo | refl = {!!}
+-}
 
 {- 1 and ⊗ are (traditionally used for) the horizontal identity and composition in _Span_ -}
 
@@ -121,7 +174,20 @@ Also, is it possible to put all those short definitions after the "where" onto a
 -}
 
 -- exercise: complete this by adding the action of ⊗ on maps of spans
+infixr 8 _⊗Map_
+_⊗Map_ : {X Y Z : Graph} → {B B′ : Span Y Z} → {A A′ : Span X Y} → (G : B ⇒ B′) → (F : A ⇒ A′) → (B ⊗ A ⇒ B′ ⊗ A′)
+_⊗Map_ {X} {Y} {Z} {B} {B′} {A} {A′} G F = record
+  { obj→ = obj-aux
+  ; hom→ = λ {x} {x′} {z} {z′} {yba} {y′b′a′} → hom-aux {x} {x′} {z} {z′} yba y′b′a′   -- just need to make these explicit to pattern-match on 'em
+  }
+    where
+      obj-aux : ∀ {x z} → (yba : obj (B ⊗ A) x z) → (obj (B′ ⊗ A′) x z)
+      obj-aux (y , (b , a)) = (y , (obj→ G b , obj→ F a))
 
+      hom-aux : ∀ {x x′ z z′} (yba : obj (B ⊗ A) x z) (y′b′a′ : obj (B ⊗ A) x′ z′) {f h} (glk : hom (B ⊗ A) yba y′b′a′ f h)
+              → (hom (B′ ⊗ A′) (obj-aux yba) (obj-aux y′b′a′) f h)
+      hom-aux (y , (b , a)) (y′ , (b′ , a′)) (g , (l , k)) = (g , (hom→ G l , hom→ F k))
+ 
 {- the unitality, associativity and interchange maps for _Span_ : -}
 
 1⊗A-to-A : ∀ {X Y : Graph} → (A : Span X Y) → ((1Span Y) ⊗ A) ⇒ A

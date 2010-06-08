@@ -1,10 +1,10 @@
-module TOperads1 where
+module Dummy.TOperads1 where
 
-import Graphs
-open import T
+import Dummy.Graphs as Graphs
+open import Dummy.T as T
   using
     ( T )
-open import TSpans1
+open import Dummy.TSpans1 as TSpans1
   using
     ( TSpan 
     ; _⊗_ 

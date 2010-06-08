@@ -1,4 +1,4 @@
-module TSpans2 where
+module Dummy.TSpans2 where
 
 import Data.Empty
   as Empty
@@ -20,9 +20,16 @@ import Function
 open Fun
   renaming
     ( _∘_ to _|∘|_ 
-    ; id to |id| )
-
-import Graphs
+    ; id to |id| 
+    )
+open import Setoids
+  using
+    ( Setoid₀ )
+  renaming
+    ( _⇒_ to _⇒Setoid_
+    ; _⇛_ to _⇛Setoid_
+    )
+import Dummy.Graphs as Graphs
 open Graphs
   using
     ( Graph )
@@ -35,17 +42,19 @@ open Graphs._⇒_
     ( obj→ to obj→Graph
     ; hom→ to hom→Graph
     )
-open import Spans2
+open import Dummy.Spans2 as Spans2
   using
     ( Span 
     ; _⇒_
     ; id
     )
   renaming
-    ( _⊗_ to _⊗Span_ )
+    ( _⊗_ to _⊗Span_ 
+    ; _⊗Map_ to _⊗MapSpan_ 
+    )
 open Spans2.Span
 open Spans2._⇒_
-open import T
+open import Dummy.T as T
   using
     ( T
     ; TMap
@@ -78,16 +87,48 @@ data KleisliPaths {X Y : Graph} (A : TSpan X Y) : ∀ {x x′} {y y′} (a : obj
        → (p : Paths X x x′) → (q : Paths Y y y′) → (r : KleisliPaths A a a′ p q) 
        → KleisliPaths A a a′′ (p′ • p) (step f q)
 
-TSpanKlMult : {X Y : Graph} → (F : TSpan X Y) → (TSpan X (T Y))  -- I know this is a slightly unwieldy name, but I don't think we're likely to ever
+KleisliPathsMap : ∀ {X Y : Graph} {A B : TSpan X Y} (F : A ⇒ B)
+                  → (∀ {x x′ y y′} {a : obj A x y} {a′ : obj A x′ y′} {p q} → (KleisliPaths A a a′ p q) → (KleisliPaths B (obj→ F a) (obj→ F a′) p q))
+KleisliPathsMap F (refl _ _ _) = refl _ _ _
+KleisliPathsMap F (step _ _ k _ _ r) = step _ _ (hom→ F k) _ _ (KleisliPathsMap F r)
+
+TSpanKlMult : {X Y : Graph} → (A : TSpan X Y) → (TSpan X (T Y))  -- I know this is a slightly unwieldy name, but I don't think we're likely to ever
 TSpanKlMult {X} {Y} A = record                                   -- need it much beyond the next couple of definitions.
   { obj = obj A
   ; hom = KleisliPaths A
   }      
 
+TSpanKlMultMap : ∀ {X Y : Graph} {A B : TSpan X Y} (F : A ⇒ B) → (TSpanKlMult A) ⇒ (TSpanKlMult B)
+TSpanKlMultMap F = record
+  { obj→ = obj→ F
+  ; hom→ = KleisliPathsMap F
+  }
+
 infixr 8 _⊗_
 _⊗_ : {X Y Z : Graph} → TSpan Y Z → TSpan X Y → TSpan X Z
-_⊗_ {X} {Y} {Z} B A = B ⊗Span (TSpanKlMult A)
+_⊗_ B A = B ⊗Span (TSpanKlMult A)
 
+infixr 8 _⊗Map_
+_⊗Map_ : {X Y Z : Graph} → {B B′ : TSpan Y Z} → {A A′ : TSpan X Y} → (G : B ⇒ B′) → (F : A ⇒ A′) → (B ⊗ A ⇒ B′ ⊗ A′)
+_⊗Map_ G F = G ⊗MapSpan (TSpanKlMultMap F)
+
+A-to-1⊗A : ∀ {X Y : Graph} → (A : TSpan X Y) → A ⇒ ((1TSpan Y) ⊗ A) 
+A-to-1⊗A {X} {Y} A = record 
+  { obj→ = λ {x} {y} a → (y , (refl , a))
+  ; hom→ = λ {x} {x′} {y} {y′} {a} {a′} {p} {g} k → ( (step g (refl _)) , ( atom g , 
+             subst (λ q → KleisliPaths A a a′ q (step g (refl y))) (sym (p≡p•refl p)) (step p g k (refl _) (refl _) (refl _ _ _))))
+  }
+
+rebuild-from-atoms : {X : Graph} {x x′ : Graph.obj X} → (p : Paths X x x′) → KleisliPaths (1TSpan X) refl refl p p
+rebuild-from-atoms (refl _) = refl _ _ _
+rebuild-from-atoms (step f p′) = step _ _ (atom f) _ _ (rebuild-from-atoms p′) 
+
+A-to-A⊗1 : ∀ {X Y : Graph} → (A : TSpan X Y) → A ⇒ (A ⊗ (1TSpan X)) 
+A-to-A⊗1 {X} {Y} A = record 
+  { obj→ = λ {x} {y} a → (x , (a , refl))
+  ; hom→ =  λ {x} {x′} {y} {y′} {a} {a′} {p} {g} k → (p , (k , rebuild-from-atoms p))
+  }
+ 
 1⊗A-to-A : ∀ {X Y : Graph} → (A : TSpan X Y) → ((1TSpan Y) ⊗ A) ⇒ A
 1⊗A-to-A {X} {Y} A = record 
   { obj→ = obj-aux
@@ -100,22 +141,14 @@ _⊗_ {X} {Y} {Z} B A = B ⊗Span (TSpanKlMult A)
       obj-aux : ∀ {x} → ∀ {z} → (obj ((1TSpan Y) ⊗ A) x z) → (obj A x z)
       obj-aux {x} {z} y,y≡z,a = obj-aux-1 {x} {proj₁ y,y≡z,a} {z} (proj₁ (proj₂ y,y≡z,a)) (proj₂ (proj₂ y,y≡z,a)) -- split/reorder arguments to eliminate on y≡z
 
---      hom-aux-3 ∀ {X Y A x x′ y y′ a a′ p k r
-      
       hom-aux-2 : ∀ {x x′ } → ∀ {y y′} → ∀ {a : obj A x y} → ∀ {a′ : obj A x′ y′} → ∀ {p : Paths X x x′} → ∀ {h : Graph.hom Y y y′}
-                  → (r : KleisliPaths A a a′ p (step h (refl y)))
-                  → (hom A a a′ p h)
+                  → (r : KleisliPaths A a a′ p (step h (refl y))) → (hom A a a′ p h)
         -- in case we need to write similar functions again: this was built by pattern-matching on r, then on p, then on r again!
         -- the other orders we tried didn't work.
       hom-aux-2 {x} {x′} {y} {y′} {a} {a′} {.(p • refl x)} {h} (step p .h k (refl .x) .(refl y) (refl .x .y .a)) = subst (λ q → (hom A a a′ q h)) (p≡p•refl p) k 
         -- first case: now we know r is refl, it lies over p • refl, which is equal to p itself so gives us what we need
       hom-aux-2 {x} {x′} {y} {y′} {a} {a′} {.(p′ • step y' y0)} {h} (step p′ .h k (step y' y0) .(refl y) ()) 
         -- second case is impossible: since r is over refl, it must be refl
-
-{-
-      hom-aux-2 {.x} {x′} {y} {y′} {.a} {a′} {.(p • refl x)} {h} (step {.x} {x} {.x′} {.y} {.y} {.y′} {.a} {a} p .h k (refl .x) .(refl y) (refl .x .y .a)) = subst (λ q → (hom A a a′ q h)) (p≡p•refl p) k
-      hom-aux-2 {x} {x′} {y} {y′} {a} {a′} {.(p′ • step y' y0)} {h} (step p′ .h k (step y' y0) .(refl y) ())
--}
 
       hom-aux-1 : ∀ {y z} → {y≡z : y ≡ z} → ∀ {y′ z′} → {y′≡z′ : y′ ≡ z′} → {q : Paths Y y y′} → {h : Graph.hom Y z z′} → (s : IsAtomOf y≡z y′≡z′ q h)
                   → ∀ {x x′} → {p : Paths X x x′}→ {a : obj A x y} → {a′ : obj A x′ y′} → (r : KleisliPaths A a a′ p q)
