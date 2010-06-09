@@ -18,7 +18,7 @@ open Fun
 import Dummy.Graphs as Graphs
 open Graphs
   using
-    ( Graph )
+    ( Graph; module Graph )
   renaming
     ( _⇒_ to _⇒Graph_ )
 open Graphs._⇒_

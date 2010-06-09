@@ -1,0 +1,14 @@
+1. Finish Dummy
+-- define contractible T-operad (straightforward)
+-- define algebras for an operad
+-- hence weak-1 cat is an algebra for a contractible T-operads
+-- (brutal top hence no assoc, could be fixed by changing defn of contraction)
+
+2. From Dummy to Glob
+-- replace graphs by globular sets (coinductive)
+-- hence arrive at a notion of weak omega cat
+
+3. Find omega cats
+-- normal cat should be an omega cat (dummy)
+-- bicat is a weak omega cat
+-- show that Idw is a weak omega cat

@@ -47,7 +47,6 @@ open Graphs._⇒_
     ; hom→ to hom→Graph
     )
 
-
 {- Spans are the 1-cells of a bicategory _Span_ (the 0-cells are graphs) -}
 
 record Span (X Y : Graph) : Set₁ where
