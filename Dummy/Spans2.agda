@@ -10,6 +10,8 @@ open Prod
     ; proj₂
     ; _×_
     )
+import Data.Unit
+  as Unit
 import Function
   as Fun
 open Fun
@@ -18,6 +20,10 @@ open Fun
     ; id to |id| )
 
 open import Relation.Binary.PropositionalEquality
+
+open import Relation.Binary 
+  using
+    ( Setoid )
 
 open import Setoids
   using
@@ -76,24 +82,46 @@ G ∘ F = record
 
 {- BUT we're Setoid-enriched! -}
 
+bidept≡ : {S T : Set} (P : S → T → Set) {s s′ : S} (s≡s′ : s ≡ s′) {t t′ : T} (t≡t′ : t ≡ t′) (p : P s t) (p′ : P s′ t′) → Set
+bidept≡ P refl refl = _≡_
+
+bidept-refl : {S T : Set} (P : S → T → Set) {s : S} {t : T} (p : P s t) → bidept≡ P refl refl p p
+bidept-refl P p = refl
+
+bidept-sym : {S T : Set} (P : S → T → Set) {s s′ : S} (s≡s′ : s ≡ s′) {t t′ : T} (t≡t′ : t ≡ t′) {p : P s t} {p′ : P s′ t′} 
+            (p≡p′ : bidept≡ P s≡s′ t≡t′ p p′) → bidept≡ P (sym s≡s′) (sym t≡t′) p′ p 
+bidept-sym P refl refl = sym
+
+bidept-trans : {S T : Set} (P : S → T → Set) {s s′ s′′ : S} (s≡s′ : s ≡ s′) (s′≡s′′ : s′ ≡ s′′) {t t′ t′′ : T} (t≡t′ : t ≡ t′) (t′≡t′′ : t′ ≡ t′′) 
+              {p : P s t} {p′ : P s′ t′} {p′′ : P s′′ t′′} → (p≡p′ : bidept≡ P s≡s′ t≡t′ p p′) → (p′≡p′′ : bidept≡ P s′≡s′′ t′≡t′′ p′ p′′)
+              →  bidept≡ P (trans s≡s′ s′≡s′′) (trans t≡t′ t′≡t′′) p p′′
+bidept-trans P refl refl refl refl = trans
+
+
 infixr 1 _⇛_
 _⇛_ : ∀ {X Y : Graph} (A B : Span X Y) → Setoid₀
 _⇛_ {X} {Y} A B = record 
   { Carrier = A ⇒ B
-  ; _≈_ = λ F G → Σ (≈-obj F G) (≈-hom F G)
+  ; _≈_ = λ F G → Σ (≈-obj F G) (≈-hom F G) --(≈-hom F G)
   ; isEquivalence = record 
     { refl = λ {F} → ( (λ a → refl) , λ k → refl )
-    ; sym = λ {F G} F≈G → ( (λ a → sym (proj₁ F≈G a)) , λ k → sym-hom-aux (proj₁ F≈G _) (proj₁ F≈G _) (hom→ F k) (hom→ G k) (proj₂ F≈G k) )
+    ; sym = λ {F G} F≈G → ( (λ a → sym (proj₁ F≈G a)) , λ k → bidept-sym _ (proj₁ F≈G _) (proj₁ F≈G _) (proj₂ F≈G k) )
     ; trans = λ {F G H} F≈G G≈H → 
       ( (λ a → trans (proj₁ F≈G a) (proj₁ G≈H a))
-      , (λ k → trans-hom-aux (proj₁ F≈G _) (proj₁ G≈H _) (proj₁ F≈G _) (proj₁ G≈H _) (hom→ F k) (hom→ G k) (hom→ H k) (proj₂ F≈G k) (proj₂ G≈H k))
+      , (λ k → bidept-trans _ (proj₁ F≈G _) (proj₁ G≈H _) (proj₁ F≈G _) (proj₁ G≈H _) (proj₂ F≈G k) (proj₂ G≈H k))
       )
-    }
+    } 
   }
   where
     ≈-obj : (F G : A ⇒ B) → Set
     ≈-obj F G = ∀ {x y} (a : obj A x y) → ((obj→ F a) ≡ (obj→ G a))
 
+    ≈-hom : (F G : A ⇒ B) → ( xya→Fa≈Ga : ≈-obj F G ) → Set
+    ≈-hom F G a→Fa≈Ga = ∀ {x x′ y y′} {a : obj A x y} {a′ : obj A x′ y′} {f g} (k : hom A a a′ f g)
+                            → bidept≡ (λ b b′ → hom B b b′ f g) (a→Fa≈Ga a) (a→Fa≈Ga a′) (hom→ F k) (hom→ G k)
+    
+    
+{- old approach, basically using a specific instance of bihet≡ :
     ≈-hom-aux : ∀ {x x′ y y′} {b c : obj B x y} (b≡c : b ≡ c) {b′ c′ : obj B x′ y′} (b′≡c′ : b′ ≡ c′) {f g} → (hom B b b′ f g) → (hom B c c′ f g) → Set 
     ≈-hom-aux refl refl = _≡_  -- to see thru the thicket of implict variables here, compare the definitions of this, sym-hom-aux and trans-hom-aux 
 
@@ -110,8 +138,9 @@ _⇛_ {X} {Y} A B = record
                                  (l : hom B b b′ f g) (m : hom B c c′ f g) (n : hom B d d′ f g) →
                                   (≈-hom-aux b≡c b′≡c′ l m ) → (≈-hom-aux c≡d c′≡d′ m n) → (≈-hom-aux (trans b≡c c≡d) (trans b′≡c′ c′≡d′) l n)
     trans-hom-aux refl refl refl refl l m n = trans
+-}
 
--- Two alternatives to current use of ≈-hom-aux follow.
+-- Two other alternatives approaches started:
 --      ( subst (λ b′ → hom B (obj→ G a) b′ f g) (xya→Fa≈Ga a′) (subst (λ b → hom B b (obj→ F a′) f g) (xya→Fa≈Ga a) (hom→ F k)) ≡ hom→ G k )
 {-
         ≈hom-aux : ∀ {x x′ y y′} {a : obj A x y} {a′ : obj A x′ y′} {f g} (k : hom A a a′ f g)
@@ -254,3 +283,32 @@ C⊗BA-to-CB⊗A C B A = record
       hom-aux : ∀ {x x′ w w′} (zcyba : obj (C ⊗ (B ⊗ A)) x w) (zcyba′ : obj (C ⊗ (B ⊗ A)) x′ w′) {f i} (hmglk : hom (C ⊗ (B ⊗ A)) zcyba zcyba′ f i) 
                   → hom ((C ⊗ B) ⊗ A) (obj-aux zcyba) (obj-aux zcyba′) f i
       hom-aux (_ , (_ , (_ , (_ , _)))) (_ , (_ , (_ , (_ , _)))) (h , (m , (g , (l , k)))) = (g , ((h , (m , l)) , k))
+
+
+
+{- Some other useful span constructions (beyond the bicategory structure): -}
+
+{- the terminal span between any two objects -}
+
+∀x,y:⊤→x≡y : (x y : Unit.⊤) → x ≡ y
+∀x,y:⊤→x≡y Unit.tt Unit.tt = refl
+
+⊤ : (X Y : Graph) → Span X Y
+⊤ X Y = record 
+  { obj = λ _ _ → Unit.⊤
+  ; hom = λ _ _ _ _ → Unit.⊤
+  }
+
+! : ∀ {X Y : Graph} → (A : Span X Y) → A ⇒ (⊤ X Y)
+! A = record
+  { obj→ = λ _ → Unit.tt
+  ; hom→ = λ _ → Unit.tt
+  }
+
+isSubterminal-⊤ : ∀ {X Y : Graph} → {A : Span X Y} → (F G : A ⇒ (⊤ X Y)) → Setoid._≈_ (A ⇛ (⊤ X Y)) F G
+isSubterminal-⊤ F G = ( ≈-obj ,  λ k → ≈-hom-aux (≈-obj _) (≈-obj _) (hom→ F k) (hom→ G k))
+  where
+    ≈-obj = (λ a → (∀x,y:⊤→x≡y (obj→ F a) (obj→ G a)))
+
+    ≈-hom-aux : ∀ {S : Set} {s t u v : S} (s≡t : s ≡ t) (u≡v : u ≡ v) (x y : Unit.⊤) → bidept≡ (λ _ _ → Unit.⊤) s≡t u≡v x y 
+    ≈-hom-aux refl refl = ∀x,y:⊤→x≡y

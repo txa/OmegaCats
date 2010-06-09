@@ -10,8 +10,8 @@ open Prod
     ; proj₂
     ; _×_
     )
-open import Relation.Binary.PropositionalEquality
-
+import Data.Unit
+  as Unit
 open import Relation.Binary
   using
     ( Setoid )
@@ -22,8 +22,13 @@ open import Setoids
     ( _⇒_ to _⇒Setoid_
     ; _⇛_ to _⇛Setoid_
     )
-open import Dummy.TSpans2 as TSpans2
-open import Dummy.Spans2 as Spans2
+open import Relation.Binary.PropositionalEquality
+
+import Dummy.Graphs as Graphs
+open import Dummy.T
+  using
+    ( T )
+open import Dummy.Spans2 as Spans
   using
     ( )
   renaming
@@ -33,7 +38,7 @@ open import Dummy.Spans2 as Spans2
     ; _∘_ to _∘Span_
     ; _⇛_ to _⇛Span_
     )
-import Dummy.Graphs as Graphs
+open import Dummy.TSpans2 as TSpans
 
 record IsOperad (P : TSpan Graphs.⊤ Graphs.⊤) (e : 1TSpan Graphs.⊤ ⇒Span P) (m : (P ⊗ P) ⇒Span P) : Set where
   field
@@ -46,15 +51,18 @@ record TOperad : Set₁ where
     ops : TSpan Graphs.⊤ Graphs.⊤
     unit : 1TSpan Graphs.⊤ ⇒Span ops
     mult : (ops ⊗ ops) ⇒Span ops
---   isOperad : IsOperad P e m
+    isOperad : IsOperad ops unit mult
 
 {- Examples! -}
 
+{- The _initial_ operad, T⊥, with nothing but unit operations -}
+ 
 T⊤ : TOperad
 T⊤ = record 
   { ops = 1TSpan Graphs.⊤
   ; unit = idSpan (1TSpan Graphs.⊤)
   ; mult = 1⊗A-to-A (1TSpan Graphs.⊤)
+  ; isOperad = {!!}
   }
 
 {-
@@ -70,3 +78,18 @@ isOpT⊤ = record
       left-unit-hom-aux : {!!} 
       left-unit-hom-aux = {!!}
 -}
+
+{- the operad T-strict, aka T1 or T⊤, for strict [...]-categories, with a single operation of each possible arity. -}
+
+T-strict : TOperad
+T-strict = record 
+  { ops = Spans.⊤ (T Graphs.⊤) Graphs.⊤
+  ; unit = Spans.! _
+  ; mult = Spans.! _
+  ; isOperad = record
+              { left-unit = Spans.isSubterminal-⊤ _ _
+              ; right-unit = Spans.isSubterminal-⊤ _ _
+              ; assoc = Spans.isSubterminal-⊤ _ _
+              }
+  }
+
