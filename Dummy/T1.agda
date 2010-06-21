@@ -25,15 +25,23 @@ T1 = record
 
 open Graph
 
-data end (G : Graph) : ℕ → obj G → obj G → Set where
-  ε : ∀ {A} → end G 0 A A
-  _,_ : ∀ {A B C n} → end G n A B → hom G B C → end G (suc n) A C
+data paths (G : Graph) : ℕ → obj G → obj G → Set where
+  ε : ∀ {A} → paths G 0 A A
+  _,_ : ∀ {A B C n} → paths G n A B → hom G B C → paths G (suc n) A C
  
-
+{-
 End : Graph → Fam T1
 End G = record
      { obj = λ _ → ⊤ 
-     ; hom = λ _ _ n → ∀ {A B} → end G n A B → hom G A B 
+     ; hom = λ _ _ n → ∀ {A B} → paths G n A B → hom G A B 
      }
+-}
 
+[_,_] : (G H : Graph) → Fam T1
+[_,_] G H = record
+    { obj = λ _ → (obj G → obj H)
+    ; hom = λ f g n → ∀ {A B} → (paths G n A B → hom H (f A) (g B))
+    }
 
+End : Graph → Fam T1
+End G = [ G , G ]
