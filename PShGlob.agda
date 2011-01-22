@@ -14,6 +14,15 @@ record PShGlob : Set₁ where
     srcEq : ∀ {n} → (x : obj (suc (suc n))) → src (src x) ≡ src (tgt x) 
     tgtEq : ∀ {n} → (x : obj (suc (suc n))) → tgt (src x) ≡ tgt (tgt x)
 
+record →PShGlob (F G : PShGlob) : Set where
+  constructor →pshGlob
+  field
+    →obj : ∀ {n} → PShGlob.obj F n → PShGlob.obj G n
+    →srcEq : ∀ {n} → (x : PShGlob.obj F (suc n)) →
+           (PShGlob.src G) (→obj x) ≡  →obj (PShGlob.src F x) 
+    →tgtEq : ∀ {n} → (x : PShGlob.obj F (suc n)) →
+           (PShGlob.tgt G) (→obj x) ≡ →obj (PShGlob.tgt F x) 
+
 {- Example Id -}
 
 {-
