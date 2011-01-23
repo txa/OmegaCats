@@ -54,6 +54,21 @@ _∘_ {G₁ = G₁} {G₃ = G₃} g f = record
   ; hom→ = ♯ (♭ (hom→ g)  ∘  ♭ (hom→ f))
   }
 
+{- observational equality on maps of Globs -}
+
+-- I’d like to make this definition local to the definition of _⇒≡_ using 
+-- a `where` or similar syntax, but am not quite sure how.
+coercion : (G : Glob) {x x′ y y′ : obj G} → x ≡ x′ → y ≡ y′ → 
+             ♭ (hom G x y) ⇒ ♭ (hom G x′ y′) 
+coercion G refl refl = id
+
+infixr 2 _⇒≡_
+record _⇒≡_ {G H : Glob} (f g : G ⇒ H) : Set where
+  field
+    obj≡ : (x : obj G) → (obj→ f x) ≡ (obj→ g x)
+    hom≡ : ∀ {x y : obj G} → 
+           ∞ ((coercion H (obj≡ x) (obj≡ y)) ∘ ♭ (hom→ f {x} {y}) ⇒≡ ♭ (hom→ g {x} {y}) )
+
 {- finite products and infinite products -}
 ⊥ : Glob
 ⊥ = record
