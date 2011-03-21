@@ -34,6 +34,18 @@ record Func₁ (A B : Cat₁) : Set where
     comp→ :  ∀ {a b c}{f : hom A b c}{g : hom A a b}
                   → hom→ (comp A f g) ≡ comp B (hom→ f) (hom→ g)
 
+idF : ∀ {A} → Func₁ A A
+idF {A} = record { obj→ = λ a → a; 
+                   hom→ = λ f → f; 
+                   id→ = λ {a} → refl; 
+                   comp→ = λ {a b c}{f}{g} → refl }
+
+compF : ∀ {A B C} → Func₁ B C → Func₁ A B → Func₁ A C
+compF F G = record { obj→ = λ a → obj→ F (obj→ G a); 
+                     hom→ = λ f → hom→ F (hom→ G f); 
+                     id→ = λ {a} → {!!}; comp→ = {!!} }
+            where open Func₁
+
 record Eq {A B : Cat₁}(F G : Func₁ A B) : Set where
   open Cat₁
   open Func₁
@@ -67,12 +79,39 @@ C ×C D = record {
                                       ((assoc D (proj₂ f) (proj₂ g) (proj₂ h))) }
          where open Cat₁
 
+vz : ∀ {Γ A} → Func₁ (Γ ×C A) A
+vz {Γ} {A} = record { obj→ = proj₂; 
+                      hom→ = λ {a} {b} → proj₂; 
+                      id→ = {!!}; 
+                      comp→ = {!!} }
+
+wk : ∀ {Γ A} → Func₁ Γ A → ∀ {B} → Func₁ (Γ ×C B) A
+wk F = record { obj→ = λ γa → obj→ F (proj₁ γa); 
+                hom→ = λ fg → hom→ F (proj₁ fg); 
+                id→ = {!!}; 
+                comp→ = {!!} }
+       where open Func₁
+
+εF : ∀ {Γ} → Func₁ Γ ⊤C
+εF {Γ} = record { obj→ = λ _ → _; 
+                  hom→ = λ f → _; 
+                  id→ = {!!}; 
+                  comp→ = {!!} }
+
+ext : ∀ {Γ Δ A} → Func₁ Γ Δ → Func₁ Γ A → Func₁ Γ (Δ ×C A) 
+ext F G = record { obj→ = λ γ → obj→ F γ , obj→ G γ; 
+                   hom→ = λ f → (hom→ F f) , (hom→ G f); 
+                   id→ = {!!}; 
+                   comp→ = {!!} }
+       where open Func₁
+
 record Cat₂ : Set₁ where
   field
     obj : Set
     hom : obj → obj → Cat₁
     id : ∀ {a} → Func₁ ⊤C (hom a a)
-    comp : ∀ {a b c} → Func₁ (hom b c ×C hom a b) (hom a c)
+    comp : ∀ {a b c} → Func₁ ((⊤C ×C hom b c) ×C hom a b) (hom a c)
+    lid : ∀ {a} {b} → Eq (compF (comp {a} {b} {b}) (ext (ext εF (wk id)) vz)) (vz {⊤C} {hom a b})
 {-
     lid : ∀ {a b} (f : hom a b) → comp id f ≡ f
     rid : ∀ {a b} (f : hom a b) → comp f id ≡ f
