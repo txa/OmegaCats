@@ -1,0 +1,18 @@
+Defining weak ω categories in Agda:
+
+1. We define ωCat mutually with ⇒ (set of functors), ⊤, × (products) and 
+   ∼> set of natural transformations. We encode the equations as functors,
+   and the equational laws correspond to requiring natural isomorphisms between
+   the functors. We need the product structure to be able to encode the terms.
+
+   (alternative would be to use multifunctors, then we don't need products).
+
+   the fact that everything is mutual recursive is a bit scary...
+   One alternative approach is to define this in stages, i.e. start with globular sets 
+   and then add composition and identity and then move to the laws.
+
+2. We define hollow as a predicate on morphisms, any morphism
+   representing an equality is hollow coherence corresponds to an
+   hollow arrow between any two hollow morphisms with the same source
+   and target.
+
