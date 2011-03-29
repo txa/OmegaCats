@@ -18,8 +18,13 @@ record El (G : Glob) : Set where
 Idω : Set → Glob
 Idω A = record { obj = A; hom = λ a b → ♯ Idω (a ≡ b) } 
 
+reflω' : ∀ {A} (a : A) → ∞ (El (♭ (hom (Idω A) a a)))
+reflω' a = ♯ record { obj→ = refl; hom→ = reflω' refl }
+
 reflω : ∀ {A} (a : A) → El (♭ (hom (Idω A) a a))
-reflω a = record { obj→ = refl; hom→ = ♯ reflω refl  } -- ♯ reflω refl }
+reflω a = ♭ (reflω' a)
+
+
 
 {-
 mutual

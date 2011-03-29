@@ -2,10 +2,16 @@
 -- --no-positivity-check 
 module weakOmega where
 
+{- Towards defining of weak ω categories in Agda -}
+
 open import Coinduction
 open import Data.Unit
 
 mutual 
+
+{- we cannot use records in the moment, because mutual recursive definitions with records
+   are currently outlawed. Maybe this will get better soon.
+-}
 
   data ωCat : Set₁ where
     ωcat : (obj : Set)
