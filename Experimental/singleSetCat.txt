@@ -1,0 +1,61 @@
+-- all cells in an ω-cat free over an ω -globular-setoid are defined as:
+data Freeω : Set where
+      emb : (s : C) → Freeω -- embedding
+      comp : (n : ℕ) → (y x : Freeω) → (src n y) ∼ (tgt n x) → Freeω              -- a family of compositions
+      alpha : ∀ {z y x : Freeω}{n : ℕ} → (src n z) ∼ (tgt n y)  → (src n y) ∼ (tgt n x) → Freeω  -- associator alpha
+      ...
+
+
+-- the following defines equality on Freew cells by structural recursion on their structure
+data _∼_ : Freeω → Freeω → Set where
+      -- embeded cells are equal as pair their home setoid definiton
+      comp-emb : ∀ {s s'} → s |≈| s' → _∼_ (emb s) (emb s')               
+
+    -- a composition is equal if the composed cells are equal
+      comp-comp : ∀ {n y x} → (h : src n y ∼ tgt n x) → comp n y x h ∼ comp n y x h   
+
+  -- now this is actually saying that there is a unique alpha for
+  -- each h , k , k'. I'm thinking of _∼_ as of definitional (decideable) equality
+      comp-α : ∀ {x y z x' y' z' n} → (h : src n x ∼ tgt n y) (h' : src n x' ∼ tgt n y')(k : src n y ∼ tgt n z)(k' : src n y' ∼ tgt n z') 
+                 → x ∼ x' →  y ∼ y' → z ∼ z' → alpha h k ∼ alpha h' k' 
+
+
+     ....
+ --- etc.
+
+-- then I define ℕ domains, and codomains, for each cell
+
+src : (n : ℕ) → Freeω → Freeω 
+    src n (emb s) = emb (|src| n s)         --- for emb, as pair the globular setoid
+
+-- for most cells though the results depends on which level the
+-- cell really lives (e.g. the composition of two n-cells lives
+-- on level n), so I have to pattern match as follows:
+
+-- α
+    src n (alpha {z}{y}{x}{m} h k) with compare n (suc m)
+    src n (alpha {z}{y}{x}{.(n + i)} h k)             | less .n i = src n ( src (suc n) (alpha h k))
+    src .(suc m) (alpha {z}{y}{x}{m} h k)             | equal .(suc m) = comp m z (comp m y x k) {! h !} ----- PROBLEM!
+    src .(suc (suc (m + i))) (alpha {z}{y}{x}{m} h k) | greater .(suc m) i = alpha h k  
+
+
+
+--- the problem lies on the line marked above: to define a composition of z and (y . x) I need to know that src n z ~ tgt n (y ○n x), 
+--- which is fine: the n-th codomain of a composition y ○n x is just the n-th codomain of y
+--- I have the defintion of tgt for that case:
+
+    .....
+
+
+    tgt : (n : ℕ) → Freeω → Freeω 
+    ...
+    tgt n (comp m y x sy≈tx) with compare n m 
+    tgt n (comp .(suc (n + k)) y x sy≈tx) | less .n k = tgt n (tgt (suc n) (comp (suc (n + k)) y x sy≈tx))
+    tgt .m (comp m y x sy≈tx)             | equal .m = tgt m y                                                  -- this case : wehn m and n are equal, tgt (comp _ y x _)  = tgt y
+    tgt .(suc (m + k)) (comp m y x sy≈tx) | greater .m k = comp m y x sy≈tx 
+   
+    ...
+
+
+-- the evaluation is stuck though with 
+-- Goal: src m z ∼ (tgt m (comp m y x k) | ℕcompare m m)
