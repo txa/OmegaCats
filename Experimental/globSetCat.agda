@@ -76,22 +76,44 @@ module Freeω (G : GlobularSet) where
     src {zero} (fsuc ()) x
     src {suc n} (fsuc i) x = src i (src fzero x) 
 
-
-    src-m-alpha : ∀ {n}(m : Fin (suc n)) (z y x : Freeω (suc n)) → (h : src m z ≈ tgt m y) → (k : src m y ≈ tgt m x) → Freeω (suc n)
-    src-m-alpha m z y x h k = comp m z (comp m y x k) {!!} 
-
-
-
-    tgt-m-alpha : ∀ {n}(m : Fin (suc n)) (z y x : Freeω (suc n)) → (h : src m z ≈ tgt m y) → (k : src m y ≈ tgt m x) → Freeω (suc n)
-    tgt-m-alpha m z y x h k =  comp m (comp m z y h) x {!!}  
-
-
-
     ≈refl : ∀ {n} → (x : Freeω n ) → x ≈ x
     ≈refl (emb {n} y) = ≈emb (Srefl (# n))
     ≈refl (id y) = ≈id y
     ≈refl (comp m β α y) = ≈comp y
     ≈refl (alpha m z y x h k) = ≈α h h k k (≈refl x) (≈refl y) (≈refl z) 
+
+    h-src : ∀ {n}{i} x → src {suc n} (fsuc i) x ≈ src i (src fzero x) 
+    h-src {n}{i} x = ≈refl _
+
+    h-tgt : ∀ {n}{i} x → tgt {suc n} (fsuc i) x ≈ tgt i (tgt fzero x)
+    h-tgt {n}{i} x =  ≈refl _ 
+
+    ≈trans : {n : ℕ}{z y x : Freeω n} → z ≈ y → y ≈ x → z ≈ x
+    ≈trans {n} (≈emb y) (≈emb y') = ≈emb (Strans (# n) y y')
+    ≈trans (≈id m) (≈id .m) = ≈refl (id m)
+    ≈trans (≈comp {n}{m}{y}{x} h) (≈comp .h) = ≈refl (comp m y x h)
+    ≈trans (≈α zy zy' yx yx' xx' yy' zz') (≈α {n}{m}{z}{y}{x}{z'}{y'}{x'} .zy' h' .yx' k' y1 y2 y3) = ≈α zy h' yx k' (≈trans xx' y1) (≈trans yy' y2) (≈trans zz' y3) 
+
+
+    infixl 5 _■_
+    _■_ : {n : ℕ}{z y x : Freeω n} → z ≈ y → y ≈ x → z ≈ x
+    _■_ = ≈trans
+
+    src-m-alpha : ∀ {n}(m : Fin (suc n)) (z y x : Freeω (suc n)) → (h : src m z ≈ tgt m y) → (k : src m y ≈ tgt m x) → Freeω (suc n)
+    src-m-alpha {zero} fzero z y x h k = comp fzero z (comp fzero y x k) h
+    src-m-alpha {suc n} fzero z y x h k = comp fzero z (comp fzero y x k) h
+    src-m-alpha {zero} (fsuc ()) _ _ _ _ _
+    src-m-alpha {suc n} (fsuc i) z y x h k = comp (fsuc i) z (comp (fsuc i) y x k) (h ■ (h-tgt {_}{i} y ■ ≈refl _)) 
+
+
+    tgt-m-alpha : ∀ {n}(m : Fin (suc n)) (z y x : Freeω (suc n)) → (h : src m z ≈ tgt m y) → (k : src m y ≈ tgt m x) → Freeω (suc n)
+    tgt-m-alpha fzero z y x h k = comp fzero z (comp fzero y x k) h
+    tgt-m-alpha {zero} (fsuc ()) z y x h k
+    tgt-m-alpha {suc n} (fsuc i) z y x h k = comp (fsuc i) (comp (fsuc i) z y h) x k 
+
+
+
+
 {-
     ≈refl (emb s) = ≈emb ? 
     ≈refl (comp n y x h) = ≈comp h
@@ -112,12 +134,6 @@ module Freeω (G : GlobularSet) where
     ∼sym .{hol x y h k H K} .{hol x y h k H K} (≈ξ {n} {x} {y} h k H K) = ≈ξ h k H K 
            -----
 -}
-    ≈trans : {n : ℕ}{z y x : Freeω n} → z ≈ y → y ≈ x → z ≈ x
-    ≈trans {n} (≈emb y) (≈emb y') = ≈emb (Strans (# n) y y')
-    ≈trans (≈id m) (≈id .m) = ≈refl (id m)
-    ≈trans (≈comp {n}{m}{y}{x} h) (≈comp .h) = ≈refl (comp m y x h)
-    ≈trans (≈α zy zy' yx yx' xx' yy' zz') (≈α {n}{m}{z}{y}{x}{z'}{y'}{x'} .zy' h' .yx' k' y1 y2 y3) = ≈α zy h' yx k' (≈trans xx' y1) (≈trans yy' y2) (≈trans zz' y3) 
-
 {-    ∼trans :  {i j k : Freeω} → i ∼ j → j ∼ k → i ∼ k
     ∼trans (≈emb y) (≈emb y') = ≈emb (Strans y y')
     ∼trans (≈comp h) (≈comp .h) = ≈comp h
