@@ -15,6 +15,18 @@ mutual
   data Obj : (C : Cat) → Set where
     ⇑ : ∀ {Cab} (f : Hom Cab) → Obj (hom Cab)
 
+  data Inv (C : Cat) : Set where
+    obj : (a b : Obj C) → Inv C
+    mor : (Δ : Inv C)(f f' : Hom (invSrc Δ)) → Inv C
+
+  invSrc : ∀ {C} → (Δ : Inv C) → HomSpec
+  invSrc {C} (obj a b) = C [ a , b ]
+  invSrc (mor Δ f f') = (hom (invSrc Δ)) [ (⇑ f) , (⇑ f') ]
+
+  invTgt : ∀ {C} → (Δ : Inv C) → HomSpec
+  invTgt {C} (obj a b) = C [ b , a ]
+  invTgt (mor Δ f f') = (hom (invTgt Δ)) [ (⇑ (inv' Δ f)) , ⇑ (inv' Δ f') ]
+
   data Comp (C : Cat) : Set where
     obj : (a b c : Obj C) → Comp C
     hom : (Δ : Comp C)(f f' : Hom (compSrc₀ Δ))(g g' : Hom (compSrc₁ Δ))  → Comp C
@@ -33,12 +45,14 @@ mutual
 
   data Hom : HomSpec → Set where
     id : ∀ {C}(a : Obj C) → Hom (C [ a , a ])
+    inv : ∀ {C}(Δ : Inv C) → Hom (invSrc Δ) → Hom (invTgt Δ)
     comp : ∀ {C}(Δ : Comp C) → Hom (compSrc₀ Δ) → Hom (compSrc₁ Δ) → Hom (compTgt Δ)
+
+  inv' : ∀ {C}(Δ : Inv C) → Hom (invSrc Δ) → Hom (invTgt Δ)
+  inv' = inv
 
   comp' : ∀ {C}(Δ : Comp C) → Hom (compSrc₀ Δ) → Hom (compSrc₁ Δ) → Hom (compTgt Δ)
   comp' = comp
-
-{- example -}
 
 postulate
   a b c : Obj •
