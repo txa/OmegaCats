@@ -47,3 +47,4 @@ record ωCat : Set₁ where
     evalCathom : ∀ {Γ}{C : Cat Γ}{A B : Obj C}{γ : evalCon Γ} 
                → evalCat (hom (C [ A , B ])) γ ≡ ♭ (Glob.hom (evalCat C γ) (evalObj A γ) (evalObj B γ))
 
+{- Need to add equations for Var (and for wk) ! -}

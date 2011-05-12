@@ -9,9 +9,10 @@ mutual
     _,_ : (Γ : Con)(C : Cat Γ) → Con
 
   {- A category is either the base category or the hom category of a previosuly constructed category -}
-  data Cat (Γ : Con) : Set where
-    • : Cat Γ 
-    hom : HomSpec Γ → Cat Γ
+  data Cat : (Γ : Con) → Set where
+    • : ∀ {Γ} → Cat Γ 
+    hom : ∀ {Γ} → HomSpec Γ → Cat Γ
+    wk : ∀ {Γ} → (C : Cat Γ) → ∀ {D} → Cat (Γ , D)
 
   {- A HomSpec specifies a homset by a category and two objects -}
   record HomSpec (Γ : Con) : Set where
@@ -51,9 +52,20 @@ mutual
   {- We define object expressions, in the moment only id and comp
      should add lots of morphisms recording equations and coherence. -}
 
+  data Var : {Γ : Con}(C : Cat Γ) → Set where
+    vz : ∀ {Γ}{C : Cat Γ} → Var {Γ , C} (wk C {C})
+    vs : ∀ {Γ}{C D : Cat Γ} → Var {Γ} C → Var {Γ , D} (wk C {D})
+
   data Obj : {Γ : Con}(C : Cat Γ) → Set where 
+    var : ∀ {Γ}{C : Cat Γ} → Var C → Obj C
     id : ∀ {Γ}{C : Cat Γ }(a : Obj C) → Obj (hom (C [ a , a ]))
     comp : ∀ {Γ}{C : Cat Γ}(Δ : Comp C) → Hom (compSrc₀ Δ) → Hom (compSrc₁ Δ) → Obj (hom (compTgt Δ))
+
+  {- We need to define an extra type for Variables, otherwise wk introduces equivalent expressions.
+     Also we should define weak for Cat recursively, otherwise we have the same problem.
+-}
+
+
 
   {- Little hack needed because of Agda's current implementation of mutual. -}
   comp' : ∀ {Γ}{C : Cat Γ}(Δ : Comp C) → Hom (compSrc₀ Δ) → Hom (compSrc₁ Δ) → Hom (compTgt Δ)
