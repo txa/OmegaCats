@@ -1,148 +1,313 @@
-{-# OPTIONS --no-termination-check #-}
+-- a version where equality of cells is propositional, in particular,
+-- (x . y) ≈ (x' . y') iff x ≈ x' ∧ y ≈ y', ie. the fact is irrelevant
+-- of the proof used to define (x . y) == comp x y h , (x' . y') ==
+-- comp x' y' h' ie. ∀ x y h h' → comp x y h == comp x y h'
+-- Effectively this defines a Setoid of cells of an weak
+-- ω-category. This is necessary because we want *exactly one*
+-- composition for each composeable cells, not one composition for
+-- each proof that the cells are composeable.  The same goes for α:
+-- associativity. The proof of composeability is g.h.f is irrelevant
+-- there, otherwise we would have too many α's. 
+--
+-- We start from a globular set where equality is ≡ . A more precise
+-- way to do that is to start from a setoid, or more precisely, an
+-- indexed collection of setoids. That's to be done later. At the
+-- moment we're happy to have cong , subst
+
+-- but there are not enough cells! in particular we need one alpha for each composition,
+-- one λ and ρ for each composition with an appropriate unit!
+
+
+-- {-# OPTIONS --no-termination-check #-}
 -- {-# OPTIONS --show-implicit #-}
 
 module globSetCat where
 
 open import Data.Nat
-open import Data.Fin hiding (#_;_<_) renaming (suc to fsuc;zero to fzero)
+open import Data.Fin hiding (#_;_<_;_+_) renaming (suc to fsuc;zero to fzero)
 open import Data.Product 
 open import Data.Empty 
 open import Data.Unit hiding (tt ; _≤_ )
 open import Level
 open import Relation.Binary -- PropositionalEquality
+open import Relation.Binary.PropositionalEquality renaming (subst to ≡subst;trans to ≡trans;sym to ≡sym;cong to ≡cong;refl to ≡refl)
 open import Relation.Nullary.Core
-
-absurd : {A : Set} → ⊥ → A
-absurd ()
-
-
 
 
 -- a category structure on a set
 record GlobularSet : Set₁ where
   field
-    #_ : ℕ → Setoid zero zero
-    src : ∀ {n} → Setoid.Carrier (# (suc n)) → Setoid.Carrier (# n)
-    tgt : ∀ {n} → Setoid.Carrier (# (suc n)) → Setoid.Carrier (# n)
+    #_ : ℕ → Set
+    src : ∀ {n} → # (suc n) → # n
+    tgt : ∀ {n} → # (suc n) → # n
     
-    ss-st : ∀ {n x} → Setoid._≈_ (# (suc (suc n))) (src {suc (suc n)} (src x)) (src (tgt x))
-    ts-tt : ∀ {n x} → Setoid._≈_ (# (suc (suc n))) (tgt {suc (suc n)} (src x)) (tgt (tgt x))
-
-  _|~|_ : {n : ℕ} → Setoid.Carrier (# n) → Setoid.Carrier (# n) → Set
-  _|~|_ {n} x y = Setoid._≈_ (# n) x y 
-
-  |#|_ : ℕ → Set 
-  |#| n = Setoid.Carrier (# n)
-
+    ss-st : ∀ {n x} → src {n} (src x) ≡ src (tgt x)
+    ts-tt : ∀ {n x} → tgt {n} (src x) ≡ tgt (tgt x)
+    
 module Freeω (G : GlobularSet) where
   open GlobularSet G renaming (src to |src|;tgt to |tgt|)
-  open Setoid hiding (_≈_) renaming (Carrier to C; sym to Ssym ; refl to Srefl ; trans to Strans) 
 
   mutual 
     data Freeω : ℕ → Set where
-      emb : ∀ {n} → |#| n → Freeω n
-      id : ∀ {n} → Freeω n → Freeω (suc n)
-      comp : ∀ {n} → (m : Fin (suc n)) → (β α : Freeω (suc n)) → (src m β) ≈ (tgt m α) → Freeω (suc n)
-      alpha : ∀ {n} → (m : Fin (suc n)) → (z y x : Freeω (suc n)) → src m z ≈ tgt m y → src m y ≈ tgt m x → Freeω (suc (suc n))
+      emb : ∀ {n} → # n → Freeω n
+      id : ∀ {n} → Freeω n → Freeω (suc n) -- one identity , which can be iterated
+      comp : ∀ {n} → (m : Fin (suc n)) → (β α : Freeω (suc n)) → (src m β) ≈ (tgt m α) → Freeω (suc n) -- m compositions
+      alpha : ∀ {n} → (z y x : Freeω (suc n)) → src₀ z ≈ tgt₀ y → src₀ y ≈ tgt₀ x → Freeω (suc (suc n)) -- alpha one level up
+      alpha⁻ : ∀ {n} → (z y x : Freeω (suc n)) → src₀ z ≈ tgt₀ y → src₀ y ≈ tgt₀ x → Freeω (suc (suc n)) -- alpha one level up, the oposite direction
+      lid : ∀ {n} → (x : Freeω (suc n)) → Freeω (suc (suc n)) -- λ one level up
+      lid⁻ : ∀ {n} → (x : Freeω (suc n)) → Freeω (suc (suc n)) -- λ one level up, opposite dir
+      rid : ∀ {n} → (x : Freeω (suc n)) → Freeω (suc (suc n)) -- ρ inverse
+      rid⁻ : ∀ {n} → (x : Freeω (suc n)) → Freeω (suc (suc n)) -- ρ inverse
+      hol : ∀ {n}{x y : Freeω (suc n)} → src₀ x ≈ src₀ y → tgt₀ x ≈ tgt₀ y → hollow x → hollow y → Freeω (suc (suc n)) -- the inverse of hollow is implied
 
     infix 4 _≈_
 
     -- the diagonal
     data _≈_ : {n : ℕ} → Freeω n → Freeω n → Set where
-      ≈emb : ∀ {n : ℕ} {s s' : |#| n} → s |~| s' → _≈_ (emb s) (emb s') 
-      ≈id : ∀ {n : ℕ} → (m : Freeω n) → id m ≈ id m
-      ≈comp : ∀ {n : ℕ}{m : Fin (suc n)}{y x : Freeω (suc n)} → (h : src m y ≈ tgt m x) → comp m y x h ≈ comp m y x h
-      ≈α : ∀ {n : ℕ}{m : Fin (suc n)}{z y x z' y' x' : Freeω (suc n)} 
-                 → (h : src m z ≈ tgt m y) (h' : src m z' ≈ tgt m y')(k : src m y ≈ tgt m x)(k' : src m y' ≈ tgt m x') 
-                 → x ≈ x' →  y ≈ y' → z ≈ z' → alpha m z y x h k ≈ alpha m z' y' x' h' k'
---      ≈comp-tgt : ∀ {n : ℕ}{m : Fin (suc n)}{y x : Freeω (suc n)}{k : src m y ≈ tgt m x} → tgt m y ≈ tgt m (comp m y x k)
-{-      ≈ƛ : ∀ {n x} → lid n x ∼ lid n x
-      ≈ρ : ∀ {n x} → rid n x ∼ rid n x
-      ≈ξ : ∀ {n}{x}{y} → (h : src n x ∼ src n y) → (k : tgt n x ∼ tgt n y) → (H : hollow x) (K : hollow y) → hol x y h k H K  ∼ hol x y h k H K 
--}
+      ≈emb : ∀ {n : ℕ} {s s' : # n} → s ≡ s' → _≈_ (emb s) (emb s') 
+      ≈id : ∀ {n : ℕ} → {m m' : Freeω n} → m ≈ m' → id m ≈ id m'
+      ≈comp : ∀ {n : ℕ}{m : Fin (suc n)}{y x y' x' : Freeω (suc n)}{h : src m y ≈ tgt m x}{h' : src m y' ≈ tgt m x'} → y ≈ y' → x ≈ x' → comp m y x h ≈ comp m y' x' h'
+      ≈alpha : ∀ {n : ℕ}{z y x z' y' x' : Freeω (suc n)}{h h' k k'} → x ≈ x' →  y ≈ y' → z ≈ z' → alpha z y x h k ≈ alpha z' y' x' h' k'
+      ≈alpha⁻ : ∀ {n : ℕ}{z y x z' y' x' : Freeω (suc n)}{h h' k k'} → x ≈ x' →  y ≈ y' → z ≈ z' → alpha⁻ z y x h k ≈ alpha⁻ z' y' x' h' k'
+      ≈lid : ∀ {n}{x x' : Freeω (suc n)} → x ≈ x' → lid x ≈ lid x'
+      ≈lid⁻ : ∀ {n}{x x' : Freeω (suc n)} → x ≈ x' → lid⁻ x ≈ lid⁻ x'
+      ≈rid : ∀ {n}{x x' : Freeω (suc n)} → x ≈ x' → rid x ≈ rid x'
+      ≈rid⁻ : ∀ {n}{x x' : Freeω (suc n)} → x ≈ x' → rid⁻ x ≈ rid⁻ x'
+      ≈hol : ∀ {n}{x y : Freeω (suc n)}(h h' : src₀ x ≈ src₀ y)(k k' : tgt₀ x ≈ tgt₀ y)(l l' : hollow x)(m m' : hollow y) → hol h k l m ≈ hol h' k' l' m'
+
+
+    hollow : {n : ℕ} → Freeω n → Set
+    hollow (emb y) = ⊥
+    hollow (id y) = ⊤
+    hollow (comp m β α y) = ⊥
+    hollow (alpha z y x y' y0) = ⊤
+    hollow (lid x) = ⊤
+    hollow (hol y' y0 y1 y2) = ⊤ 
+    hollow (alpha⁻ z y x y' y0) = ⊤
+    hollow (lid⁻ x) = ⊤
+    hollow (rid x) = ⊤
+    hollow (rid⁻ x) = ⊤
+
+
+
+--    tgt₀-comp : ∀ {n} → (m : Fin (suc n)) → (β α : Freeω (suc n)) → (src m β) ≈ (tgt m α) → Freeω n
+--    tgt₀-comp m β α h = ? 
+
     tgt : ∀ {n} → (m : Fin (suc n)) → Freeω (suc n) → Freeω (n ℕ-ℕ m)
-    tgt fzero (emb y) = emb (|tgt| y)
-    tgt fzero (comp _ g f _) = tgt fzero g
-    tgt fzero (id y) = y
-    tgt fzero (alpha m z y x zy yx) = tgt-m-alpha m z y x zy yx -- 
-    tgt {zero} (fsuc ()) x 
-    tgt {suc n} (fsuc i) x = tgt i (tgt fzero x)
+    tgt fzero x = tgt₀ x
+    tgt {zero} (fsuc ()) x
+    tgt {suc n} (fsuc i) x = tgt i (tgt₀ x)
 
+
+    -- this is needed to be separate for termination
     src : ∀ {n} → (m : Fin (suc n)) → Freeω (suc n) → Freeω (n ℕ-ℕ m)
-    src fzero (emb y) = emb (|src| y)
-    src fzero (comp _ g f _) = src fzero f
-    src fzero (id y) = y
-    src fzero (alpha m z y x zy yx) = src-m-alpha m z y x zy yx -- comp m z (comp m y x yx) {!zy!}  
+    src fzero x = src₀ x -- (emb y) = emb (|src| y)
     src {zero} (fsuc ()) x
-    src {suc n} (fsuc i) x = src i (src fzero x) 
+    src {suc n} (fsuc i) x = src i (src₀ x)
 
-    ≈refl : ∀ {n} → (x : Freeω n ) → x ≈ x
-    ≈refl (emb {n} y) = ≈emb (Srefl (# n))
-    ≈refl (id y) = ≈id y
-    ≈refl (comp m β α y) = ≈comp y
-    ≈refl (alpha m z y x h k) = ≈α h h k k (≈refl x) (≈refl y) (≈refl z) 
+    tgt₀ : ∀ {n} → Freeω (suc n) → Freeω n
+    tgt₀ (emb y) = emb (|tgt| y)
+    tgt₀ (id y) = y
+    tgt₀ (comp fzero β α h) = tgt₀ β
+    tgt₀ {zero} (comp (fsuc ()) β α h)
+    tgt₀ {suc n} (comp (fsuc i) β α h) = comp i (tgt₀ β) (tgt₀ α) (lem-s₊t₀β≈t₊t₀α i h) 
+    tgt₀ (alpha z y x zy yx) = tgt₀-alpha z y x zy yx 
+    tgt₀ (lid x) = x 
+    tgt₀ (alpha⁻ z y x y' y0) = src₀-alpha z y x y' y0
+    tgt₀ (lid⁻ x) = src₀-lid x
+    tgt₀ (rid x) = x
+    tgt₀ (rid⁻ x) = src₀-rid x
+    tgt₀ (hol {n}{x}{y} d e f g) = y 
 
-    h-src : ∀ {n}{i} x → src {suc n} (fsuc i) x ≈ src i (src fzero x) 
-    h-src {n}{i} x = ≈refl _
+    src₀ : ∀ {n} → Freeω (suc n) → Freeω n
+    src₀ (emb y) = emb (|src| y)
+    src₀ (id y) = y
+    src₀ (comp fzero β α y) = src₀ α 
+    src₀ {zero} (comp (fsuc ()) β α h)
+    src₀ {suc n} (comp (fsuc i) β α h) = comp i (src₀ β) (src₀ α) (lem-s₊s₀β≈t₊s₀α i h) 
+    src₀ (alpha z y x zy yx) = src₀-alpha z y x zy yx
+    src₀ (alpha⁻ z y x y' y0) = tgt₀-alpha z y x y' y0
+    src₀ (lid x) = src₀-lid x -- comp fzero (id (tgt₀ x)) x {!!}
+    src₀ (lid⁻ x) = x
+    src₀ (rid x) = src₀-rid x
+    src₀ (rid⁻ x) = x
+    src₀ (hol {n}{x}{y} a b c d) = x 
 
-    h-tgt : ∀ {n}{i} x → tgt {suc n} (fsuc i) x ≈ tgt i (tgt fzero x)
-    h-tgt {n}{i} x =  ≈refl _ 
+    tgt₀-alpha : ∀ {n} → (z y x : Freeω (suc n)) → src₀ z ≈ tgt₀ y → src₀ y ≈ tgt₀ x → Freeω (suc n)
+    tgt₀-alpha z y x zy yx = comp fzero z (comp fzero y x yx) zy 
 
-    ≈trans : {n : ℕ}{z y x : Freeω n} → z ≈ y → y ≈ x → z ≈ x
-    ≈trans {n} (≈emb y) (≈emb y') = ≈emb (Strans (# n) y y')
-    ≈trans (≈id m) (≈id .m) = ≈refl (id m)
-    ≈trans (≈comp {n}{m}{y}{x} h) (≈comp .h) = ≈refl (comp m y x h)
-    ≈trans (≈α zy zy' yx yx' xx' yy' zz') (≈α {n}{m}{z}{y}{x}{z'}{y'}{x'} .zy' h' .yx' k' y1 y2 y3) = ≈α zy h' yx k' (≈trans xx' y1) (≈trans yy' y2) (≈trans zz' y3) 
+    src₀-alpha : ∀ {n} → (z y x : Freeω (suc n)) → src₀ z ≈ tgt₀ y → src₀ y ≈ tgt₀ x → Freeω (suc n)
+    src₀-alpha z y x zy yx = comp fzero (comp fzero z y zy) x yx 
+
+    src₀-lid : ∀ {n} → (x : Freeω (suc n)) → Freeω (suc n)
+    src₀-lid x = comp fzero (id (tgt₀ x)) x ≈refl 
+
+    src₀-rid : ∀ {n} → (x : Freeω (suc n)) → Freeω (suc n)
+    src₀-rid x = comp fzero  x (id (src₀ x)) ≈refl 
+
+
+-- globularity lemmas
+
+
+
+    lem-s₊t₀β≈t₊t₀α : ∀{n}(i : Fin (suc n)){α β : Freeω (suc (suc n))} → src (fsuc i) β ≈ tgt (fsuc i) α → src i (tgt₀ β) ≈ tgt i (tgt₀ α)
+    lem-s₊t₀β≈t₊t₀α fzero {α}{β} h = glob-s₀t₀≈s₀s₀ β ■ h
+    lem-s₊t₀β≈t₊t₀α {zero} (fsuc ()) h
+    lem-s₊t₀β≈t₊t₀α {suc n} (fsuc i) {α}{β} h = ≈cong-src i (glob-s₀t₀≈s₀s₀ β) ■ h  
+
+    lem-s₊s₀β≈t₊s₀α : ∀ {n}(i : Fin (suc n)){α β : Freeω (suc (suc n))} → src (fsuc i) β ≈ tgt (fsuc i) α → src i (src₀ β) ≈ tgt i (src₀ α)
+    lem-s₊s₀β≈t₊s₀α fzero {α}{β} h = h ■ glob-t₀t₀≈t₀s₀ α 
+    lem-s₊s₀β≈t₊s₀α {zero} (fsuc ()) h
+    lem-s₊s₀β≈t₊s₀α {suc n} (fsuc i) {α}{β} h = h ■  ≈cong-tgt i (glob-t₀t₀≈t₀s₀ α) 
+
+    glob-s₀t₀≈s₀s₀ : ∀ {n}(x : Freeω (suc (suc n))) → src₀ (tgt₀ x) ≈ src₀ (src₀ x)
+    glob-s₀t₀≈s₀s₀ (emb y) = ≈emb (≡sym ss-st) -- ≡≈cong emb (≡sym ss-st)
+    glob-s₀t₀≈s₀s₀ (id y) = ≈refl
+    glob-s₀t₀≈s₀s₀ (comp fzero β α y) = glob-s₀t₀≈s₀s₀ β ■ ≈cong-src₀ y ■ (glob-s₀t₀≈s₀s₀ α)
+    glob-s₀t₀≈s₀s₀ (comp (fsuc fzero) β α y) = glob-s₀t₀≈s₀s₀ α
+    glob-s₀t₀≈s₀s₀ {zero} (comp (fsuc (fsuc ())) β α y)
+    glob-s₀t₀≈s₀s₀ {suc n} (comp (fsuc (fsuc i)) β α y) = ≈comp (glob-s₀t₀≈s₀s₀ β) (glob-s₀t₀≈s₀s₀ α)
+    glob-s₀t₀≈s₀s₀ (alpha z y x zy yx) = ≈refl 
+    glob-s₀t₀≈s₀s₀ (alpha⁻ z y x zy yx) = ≈refl
+    glob-s₀t₀≈s₀s₀ (lid x) = ≈refl
+    glob-s₀t₀≈s₀s₀ (lid⁻ x) = ≈refl
+    glob-s₀t₀≈s₀s₀ (rid x) = ≈refl
+    glob-s₀t₀≈s₀s₀ (rid⁻ x) = ≈refl
+    glob-s₀t₀≈s₀s₀ (hol a b c d) = ≈sym a  
+
+
+    glob-s₀s₀≈s₀t₀ : ∀ {n}(x : Freeω (suc (suc n))) → src₀ (src₀ x) ≈ src₀ (tgt₀ x)
+    glob-s₀s₀≈s₀t₀ x = ≈sym (glob-s₀t₀≈s₀s₀ x)
+
+    glob-t₀t₀≈t₀s₀ : ∀ {n}(x : Freeω (suc (suc n))) → tgt₀ (tgt₀ x) ≈ tgt₀ (src₀ x)
+    glob-t₀t₀≈t₀s₀ (emb y) = ≈emb (≡sym ts-tt)
+    glob-t₀t₀≈t₀s₀ (id y) = ≈refl
+    glob-t₀t₀≈t₀s₀ (comp fzero β α y) = glob-t₀t₀≈t₀s₀ β ■ ≈cong-tgt₀ y ■ (glob-t₀t₀≈t₀s₀ α)
+    glob-t₀t₀≈t₀s₀ (comp (fsuc fzero) β α y) = glob-t₀t₀≈t₀s₀ β
+    glob-t₀t₀≈t₀s₀ {zero} (comp (fsuc (fsuc ())) β α y)
+    glob-t₀t₀≈t₀s₀ {suc n} (comp (fsuc (fsuc i)) β α y) = ≈comp (glob-t₀t₀≈t₀s₀ β) (glob-t₀t₀≈t₀s₀ α) 
+    glob-t₀t₀≈t₀s₀ (alpha z y x zy yx) = ≈refl 
+    glob-t₀t₀≈t₀s₀ (alpha⁻ z y x zy yx) = ≈refl
+    glob-t₀t₀≈t₀s₀ (lid x) = ≈refl
+    glob-t₀t₀≈t₀s₀ (lid⁻ x) = ≈refl
+    glob-t₀t₀≈t₀s₀ (rid x) = ≈refl
+    glob-t₀t₀≈t₀s₀ (rid⁻ x) = ≈refl
+    glob-t₀t₀≈t₀s₀ (hol a b c d) = ≈sym b 
+
+
+    glob-t₀s₀≈t₀t₀ : ∀ {n}(x : Freeω (suc (suc n))) → tgt₀ (src₀ x) ≈ tgt₀ (tgt₀ x)  
+    glob-t₀s₀≈t₀t₀ x = ≈sym (glob-t₀t₀≈t₀s₀ x)
+
+    lem-s₊t₀≈s₊s₀ : ∀ {n}(i : Fin (suc n))(x : Freeω (suc (suc n))) → src i (tgt₀ x) ≈ src i (src₀ x)
+    lem-s₊t₀≈s₊s₀ fzero x = glob-s₀t₀≈s₀s₀ x
+    lem-s₊t₀≈s₊s₀ {zero} (fsuc ()) x
+    lem-s₊t₀≈s₊s₀ {suc n} (fsuc i) x = ≈cong-src i (glob-s₀t₀≈s₀s₀ x) 
+
+    lem-src : ∀ {n}{i} (x : Freeω (suc (suc n))) → src (fsuc i) x ≈ src {n} i (src₀ x) 
+    lem-src (emb y) = ≈refl
+    lem-src (id y) = ≈refl
+    lem-src (comp m β α y) = ≈refl 
+    lem-src (alpha z y x zy yx) = ≈refl 
+    lem-src (alpha⁻ z y x zy yx) = ≈refl
+    lem-src (lid x) = ≈refl 
+    lem-src (lid⁻ x) = ≈refl
+    lem-src (rid x) = ≈refl
+    lem-src (rid⁻ x) = ≈refl
+    lem-src (hol a b c d) = ≈refl 
+
+
+    lem-tgt : ∀ {n}{i} (x : Freeω (suc (suc n))) → tgt (fsuc i) x ≈ tgt i (tgt fzero x)
+    lem-tgt (emb y) = ≈refl
+    lem-tgt (id y) = ≈refl
+    lem-tgt (comp m β α y) = ≈refl 
+    lem-tgt (alpha z y x zy yx) = ≈refl 
+    lem-tgt (alpha⁻ z y x zy yx) = ≈refl
+    lem-tgt (lid x) = ≈refl
+    lem-tgt (lid⁻ x) = ≈refl
+    lem-tgt (rid x) = ≈refl
+    lem-tgt (rid⁻ x) = ≈refl
+    lem-tgt (hol a b c d) = ≈refl 
 
 
     infixl 5 _■_
     _■_ : {n : ℕ}{z y x : Freeω n} → z ≈ y → y ≈ x → z ≈ x
     _■_ = ≈trans
 
-    src-m-alpha : ∀ {n}(m : Fin (suc n)) (z y x : Freeω (suc n)) → (h : src m z ≈ tgt m y) → (k : src m y ≈ tgt m x) → Freeω (suc n)
-    src-m-alpha {zero} fzero z y x h k = comp fzero z (comp fzero y x k) h
-    src-m-alpha {suc n} fzero z y x h k = comp fzero z (comp fzero y x k) h
-    src-m-alpha {zero} (fsuc ()) _ _ _ _ _
-    src-m-alpha {suc n} (fsuc i) z y x h k = comp (fsuc i) z (comp (fsuc i) y x k) (h ■ (h-tgt {_}{i} y ■ ≈refl _)) 
+
+    ≈sym : ∀ {n : ℕ}{x y : Freeω n} → x ≈ y → y ≈ x
+    ≈sym (≈emb y) = ≈emb (≡sym y)
+    ≈sym (≈id  y) = ≈id (≈sym y)
+    ≈sym (≈comp yy' xx') = ≈comp (≈sym yy') (≈sym xx') 
+    ≈sym (≈alpha xx' yy' zz') = ≈alpha (≈sym xx') (≈sym yy') (≈sym zz')
+    ≈sym (≈alpha⁻ xx' yy' zz') = ≈alpha⁻ (≈sym xx') (≈sym yy') (≈sym zz')
+    ≈sym (≈lid xx') = ≈lid (≈sym xx')
+    ≈sym (≈lid⁻ y) = ≈lid⁻ (≈sym y)
+    ≈sym (≈rid y) = ≈rid (≈sym y)
+    ≈sym (≈rid⁻ y) = ≈rid⁻ (≈sym y)
+    ≈sym (≈hol a b c d e f g h) = ≈hol b a d c f e h g 
 
 
-    tgt-m-alpha : ∀ {n}(m : Fin (suc n)) (z y x : Freeω (suc n)) → (h : src m z ≈ tgt m y) → (k : src m y ≈ tgt m x) → Freeω (suc n)
-    tgt-m-alpha fzero z y x h k = comp fzero z (comp fzero y x k) h
-    tgt-m-alpha {zero} (fsuc ()) z y x h k
-    tgt-m-alpha {suc n} (fsuc i) z y x h k = comp (fsuc i) (comp (fsuc i) z y h) x k 
+    ≈trans : ∀ {n}{x y z : Freeω n} → x ≈ y → y ≈ z → x ≈ z
+    ≈trans (≈emb y) (≈emb y') = ≈emb (≡trans y y')
+    ≈trans (≈id xy) (≈id xz) = ≈id (≈trans xy xz)
+    ≈trans (≈comp yy′ xx′) (≈comp y′y″ x′x″ ) = ≈comp (≈trans yy′ y′y″) (≈trans xx′ x′x″)  
+    ≈trans (≈alpha y0 y1 y2) (≈alpha y4 y5 y6) = ≈alpha (≈trans y0 y4) (≈trans y1 y5) (≈trans y2 y6) 
+    ≈trans (≈lid y) (≈lid y') = ≈lid (≈trans y y') 
+    ≈trans (≈alpha⁻ y0 y1 y2) (≈alpha⁻ y4 y5 y6) = ≈alpha⁻ (≈trans y0 y4) (≈trans y1 y5) (≈trans y2 y6)
+    ≈trans (≈lid⁻ y) (≈lid⁻ y') = ≈lid⁻ (≈trans y y')
+    ≈trans (≈rid y) (≈rid y') = ≈rid (≈trans y y')
+    ≈trans (≈rid⁻ y) (≈rid⁻ y') = ≈rid⁻ (≈trans y y')
+    ≈trans (≈hol h h' k k' l l' m m') (≈hol .h' h0 .k' k0 .l' l0 .m' m0) = ≈hol h h0 k k0 l l0 m m0 
+
+    ≈cong-src₀ : ∀ {n}{x y : Freeω (suc n)} → x ≈ y → src₀ x ≈ src₀ y
+    ≈cong-src₀ (≈emb y) = ≈emb (≡cong |src| y)
+    ≈cong-src₀ (≈id y) = y
+    ≈cong-src₀ (≈comp {n} {fzero} yy' xx') = ≈cong-src₀ xx'
+    ≈cong-src₀ (≈comp {zero} {fsuc ()} yy' xx')
+    ≈cong-src₀ (≈comp {suc n} {fsuc i} yy' xx') = ≈comp (≈cong-src₀ yy') (≈cong-src₀ xx') 
+    ≈cong-src₀ (≈alpha y0 y1 y2) = ≈comp (≈comp y2 y1) y0 
+    ≈cong-src₀ (≈alpha⁻ y0 y1 y2) = ≈comp y2 (≈comp y1 y0)
+    ≈cong-src₀ (≈lid y) = ≈comp (≈id (≈cong-tgt₀ y)) y
+    ≈cong-src₀ (≈lid⁻ y) = y
+    ≈cong-src₀ (≈rid y) = ≈comp y (≈id (≈cong-src₀ y))
+    ≈cong-src₀ (≈rid⁻ y) = y
+    ≈cong-src₀ (≈hol a b c d e f g h) = ≈refl 
 
 
+    ≈cong-tgt₀ : ∀ {n}{x y : Freeω (suc n)} → x ≈ y → tgt₀ x ≈ tgt₀ y
+    ≈cong-tgt₀ (≈emb y) = ≈emb (≡cong |tgt| y)
+    ≈cong-tgt₀ (≈id y) = y
+    ≈cong-tgt₀ (≈comp {n} {fzero} yy' xx') = ≈cong-tgt₀ yy'
+    ≈cong-tgt₀ (≈comp {zero} {fsuc ()} yy' xx')
+    ≈cong-tgt₀ (≈comp {suc n} {fsuc i} yy' xx') = ≈comp (≈cong-tgt₀ yy') (≈cong-tgt₀ xx') 
+    ≈cong-tgt₀ (≈alpha xx' yy' zz') = ≈comp zz' (≈comp yy' xx') 
+    ≈cong-tgt₀ (≈hol a b c d e f g h) = ≈refl
+    ≈cong-tgt₀ (≈alpha⁻ y0 y1 y2) = ≈comp (≈comp y2 y1) y0
+    ≈cong-tgt₀ (≈lid y) = y
+    ≈cong-tgt₀ (≈lid⁻ y) = ≈comp (≈id (≈cong-tgt₀ y)) y
+    ≈cong-tgt₀ (≈rid y) = y
+    ≈cong-tgt₀ (≈rid⁻ y) = ≈comp y (≈id (≈cong-src₀ y))
 
 
-{-
-    ≈refl (emb s) = ≈emb ? 
-    ≈refl (comp n y x h) = ≈comp h
-    ≈refl (alpha {n} m z y x h k) = ≈α h h k k (≈refl x) (≈refl y) (≈refl z)
--}
---    ≈refl (lid n x) = ≈ƛ
---    ≈refl (rid n x) = ≈ρ
---    ≈refl (hol x y h k H K ) = ≈ξ h k H K 
+    ≈cong-src : ∀ {n}{x y : Freeω (suc n)} → (m : Fin (suc n)) → x ≈ y → src m x ≈ src m y
+    ≈cong-src {n}{x}{y} fzero h = ≈cong-src₀ h
+    ≈cong-src {zero} (fsuc ()) h
+    ≈cong-src {suc n} (fsuc i) h = ≈cong-src i (≈cong-src₀ h) 
 
-{-
-           -----
-    ∼sym : {i j : Freeω} →  i ∼ j → j ∼ i
-    ∼sym .{emb s} .{emb s'} (≈emb {s} {s'} y) = ≈emb (Ssym y)
-    ∼sym .{comp n y x h} .{comp n y x h} (≈comp {n} {y} {x} h) = ≈comp h
-    ∼sym .{alpha h k} .{alpha h' k'} (≈α h h' k k' y0 y1 y2) = ≈α h' h k' k (∼sym y0) (∼sym y1) (∼sym y2)
-    ∼sym .{lid n x} .{lid n x} (≈ƛ {n}{x}) = ≈ƛ
-    ∼sym .{rid n x} .{rid n x} (≈ρ {n}{x}) = ≈ρ
-    ∼sym .{hol x y h k H K} .{hol x y h k H K} (≈ξ {n} {x} {y} h k H K) = ≈ξ h k H K 
-           -----
--}
-{-    ∼trans :  {i j k : Freeω} → i ∼ j → j ∼ k → i ∼ k
-    ∼trans (≈emb y) (≈emb y') = ≈emb (Strans y y')
-    ∼trans (≈comp h) (≈comp .h) = ≈comp h
-    ∼trans (≈α {x}{y}{z}{x'}{y'}{z'}{n} h h' k k' xx' yy' zz') (≈α .h' x'y' .k' y'z' x'x' y'y' z'z') = ≈α h x'y' k y'z' (∼trans xx' x'x') (∼trans yy' y'y') (∼trans zz' z'z')
-    ∼trans ≈ƛ ≈ƛ = ≈ƛ
-    ∼trans ≈ρ ≈ρ = ≈ρ
-    ∼trans (≈ξ sxsy txty H K ) (≈ξ .sxsy .txty .H .K) = ≈ξ sxsy txty H K
+    ≈cong-tgt : ∀ {n}{x y : Freeω (suc n)} → (m : Fin (suc n)) → x ≈ y → tgt m x ≈ tgt m y
+    ≈cong-tgt fzero h = ≈cong-tgt₀ h
+    ≈cong-tgt {zero} (fsuc ()) h
+    ≈cong-tgt {suc n} (fsuc i) h = ≈cong-tgt i (≈cong-tgt₀ h) 
 
 
-    ∼IsEquivalence : IsEquivalence _∼_
-    ∼IsEquivalence = record { refl = λ {x} → ∼refl x; sym = λ {i}{j} → ∼sym {i}{j}; trans = ∼trans } 
--}
+    ≈refl : ∀ {n}{x : Freeω n} → x ≈ x
+    ≈refl {n} {emb y} = ≈emb ≡refl
+    ≈refl {suc n} {id y} = ≈id ≈refl
+    ≈refl {suc n} {comp m β α y} = ≈comp ≈refl ≈refl
+    ≈refl {(suc (suc n))} {alpha z y x zy yx} = ≈alpha ≈refl ≈refl ≈refl 
+    ≈refl {(suc (suc n))} {alpha⁻ z y x y' y0} = ≈alpha⁻ ≈refl ≈refl ≈refl
+    ≈refl {suc (suc n)} {lid x} = ≈lid ≈refl
+    ≈refl {(suc (suc n))} {lid⁻ x} = ≈lid⁻ ≈refl
+    ≈refl {(suc (suc n))} {rid x} = ≈rid ≈refl
+    ≈refl {(suc (suc n))} {rid⁻ x} = ≈rid⁻ ≈refl
+    ≈refl {suc (suc n)} {hol a b c d} = ≈hol a a b b c c d d 
