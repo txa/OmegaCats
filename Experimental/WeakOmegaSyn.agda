@@ -77,6 +77,7 @@ module WeakOmega (G : Glob) where
       comp : ∀ {C : Cat}(a b c : Obj C){n : ℕ} → (h : Tele a b n)(k : Tele b c n)(l : Tele a c n) → CompTele h k l → ∀ {h' k' l' : HomSpec} → NormTele h h' → NormTele k k' → NormTele l l' → Hom h' → Hom k' → Hom l'
       embArr : {t : GHomSpec}{t' : HomSpec} → (T : EmbHomSpec t t') → (f : Glob.obj (GTNormSpec (GThom t))) → Hom t'
       coh : ∀ {C C' : Cat}{a : Obj C}{a' : Obj C'}{H : C ≐Cat C'} → H ⊢ a ≐Obj a' → Hom (C [ a , substObj H a' ])
+      coh⁻ : ∀ {C C' : Cat}{a : Obj C}{a' : Obj C'}{H : C ≐Cat C'} → H ⊢ a ≐Obj a' → Hom (C [ substObj H a' , a ])
 --      coh : ∀ {t t' : HomSpec}{f : Hom t}{f' : Hom t'}{ H : t ≐HS t'} → H ⊢ f ≐Hom f' → Hom ((hom t) [ (⇑ f) , ⇑ (substHom H f') ])
 {--      coh : ∀ {c : Cat}{a b : Obj c}(f f' : Hom (c [ a , b ])) → {te : GTele} → (c∥∥te : c ∥∥Cat te) → {a' b' : Glob.obj (GTHom te)} → c∥∥te ⊢ a ∥∥Obj a' → c∥∥te ⊢ b ∥∥Obj b' → (ξ : Glob.obj (GTHom ( GThom (te ⟦ a' , b' ⟧)))) →
 --            (_∥∥Hom_ {_}{_}{_}{te}{a'}{b'} f ξ) → (_∥∥Hom_ {_}{_}{_}{te}{a'}{b'} f' ξ) → Hom ((hom (c [ a , b ])) [ ⇑ f , ⇑ f' ])
@@ -166,6 +167,9 @@ module WeakOmega (G : Glob) where
     normTele {C}{a}{b} here = C [ a , b ]
     normTele {C}{a}{b} (there {n}{h} f g) = (hom (normTele h)) [ (⇑ f) , (⇑ g) ]
 
+    catTele : ∀ {C : Cat}{a b : Obj C}{n : ℕ} → Tele a b n → Cat
+    catTele h = hom (normTele h)
+
     idTele : ∀ {C} (a : Obj C) → (n : ℕ) → Σ (Tele a a n) (λ t → Hom (normTele t))
     idTele a zero = here , id a
     idTele a (suc n) with idTele a n 
@@ -192,6 +196,7 @@ module WeakOmega (G : Glob) where
     data _≐HS_ : HomSpec → HomSpec → Set where
       ≐[] : ∀ {C C' : Cat}{s t : Obj C}{s' t' : Obj C'} → (H : C ≐Cat C') → H ⊢ s ≐Obj s' → H ⊢ t ≐Obj t' → C [ s , t ] ≐HS C' [ s' , t' ]
     
+
     ≐HSSym : ∀ {h h'} → h ≐HS h' → h' ≐HS h
     ≐HSSym (≐[] H y y') = ≐[] (≐CatSym H) (≐ObjSym y) (≐ObjSym y') 
 
@@ -208,16 +213,104 @@ module WeakOmega (G : Glob) where
     substObj {.(hom h)} {.(hom h')} (≐hom {h} {h'} y) (⇑ {.h'} f) = ⇑ (substHom y f) 
 
     substHom : {h h' : HomSpec} → h ≐HS h' → Hom h' → Hom h
-    substHom {.• [ s , t ]} {.• [ s' , t' ]} (≐[] {.•} {.•} {.s} {.t} {.s'} {.t'} ≐• s≐s' t≐t') f = comp s s' t here here here CThere NThere NThere NThere (coh s≐s') 
-                                                                                                    (comp s' t' t here here here CThere NThere NThere NThere f (coh (≐ObjSym t≐t')))
-    substHom {(hom h) [ ⇑ f , ⇑ g ]} {(hom h') [ ⇑ f' , ⇑ g' ]} (≐[] (≐hom h≐h') f≐f' g≐g') ξ = {!!}
+    substHom {.• [ s , t ]} {.• [ s' , t' ]} (≐[] ≐• ss' tt') x' = comp s s' t here here here CThere NThere NThere NThere (coh ss') (comp s' t' t here here here CThere NThere NThere NThere x' (coh⁻ tt'))
+    substHom {hom (.• [ s , t ]) [ ⇑ s₁ , ⇑ t₁ ]} {hom (.• [ s' , t' ]) [ ⇑ s₁′ , ⇑ t₁′ ]} (≐[] (≐hom (≐[] ≐• ss' tt')) ss′₁ tt′₁) x' 
+             = 
+             comp {hom (• [ s , t ])} 
+                  (⇑ s₁) 
+                  (substObj (≐hom (≐[] ≐• ss' tt')) (⇑ s₁′)) 
+                  (⇑ t₁) 
+                  here here here CThere NThere NThere NThere 
+                    (coh ss′₁) 
+                    (comp 
+                      (substObj (≐hom (≐[] ≐• ss' tt')) (⇑ s₁′))
+                      (substObj (≐hom (≐[] ≐• ss' tt')) (⇑ t₁′)) 
+                      (⇑ t₁) 
+                      here here here CThere NThere NThere NThere 
+                      (comp {•}
+                        s
+                        s'
+                        t
+                        (there {•}{s}{s'}{0}{here} (coh ss') (coh ss')) 
+                        (there {•}{s'}{t}{0}{here}
+                          (comp {•} s' t' t here here here CThere NThere NThere NThere s₁′ (coh⁻ tt'))
+                          (comp {•} s' t' t here here here CThere NThere NThere NThere t₁′ (coh⁻ tt'))) 
+                        (compTele (there {•}{s}{s'}{0}{here} (coh ss') (coh ss')) 
+                                  (there {•}{s'}{t}{0}{here} (comp {•} s' t' t here here here CThere NThere NThere NThere s₁′ (coh⁻ tt'))
+                                                             (comp {•} s' t' t here here here CThere NThere NThere NThere t₁′ (coh⁻ tt'))) ) 
+                        (lemCompTele _ _) 
+                        (lemNormTele _) (lemNormTele _) (lemNormTele _)
+                        (id (⇑ (coh ss')))
+                        (comp {•} s' t' t 
+                          (there {•}{s'}{t'}{0}{here} s₁′ t₁′) 
+                          (there {•}{t'}{t}{0}{here} (coh⁻ tt') (coh⁻ tt')) 
+                          (compTele (there {•}{s'}{t'}{0}{here} s₁′ t₁′) (there {•}{t'}{t}{0}{here} (coh⁻ tt') (coh⁻ tt'))) 
+                          (lemCompTele _ _)
+                          {normTele (there {•}{s'}{t'}{0}{here} s₁′ t₁′)}{normTele (there {•}{t'}{t}{0}{here} (coh⁻ tt') (coh⁻ tt'))}
+                            {normTele (compTele (there {•}{s'}{t'}{0}{here} s₁′ t₁′) (there {•}{t'}{t}{0}{here} (coh⁻ tt') (coh⁻ tt')))}
+                          (lemNormTele _) (lemNormTele _)(lemNormTele _)
+                          x' 
+                          (id (⇑ (coh⁻ tt')))
+                        )
+                      ) 
+                      (coh⁻ tt′₁)
+                    ) 
 
-{-                                                                        comp s (substObj C≐C' s') t here here here CThere NThere NThere NThere (coh s≐s') 
-                                                                           (comp (substObj C≐C' s') (substObj C≐C' t') t here here here CThere {!!} {!!} {!!} 
-                                                                            (comp {!!} {!!} {!!} {!!} {!!} {!!} {!!} {!!} {!!} {!!} (coh (≐ObjRefl {!!})) {!!} ) 
-                                                                             (coh (≐ObjSym t≐t'))) 
+-- comp {hom (• [ s , t ])} (⇑ s₁) (substObj (≐hom (≐[] ≐• ss' tt')) (⇑ s₁′)) (⇑ t₁) here here here CThere NThere NThere NThere (coh ss'₁) (comp (substObj (≐hom (≐[] ≐• ss' tt')) (⇑ s₁′)) (substObj (≐hom (≐[] ≐• ss' tt')) (⇑ t₁′) ) (⇑ t₁) here here here CThere NThere NThere NThere (comp (⇑ s₁) (substObj (≐hom (≐[] ≐• ss' tt')) (⇑ s₁′)) (⇑ t₁) (there (coh (⇑ ss′₁)) (coh (⇑ ss′₁))) {!!} {!!} {!!} {!!} {!!} {!!} (id (⇑ (coh ss'₁))) (comp (substObj (≐hom (≐[] ≐• ss' tt')) (⇑ s₁′) (substObj (≐hom (≐[] ≐• ss' tt')) (⇑ t₁′)) t₁ (there {!!} {!!}) (there (coh tt'₁) (coh tt'₁)) (there {!!} {!!}) {!!} {!!} {!!} {!!} x' (id (⇑ (coh tt'₁))))) (coh⁻ tt'₁))
+{-
+Goal: Hom
+      (hom (• [ s , t ]) [ substObj (≐hom (≐[] ≐• ss' tt')) s₁' ,
+       substObj (≐hom (≐[] ≐• ss' tt')) t₁' ])
+-}
+    substHom {hom ((hom h) [ s , t ]) [ s' , t' ]} {hom ((hom h') [ s0 , t0 ]) [ s1 , t1 ]} (≐[] (≐hom (≐[] (≐hom y) y' y0)) ss' tt') x' = {!!}
+{-    substHom {.• [ s , t ]} {.• [ s' , t' ]} (≐[] ≐• ss' tt') x' = comp s (substObj ≐• s') t here here here CThere NThere NThere NThere (coh ss') (comp (substObj ≐• s') (substObj ≐• t') t here here here CThere NThere NThere NThere x' (coh⁻ tt'))
+    substHom {(hom h) [ s , t ]} {(hom h') [ s' , t' ]} (≐[] (≐hom hh') ss' tt') x' = comp s (substObj (≐hom hh') s') t here here here CThere NThere NThere NThere (coh ss') (comp (substObj (≐hom hh') s') (substObj (≐hom hh') t') t here here here CThere NThere NThere NThere {!!} (coh⁻ tt')) 
+-}
+     -- telescopes in the same category, because things are upside down 
+    data _≐Tele_ {C : Cat} : ∀ {a b a' b' : Obj C} → ∀ {n} → Tele a b n → Tele a' b' n → Set where
+      ≐here : ∀ {a a' b b'} → ≐CatRefl C ⊢ a ≐Obj a' → ≐CatRefl C ⊢ b ≐Obj b' → here {C}{a}{b} ≐Tele here {C}{a'}{b'}
+      ≐there : ∀ {a b a' b' : Obj C}{n}{t : Tele a b n}{t' : Tele a' b' n}{T : t ≐Tele t'} → 
+               (f g : Hom (normTele t)) → 
+               (f' g' : Hom (normTele t')) → 
+               (≐Tele→≐HS T) ⊢ f ≐Hom f' → (≐Tele→≐HS T) ⊢ g ≐Hom g' → (there {C}{a}{b}{n}{t} f g) ≐Tele (there {C}{a'}{b'}{n}{t'} f' g')
+   
+    ≐Tele→≐HS : ∀ {C}{a b a' b' : Obj C}{n : ℕ}{t : Tele a b n}{t' : Tele a' b' n} → t ≐Tele t' → (normTele t) ≐HS (normTele t')
+    ≐Tele→≐HS {C} (≐here {a}{a'}{b}{b'} aa' bb' ) = ≐[] (≐CatRefl C) aa' bb' 
+    ≐Tele→≐HS (≐there {a}{b}{a'}{b'}{n}{t}{t'}{T} f g f' g' ff' gg') = ≐[] (≐hom (≐Tele→≐HS T)) (≐⇑ (≐Tele→≐HS T) ff') (≐⇑ (≐Tele→≐HS T) gg') 
+
+    substTele : ∀ {C}{a b a' b' : Obj C}{n}{t : Tele a b n}{t' : Tele a' b' n} → (T : t ≐Tele t') → Hom (normTele t') → Hom (normTele t)
+    substTele {C}{a}{b}{a'}{b'}{.0}{here}{here}(≐here aa' bb') f' = comp {C} a (substObj (≐CatRefl C) a') b here here here CThere NThere NThere NThere (coh aa') (comp {C} (substObj (≐CatRefl C) a') (substObj (≐CatRefl C) b') b here here here CThere NThere NThere NThere (substHom (≐[] (≐CatRefl C) {!aa'!} {!!}) {!!}) (coh⁻ bb'))
+    substTele (≐there f g f' g' y y') f0 = {!!} 
+
+
+--    substTele : ∀ {C C'}{a b : Obj C}{a' b' : Obj C'}{n}{t : Tele a b n}{t' : Tele a' b' n}{H}{T : H ⊢ t ≐Tele t'} → 
+--    substTele {C} {C'} {a} {b} {a'} {b'} {.0} {.here} {.here} {H} {≐here y y'} α' = comp {C} a (substObj H a') b here here here CThere NThere NThere NThere (coh y) (comp {C} (substObj H a') (substObj H b') b here here here CThere NThere NThere NThere {!!} {!!})
+---    substTele {C} {C'} {a} {b} {a'} {b'} {(suc n)} {.(there f g)} {.(there f' g')} {H} {≐there f g f' g' y y'} α' = {!!} 
+    
+
+
+    iterHom : ∀ {C : Cat} → ℕ → (a : Obj C) → Cat
+    iterHom {C} zero a = C
+    iterHom (suc n) a = hom ((iterHom n a) [ iterId n a , iterId n a ]) 
+
+    iterId : ∀ {C} → (n : ℕ) → (a : Obj C) → Obj (iterHom n a)
+    iterId zero a = a
+    iterId (suc n) a = ⇑ (id (iterId n a)) 
+
+--    midSection : ∀ {C C'}{n : ℕ}{s t : Obj C}{s' t' : Obj C'}{h : Tele s t n}{h' : Tele s' t' n} → h ≐HS h' → Hom h' → Hom h
+--    midSection : ∀ {C C'}(n : ℕ)(h≐h' : C ≐Cat C')(s' t' : Obj C')(f' : Hom (homspec C' s' t')) → Hom (homspec C (substObj h≐h' s') (substObj h≐h' t'))
+--    midSection {C [ s , t ]}{C' [ s' , t' ]} n (≐[] h≐h' s≐s' t≐t') α = {!!} 
+--    midSection ≐• s' t' f' = f'
+--    midSection {hom (C [ s , t ])} {hom (C' [ s' , t' ])} (≐hom (≐[] H y y')) (⇑ f) (⇑ f') α = comp {C} s (substObj H s') t  (there {_} {_} {_} {_} {here} (coh y) (coh y)) (there {_}{_}{_}{_}{here} _ _ ) {!!}  {!!}  {!!} {!!} {!!} (id (⇑ (coh y))) (comp {C} (substObj H s') (substObj H t') t {!!} (there {_}{_}{_}{_}{here} (coh⁻ y') (coh⁻ y')) (compTele {!!} {!!}) (CTthere _ _ _ _)  {!!} {!!} {!!} {!!} (id (⇑ (coh⁻ y'))))
+-- comp (⇑ (coh y)) (⇑ (coh y)) (⇑ _) here {!!} {!!} {!!} {!!} {!!} {!!} (id (⇑ (coh y))) (comp (⇑ (coh y)) (⇑ (coh y)) (⇑ (coh y)) {!!} {!!} {!!} {!!} {!!} {!!} {!!} {!!} (id (⇑ (coh⁻ y' )))) 
+
+{-    substHom {.• [ s , t ]} {.• [ s' , t' ]} (≐[] {.•} {.•} {.s} {.t} {.s'} {.t'} ≐• s≐s' t≐t') f = comp s s' t here here here CThere NThere NThere NThere (coh s≐s') (comp s' t' t here here here CThere NThere NThere NThere f (coh (≐ObjSym t≐t')))
+    substHom {(hom h) [ ⇑ f , ⇑ g ]} {(hom h') [ ⇑ f' , ⇑ g' ]} (≐[] (≐hom h≐h') f≐f' g≐g') ξ = comp (⇑ f) (⇑ (substHom h≐h' f')) (⇑ g) here here here CThere NThere NThere NThere (coh f≐f') 
+                                                                                                     (comp (⇑ (substHom h≐h' f')) (⇑ (substHom h≐h' g')) (⇑ g) here here here CThere NThere NThere NThere (midSection h≐h' f' g') (coh⁻ g≐g'))
 -}
 
+--    midSection {.(• [ s , t ])} {.(• [ s' , t' ])} (≐[] {.•} {.•} {s} {t} {s'} {t'} ≐• y y') f' g' = substHom (≐[] (≐hom (≐[] ≐• y y')) (≐⇑ (≐[] ≐• y y') {!!}) {!!}) {!!}
+--    midSection {.(hom h [ s , t ])} {.(hom h' [ s' , t' ])} (≐[] {.(hom h)} {.(hom h')} {s} {t} {s'} {t'} (≐hom {h} {h'} y) y' y0) f' g' = {!!} -- comp {!!} {!!} {!!} {!!} {!!} {!!} {!!} {!!} {!!} {!!} (⇑ (id {!!} )) {!!} 
 
    -- ≐Cat is reflexive
     ≐CatRefl : ∀ C → C ≐Cat C
@@ -235,7 +328,6 @@ module WeakOmega (G : Glob) where
            lemNormCompCompTele t₁ t₂ t₃ ⊢ comp a b d t₁ (compTele t₂ t₃) (compTele t₁ (compTele t₂ t₃)) (lemCompTele _ _) (lemNormTele t₁) (lemNormTele (compTele t₂ t₃)) (lemNormTele (compTele t₁ (compTele t₂ t₃))) f₁ (comp b c d t₂ t₃ (compTele t₂ t₃) (lemCompTele _ _) (lemNormTele t₂) (lemNormTele t₃) (lemNormTele (compTele t₂ t₃)) f₂ f₃) ≐Hom comp a c d (compTele t₁ t₂) t₃ (compTele (compTele t₁ t₂) t₃) (lemCompTele _ _) (lemNormTele _) (lemNormTele _) (lemNormTele _) (comp a b c t₁ t₂ (compTele t₁ t₂) (lemCompTele _ _ ) (lemNormTele _) (lemNormTele _) (lemNormTele _) f₁ f₂) f₃
      -- Missing: ≐coh ... all coh cells a -> b , a' -> b', such that a ≐ a', b ≐ b', are strictly equal
      -- and also interchange 
-
 --      ≐trans : ∀ {h h′ h″}{H H′}{f : Hom h}{f′ : Hom h′}{f″ : Hom h″} → H ⊢ f ≐ f′ → H′ ⊢ f′ ≐ f″ → ≐HStrans H H′ ⊢ f′ 
 
     ≐HomSym : ∀ {h h'}{H : h ≐HS h'}{f g} → H ⊢ f ≐Hom g → ≐HSSym H ⊢ g ≐Hom f
