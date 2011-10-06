@@ -8,10 +8,15 @@
 \usepackage{bussproofs}
 
 \newtheorem{definition}{Definition}
+\newtheorem*{remark}{Remark}
 
+\newcommand{\glob}[2]{(\hspace{-3pt}\big({#1},{#2}\big)\hspace{-3pt})}
+\newcommand{\ditto}{\mathrm{- " -}}
 \newcommand{\mnote}[1]{\marginpar{\footnotesize{#1}}}
 \newcommand{\cell}{\mathsf{cell}}
+\newcommand{\obj}{\mathsf{obj}}
 \newcommand{\Set}{\mathsf{Set}}
+\newcommand{\Glob}{\mathsf{Glob}}
 \newcommand{\Nat}{\mathbb{N}}
 \newcommand{\Con}{\mathsf{Con}}
 \newcommand{\Cat}{\mathsf{Cat}}
@@ -48,6 +53,11 @@
 \newcommand{\coh}{\mathsf{coh}}
 \newcommand{\cohCat}{\mathsf{cohCat}}
 \newcommand{\dblline}{}
+\newcommand{\emptycon}{\varepsilon}
+\newcommand{\var}{\mathsf{var}}
+\newcommand{\wk}{\mathsf{wk}}
+
+\renewcommand{\to}{\longrightarrow}
 
 \begin{document}
 \begin{center}\Large{A syntactical approach to weak $\omega$-categories}
@@ -202,7 +212,55 @@ Variables become objects by the following data constructor of $\Obj$:
 \]
 %
 This completes the definition of globular sets with variables. To
-explicitly define a globular set out of the syntax we define:
+explicitly define a globular set out of the syntactical presentation
+we define globular sets coniductively as thus:
+
+% where each
+%   $G_n$ is a set in Voevodsky's sense \cite{}. \mnote{I want a proper
+%     Set and the only way to say it in Type Theory is by
+%     contractibility.} Formally, we define 
+% $\mathsf{Glob}$ by the following \emph{coinductive}
+% definition:
+% % , where we use Altenkirch's \emph{delay}, $\sharp$, and
+% % \emph{force}, $\flat$, on coinductive sets $S^\infty$
+% %\cite{}:
+\[
+\AxiomC{$\{\Gamma : \Con \}$}
+\UnaryInfC{$\mathsf{Glob}:\Set$}
+\DisplayProof
+\quad
+\AxiomC{$ O : \Set$}
+\AxiomC{$ H : ( a ~ b : \Set) \rightarrow \mathsf{Glob}$}
+% \noLine
+% \BinaryInfC{$C : (a ~ b : O) \rightarrow
+%   \Sigma(p : a \equiv b)((q : a \equiv b) \rightarrow p \equiv q)$}
+\BinaryInfC{$\glob{O}{H} : \mathsf{Glob}$}
+\DisplayProof
+\]
+for which we introduce projections:
+\[
+\mathsf{obj}~\glob{x}{y} = x \qquad \mathsf{hom}~\glob{x}{y} = y 
+\]
+% Note that axiom $C$ in the definition of $\mathsf{glob}$ is the
+% statement that propositional equality in $O$ is contractible.
+\noindent
+Then for each $\Gamma$ and  $C : \Cat~\Gamma$, 
+\[\mathsf{glob}~C =
+\glob{\Obj~C}{\lambda~x~y.\mathsf{glob}~\homcat{C}{x}{y}}\]
+%
+Finally we define the globular set of a context $\Gamma$ as
+\begin{equation}\label{eq:glob-of-gamma}
+\mathsf{glob}~\Gamma~=~\mathsf{glob}~(\bullet~\{\Gamma\})
+\end{equation}
+%
+A \emph{globular set morphism} $\glob{O}{H} \to \glob{O'}{H'}$ is an 
+\[f : O \to O'\]
+together with a collection:
+\[h ~ x ~ y : H ~ x ~ y \to H'~(f~x)~(f~y)\enspace.\]
+
+
+
+Alternatively, we can define:
 \[
 %\AxiomC{$\{\Gamma\}$}
 \AxiomC{$C : \Cat~\Gamma$}
@@ -257,6 +315,7 @@ For each $(k+2)$-cell $x$ the so-called
 \dom~(\dom~x)& \equiv \dom~(\cod~x)&\cod~(\dom~x)& \equiv \cod~(\cod~x)
 \end{align*}
 
+\newpage
 
 We use the usual arrow notation for categories and objects. For
 instance, $\bullet[a,b]$, $\bullet[a,b][f,g]$ and $\alpha :
@@ -322,10 +381,8 @@ composability:
 \]
 %
 
-\begin{ondrej}
-  Either finish or drop the following unless it's needed later
-\paragraph{Single-set categories}
-  Our definition to $\omega$-categories is essentially
+\begin{remark}[Single-set categories]
+  Our approach to $\omega$-categories is essentially
   coinductive. According to it an $\omega$-category, $C$, consists of
   a set of objects, $\Obj~C$, together with an $\omega$-category,
   $C[a,b]$, for each pair of objects, $a$, $b$, of $C$. An alternative
@@ -339,14 +396,13 @@ composability:
   we replace \emph{all} equational axioms with axioms requiring the
   existence of certain \emph{coherence cells}.
 
-  The datatype $\_\meets\_$ describes with respect to which category
+  Datatype $\meets$ describes with respect to which category
   structure a composition of cells is taking place. The constructor
   $\zeromeets$ signifies that a composition of cells $f: a
   \longrightarrow b$ and $g: b \longrightarrow c$ is taking place in
-  $C$. The constructor $\sucmeets{H}$ signifies that the composition
-  is taking place in one of $C$'s super categories\footnote{categories
-    $C$ is a hom-category of}.
-\end{ondrej} 
+  $C_n$. The constructor $\sucmeets{H}$ signifies that the composition
+  is taking place in some $C_{n-k}$.
+\end{remark}
 
 %
 In the following text we usually drop the index $\meets$ on
@@ -373,14 +429,14 @@ which is mutually recursive with its extension to composition of \emph{categorie
 \BinaryInfC{$C \circ_n D : \Cat~\Gamma$}
 \DisplayProof
 \quad
-\AxiomC{$\cdots$}
+\AxiomC{$\ditto$}
 \AxiomC{$a : \Obj~C\qquad b: \Obj~D$}
 \dblline
 \BinaryInfC{$a \circ_n b : \Obj~(C \circ_n D)$}
 \DisplayProof
 \]
-Here, dots indicate repetition of all assumptions from the
-previous rule. 
+Here and later on, $\ditto$ indicates cumulative repetition of all
+assumptions from the previous rule.
 \[
 %\AxiomC{$\{\Gamma\}$}
 \AxiomC{$C ~ D : \Cat ~\Gamma$}
@@ -444,7 +500,7 @@ To complement composition, we define identities.
 \TrinaryInfC{$\mathsf{IdCat}~n~b : \Cat~\Gamma$}
 \DisplayProof
 \quad
-\AxiomC{$\cdots$}
+\AxiomC{$\ditto$}
 \AxiomC{$b : \Obj~C$}
 \dblline
 \BinaryInfC{$\id\,n\,b : \Obj~(\mathsf{IdCat}\,n\,b)$}
@@ -458,19 +514,17 @@ To complement composition, we define identities.
 \DisplayProof
 \]
 \[
-\AxiomC{$\phantom{G}\cdots\phantom{G}$}
+\AxiomC{$\phantom{G}\ditto\phantom{G}$}
 \UnaryInfC{$\id\,0\,b = b \qquad \id\,(n+1)\,b = \id\,(\id\,n\,b)$}
 \DisplayProof
 \]
 
-\mnote{This looks like deserving a closed (noniterative)
-  form.  I don't suppose it's possible just now, but maybe if one
-  tried to do it some interesting connections would crop up.}
+\mnote{worth a formalisation?}
 %
 For a category $C$ and an object $b$ in $C$ we define simultaneously
 iterated identities on $b$, for all $n:\Nat$, and the categories they
 lie in, i.e. cells. This is a pattern we see often in the rest of this
-paper: \emph{an operator on objects mutually recursively extends to an
+paper: \emph{an operator on objects inductively recursively extends to an
   operator on categories}.  We
 often write $(\id~n~b)$ as $\id^nb$.
 
@@ -505,7 +559,7 @@ and their cells. The key missing construct is what we call a
 \emph{telescope}\footnote{In \cite{}, the word telescope was
   introduced to mean roughly a \emph{dependent context}. We borrow it
   because the nature of our telescopes is similar and, moreover, they
-  look like telescopes in pictures.}
+  look like telescopes in pictures.}.
 
 A \emph{telescope} is a category relative to another category
 $C$. Formally, we define a new datatype $\Tele$ at the same time as a
@@ -534,7 +588,7 @@ arbitrary category $C$ rather than $\bullet$\,:
 \BinaryInfC{$\telesuc{T}{a}{b} : \Tele ~ C$}
 \DisplayProof
 \]
-Normalisation $\cat{T}$ is defined in the rather obvious way:
+Normalisation $\cat{T}$ is defined in the obvious way:
 \[
 \AxiomC{$T : \Tele~C$}
 \AxiomC{$a~b : \Obj~(\cat{T})$}
@@ -563,20 +617,20 @@ which is relative to
 \efig
 \]
 And 
-\[\cat{\telesuc{\telezero{\homcat{\homcat{\bullet}{a}{b}}{f}{g}}}{\alpha}{\alpha'}}\quad=\quad\homcat{\homcat{\homcat{\bullet}{a}{b}}{f}{g}}{\alpha}{\alpha'}\enspace.\]
+\[\cat{\telesuc{\telezero{\homcat{\homcat{\bullet}{a}{b}}{f}{g}}}{\alpha}{\alpha'}}\quad\equiv\quad\homcat{\homcat{\homcat{\bullet}{a}{b}}{f}{g}}{\alpha}{\alpha'}\enspace.\]
 %
 
 It is now straightforward to prove that the category of every
 telescope, $T$, lying in a
-hom category $\homcat{C}{x}{y}$ meets $\IdCat{(\depth~t)}{x}$ on the left and
-$\IdCat{(\depth~t)}{y}$ on the right, where $\depth$ for telescopes is defined in the
+hom category $\homcat{C}{x}{y}$ meets $\IdCat{(\depth~T)}{x}$ on the left and
+$\IdCat{(\depth~T)}{y}$ on the right, where $\depth$ for telescopes is defined in the
 obvious way. Formally:
 \begin{equation*}%\label{eq:idcat-meets}
 %\AxiomC{$\{\Gamma\}\qquad \{C : Cat~\Gamma\}$}
 \AxiomC{$a~b : \Obj~C$}
 \AxiomC{$T : \Tele~(\homcat{C}{a}{b})$}
-\BinaryInfC{$\mathsf{id\text{-}meets}~T:(\cat{T}) \meets
-  (\IdCat{(\depth~t)}b)\qquad T~\mathsf{meets\text{-}id}:(\IdCat{(\depth~t)}{a}) \meets (\cat{T})$}
+\BinaryInfC{$ T~ \mathsf{meets\text{-}id}:(\cat{T}) \meets
+  (\IdCat{(\depth~t)}b)\qquad  \mathsf{id\text{-}meets}~T:(\IdCat{(\depth~t)}{a}) \meets (\cat{T})$}
 \DisplayProof
 \end{equation*}
 %
@@ -618,26 +672,27 @@ because there is at most one element of $C \meets D$ for each $C$ and
 $D$. Of course, we still need to prove, whenever we form a composition
 $\alpha \circ_n \beta$, for $\alpha : \Obj~C$, $\beta: \Obj~D$, that
 $C \meets D$ holds. But, such proofs are, at least in all cases used in
-this text, straightforward by recursion. Figure
-\ref{fig:meetslemmas} summarises all such results needed; we leave it
-for the reader to choose the right one based on the context of each
-composition.
+this text, straightforward by recursion. 
+% Figure
+% \ref{fig:meetslemmas} summarises all such results needed; we leave it
+% for the reader to choose the right one based on the context of each
+% composition.
 
-\begin{figure}[t]
-  \centering
-  $$
-  \AxiomC{$\Gamma : \textsf{Con}\qquad C : \Cat~\Gamma\qquad a ~ b :
-    \Obj ~ C\qquad T : \Tele~(\homcat{C}{a}{b})$}
-  \UnaryInfC{}
-  \DisplayProof
-  $$
-  \begin{align*}
-\mathsf{\mathsf{id\text{-}meets}~T}&~:~(\cat{T}) \meets (\IdCat{(\depth~T)}b)\\
-\mathsf{t~\mathsf{meets\text{-}id}}&~:~(\IdCat{(\depth~T)}{a}) \meets (\cat{T})
-  \end{align*}
-  \caption{Lemmas for $\meets$}
-  \label{fig:meetslemmas}
-\end{figure}
+% \begin{figure}[t]
+%   \centering
+%   $$
+%   \AxiomC{$\Gamma : \textsf{Con}\qquad C : \Cat~\Gamma\qquad a ~ b :
+%     \Obj ~ C\qquad T : \Tele~(\homcat{C}{a}{b})$}
+%   \UnaryInfC{}
+%   \DisplayProof
+%   $$
+%   \begin{align*}
+% \mathsf{\mathsf{id\text{-}meets}~T}&~:~(\cat{T}) \meets (\IdCat{(\depth~T)}b)\\
+% \mathsf{t~\mathsf{meets\text{-}id}}&~:~(\IdCat{(\depth~T)}{a}) \meets (\cat{T})
+%   \end{align*}
+%   \caption{Lemmas for $\meets$}
+%   \label{fig:meetslemmas}
+% \end{figure}
 
 We say that a \emph{telescope $T$ normalises to $C$} when
 $((\cat{T})\equiv C)$ is inhabited. Because equality on categories is
@@ -654,23 +709,23 @@ category equality:
 \DisplayProof
 \]
 %
-Figure \ref{fig:eqlemmas} summarises all equality results required in
-the rest of the text. The one required in any given context is simply
-inferred from types. 
-\begin{figure}[t]
-  \centering
-  $$
-  \AxiomC{$\Gamma : \textsf{Con}\qquad C : \Cat~\Gamma\qquad a ~ b :
-    \Obj ~ C\qquad T : \Tele~(\homcat{C}{a}{b})$}
-  \UnaryInfC{}
-  \DisplayProof
-  $$
-  \begin{align*}
-   \cat{T} &\;\equiv\;\cat{\preptele{a}{b}{T}}
-  \end{align*}
-  \caption{Lemmas for equality on $\Cat$}
-  \label{fig:eqlemmas}
-\end{figure}
+% Figure \ref{fig:eqlemmas} summarises all equality results required in
+% the rest of the text. The one required in any given context is simply
+% inferred from types. 
+% \begin{figure}[t]
+%   \centering
+%   $$
+%   \AxiomC{$\Gamma : \textsf{Con}\qquad C : \Cat~\Gamma\qquad a ~ b :
+%     \Obj ~ C\qquad T : \Tele~(\homcat{C}{a}{b})$}
+%   \UnaryInfC{}
+%   \DisplayProof
+%   $$
+%   \begin{align*}
+%    \cat{T} &\;\equiv\;\cat{\preptele{a}{b}{T}}
+%   \end{align*}
+%   \caption{Lemmas for equality on $\Cat$}
+%   \label{fig:eqlemmas}
+% \end{figure}
 
 %
 %
@@ -686,10 +741,10 @@ the following function:
 \UnaryInfC{$\preptele{a}{b}{T}~:~\Tele~C$}
 \DisplayProof
 \]
-with definition
+with the definition:
 \[
 \AxiomC{$T : \Tele~\homcat{C}{a}{b}$}
-\UnaryInfC{$\preptele{a}{b}{\telezero{(\homcat{C}{a}{b})}}~=~\telesuc{\telezero{C}}{a}{b}\qquad\preptele{a}{b}{(\telesuc{T}{a'}{b'})}~=~\telesuc{(\preptele{a}{b}{T})}{\substobj{a'}}{\substobj{b'}}.$}
+\UnaryInfC{$\preptele{a}{b}{\telezero{\homcat{C}{a}{b}}}~=~\telesuc{\telezero{C}}{a}{b}\qquad\preptele{a}{b}{(\telesuc{T}{a'}{b'})}~=~\telesuc{(\preptele{a}{b}{T})}{\substobj{a'}}{\substobj{b'}}.$}
 \DisplayProof
 \]
 It holds trivially that:
@@ -717,30 +772,34 @@ Some examples of coherence cells are the 2-cells:
 \circ_0 h)
 \end{align*}
 where the first two witness one half\footnote{such cells are usually
-  assumed to be equivalences} of the right and left\footnote{note that
+  assumed to be weak equivalences} of the right and left\footnote{note that
   we write compositions the other way round than is usual} identity laws
 of composition $\circ_0$ and the last one, $\alpha$ witnesses one-half
 of $\circ_0$'s associativity. 
 %
-We can think of similar laws for all the higher compositions. But they
-quickly become complicated. So we take a more abstract approach.
+To generate all similar laws for all higher compositions, which become
+quickly very complicated, we take the following a approach:
 
 We think of the cells of a weak $\omega$-category as living above
 cells of a \emph{strict} $\omega$-category via a homomorphism of weak
 $\omega$-categories which forgets all non-variable cells and
 associations of compositions and sends all coherence cells to
-identities.
+identities. Then for any two cells which in this way
+\emph{``strictify''} to the same cell, we insert a coherence
+cell. This is in essence the idea of a \emph{contraction} in operadic
+definitions of weak $\omega$-categories of Batanin and Leinster\cite{}.
 \begin{ondrej}
   A categorical picture would help here: the functor from weak omega
   cats to strict omega cats which is a left adjoint to the inclusion
   of strict into the weak which works, say, by associating everything to the
   left. This makes strict $\omega$-categories reflective in weak $\omega$-cats.
 \end{ondrej}
-However, rather than implementing this strategy directly which would
-involve defining a strict $\omega$-category in Type Theory, which
-would be difficult without quotient types, we formalise directly when
-two cells in an weak $\omega$-category correspond to the same cell in
-the underlying strict $\omega$-category.
+
+However, to implement this strategy directly would involve defining a
+strict $\omega$-category in Type Theory, which would essentially
+involve quotienting a weak $\omega$-category.  So we formalise
+directly when two cells in an weak $\omega$-category correspond to the
+same cell in the underlying strict $\omega$-category.
 %
 %
 
@@ -859,17 +918,12 @@ left units for composition:
 \DisplayProof
 \]
 
-\begin{ondrej}
-  I'm using just underscores for the clever-inferable components. This
-  should be introduced before by just saying somewhere above that ``we use an underscore
-  in all places where trivial assumptions are required, whose type is
-  inferable from the context, and whose proof is straightforward to
-  trivial. The
-  details are in the appendix.'' This is better then naming the lemmas in figures. 
-\end{ondrej}
-
 \noindent
-Lastly, we include congruence rules:
+Here, underscores replace assumptions about $\meets$ and $\doteq$ on
+categories, whose types are inferrable and which are all straightforwardly provable. 
+
+
+Lastly, we include the following congruence rules:
 \[
 \AxiomC{$a : \Obj ~C$}
 \UnaryInfC{$ \refl{a} : \refl{C} \vdash a \doteq a$}
@@ -908,7 +962,7 @@ An example is the following strict equality:
 \morphism(650,1150)|r|/{@{>}@/^.5em/}/<0,-300>[`;\alpha']
 \efig\]
 \[\vdash\]
-\begin{equation}
+\begin{equation}\label{eq:lambda}
 \bfig
 \morphism(375,0)|a|<250,0>[`;\gamma\circ_1(\id^1 g)]
 \efig\doteq\bfig
@@ -997,35 +1051,36 @@ In the rest of this section we carry out this plan in detail.
 %
 For $H : C \doteq C'$ we define a category $\cohCat~H$:
 \[
-\AxiomC{$\{\Gamma\}$}
 \AxiomC{$C ~ C' : \Cat~\Gamma$}
 \AxiomC{$H : C \doteq C'$}
-\TrinaryInfC{$ \cohCat~H : \Cat~\Gamma$}
+\BinaryInfC{$ \cohCat~H : \Cat~\Gamma$}
 \DisplayProof
 \]
-Whenever $H : C \doteq C'$, any object $\alpha$ relative to
-$C$ defines a object $\mathsf{subst_1}~H~\_~\alpha$ relative to
-$\cohCat~H$. Likewise, any object $\alpha'$ relative to $C'$ is defines
-a object $\mathsf{subst_2}~H~\_~\alpha'$ relative to $\cohCat~H$. 
+Whenever $H : C \doteq C'$, any object $\alpha$ relative to $C$
+defines a object relative to $\cohCat~H$. It's denoted
+$(\mathsf{subst_1}~H~T~\alpha)$, where $T$ is a telescope in $C$ and
+$\alpha : \Obj (\cat {T})$. Likewise, any object $\alpha'$ relative to
+$C'$ is defines a object $\mathsf{subst_2}~H~T'~\alpha'$ relative to
+$\cohCat~H$.
 \[
-\AxiomC{$\cdots$}
+\AxiomC{$\ditto$}
 \AxiomC{$T : \Tele~C$}
 \BinaryInfC{$\mathsf{substTele_1}~H~T : \Tele~(\cohCat~H)$}
 \DisplayProof
 \quad
-\AxiomC{$\cdots$}
+\AxiomC{$\ditto$}
 \AxiomC{$T' : \Tele~C'$}
 \BinaryInfC{$\mathsf{substTele_2}~H~T' : \Tele~(\cohCat~H)$}
 \DisplayProof
 \]
 \[
-\AxiomC{$\cdots$}
+\AxiomC{$\ditto$}
 \AxiomC{$\alpha : \Obj ~(\cat{T})$}
 \BinaryInfC{$\mathsf{subst_1}~H~T~\alpha :
   \Obj~(\cat{\mathsf{substTele_1}~H~T})$}
 \DisplayProof
 \quad
-\AxiomC{$\cdots$}
+\AxiomC{$\ditto$}
 \AxiomC{$\alpha' : \Obj ~(\cat{T'})$}
 \BinaryInfC{$\mathsf{subst_2}~H~T'~\alpha' :
   \Obj~(\cat{\mathsf{substTele_2}~H~T'})$}
@@ -1039,8 +1094,9 @@ definition of $\cohCat$. Because $\cat{\telezero{C}}= C$ we recover
 the special case.
 
 The key ingredient of $\cohCat$, $\mathsf{substTele}_i$ and
-$\mathsf{subst}_i$ are coherence cells which we introduce by the following new
-constructor of $\Obj$ as follows:
+$\mathsf{subst}_i$ are coherence cells which we introduce by the
+following two new
+constructors of $\Obj$ as follows:
 %
 \[
 \AxiomC{$\{C~C'\}$}
@@ -1050,11 +1106,18 @@ constructor of $\Obj$ as follows:
 \dblline
 \TrinaryInfC{$\coh~W :
   \Obj~(\homcat{(\cohCat~H)}{\mathsf{subst_1}~H~\telezero{C}~a}{\mathsf{subst_2}~H~\telezero{C'}~a'})$}
+\noLine
+\UnaryInfC{$\coh^{-1}~W :
+  \Obj~(\homcat{(\cohCat~H)}{\mathsf{subst_2}~H~\telezero{C'}~a'}{\mathsf{subst_1}~H~\telezero{C}~a})$}
 \DisplayProof
 \]
 %
 %
-An example follows:
+For definitions of $\mathsf{subst}$ and $\mathsf{substTele}$, see
+the Appendix. Here we give an unfolding for the example in
+\eqref{eq:lambda} to illustrate the recursive pattern and the role of
+the key ingredients introduced so far:
+%
 \[\vdots\]
 
 
@@ -1072,63 +1135,108 @@ interpretation of the syntax defines a weak $\omega$-category.
 The following is the key definition of this text:
 
 \begin{definition}
-A \emph{weak $\omega$ category} is given by:
+A \emph{weak $\omega$ category} is given by the following well founded
+definition:
 \begin{enumerate}
 \item A context $\Gamma : \mathsf{Con}$
-\item A \emph{globular set} $S$ such that each
-  $S_n$ is a set in Voevodsky's sense \cite{}. \mnote{I want a proper
-    Set and the only way to say it in Type Theory is by contractibility.}This means explicitly
-  that we have the following data
-\begin{align*}
-  S &~:~ \Nat \rightarrow \Set \\
-  \domrm &~:~ S \rightarrow S \\
-  \codrm &~:~ s \rightarrow S 
-\end{align*}
-and an axiom
-\begin{equation}\label{eq:contr}
- (n : \Nat)\rightarrow (x~y: S~n)\rightarrow\Sigma(p : x \equiv y)((q : x \equiv
-y)\rightarrow (p\equiv q)) 
-\end{equation}
-which is saying that propositional equality in each $(S~n)$ is contractible.
-\item An \emph{interpretation function} 
-\[\llbracket \text{-} \rrbracket : \big(\Sigma (C :
-\Cat~\Gamma)(\Obj~C)\big) \rightarrow S\]
-which is a map of globular sets in the sense that for all $(x : \Obj ~\homcat{C}{a}{b})$:
-\begin{align*}
-  \domrm \intpr{x} &\;\equiv\; a &\codrm \intpr{x} &\;\equiv\; b
-\end{align*}
-\item a \emph{function} 
-\[ s : S \rightarrow \big(\Sigma (C :
-\Cat~\Gamma)(\Obj~C)\big) \]
-which is a section\mnote{It is going to be something along these lines
-but what is it exactly?} of $\llbracket\text{-}\rrbracket$. Explicitly,
-%
-\begin{equation}
-(x : X) \rightarrow ( \intpr{s~x} \equiv x)\enspace.
-\end{equation}
-%
+\item A globular set $G : \Glob$ 
+
+\item An interpretation globular set morphism $\intpr{\text{-}} :
+  \mathsf{glob}~\Gamma \to G$ :
+\[
+\AxiomC{$\{C : \Cat ~ \Gamma\}$}
+\AxiomC{$x : \Obj~C$}
+\BinaryInfC{$\intpr{x} : \obj~(\intpr{C}^\Cat~\intpr{\Gamma}^\Con)$}
+\DisplayProof
+\]
+such that
+\[
+\AxiomC{$\{C : \Cat~\Gamma\}$}
+\AxiomC{$v : \mathsf{Var}~C$}
+\BinaryInfC{$\intpr{\var~v} ~=~ \intpr{v}^\var~\intpr{\Gamma}^\Con$}
+\DisplayProof
+\qquad
+\AxiomC{$\phantom{x : \Obj~C}$}
+\AxiomC{$\phantom{D : \Cat~\Gamma}$}
+\BinaryInfC{$\intpr{\wk~x~D}  ~=~ \intpr{x}$}
+\DisplayProof
+\]
+and where we assume the following definitions
+% as follows:
+\[
+\AxiomC{$\{ C : \Cat~\Gamma \}$}
+\UnaryInfC{$\intpr{\mathsf{vz}}^\var = \pi_2
+\qquad \intpr{\mathsf{vs}~v}^\var = \intpr{v}^\var \circ \pi_1$}
+\DisplayProof
+\]
+% and $\intpr{\text{-}}^\Con$ is defined as follows:
+\[
+\AxiomC{$\phantom{\{\}}$}
+\UnaryInfC{$\intpr{\varepsilon}^\Con = 1
+\qquad
+\intpr{\Gamma, C}^\Con = \Sigma(\overline{x} :
+\intpr{\Gamma}^\Con)(\intpr{C}^\Cat~\overline{x})$}
+\DisplayProof 
+\]
+\[
+\AxiomC{$\{\Gamma : \Con\}$}
+\AxiomC{$C : \Cat~\Gamma$}
+\AxiomC{$\overline{x} : \intpr{\Gamma}^\Con$}
+\TrinaryInfC{$\intpr{\bullet}^\Cat ~ \overline{x} = G
+\qquad
+\intpr{\homcat{C}{a}{b}}^\Cat ~ \overline{x} = (\mathsf{hom} ~
+(\intpr{C}^\Cat~\overline{x}))~(\intpr{a}~\overline{x})~(\intpr{b}~\overline{x}) 
+$}
+\DisplayProof
+\]
+
+
+\item a globular set morphism
+\[ s : G \longrightarrow \mathsf{glob}~\Gamma \]
+which is a section of $\intpr{\text{-}}$. 
 \end{enumerate}
 \end{definition}
 %
+\mnote{We might need that each homset is a set, and we should build
+  this into the definition of globular sets, and prove that our
+  interpretation is such. Otherwise everything seems so loose. I
+  believe this will crop up as soon as we try to compare our
+  definition to a standard one. }
+%
+Explicitly, a globular set morphism
+$\glob{f}{g} : \glob{O}{H} \to \glob{O'}{H'}$ is a \emph{section} of a
+morphism $\glob{h}{k} : \glob{O'}{H'} \to \glob{O}{H}$ if $f$ is a
+section of $h$, i.e.:
+\[
+(x : O) \rightarrow (h (f x) \equiv x)
+\]
+and each $g~x~y$ is a section of $k~(f~x)~(f~y)$. 
+%
+% \begin{equation}
+% (x : X) \rightarrow ( \intpr{s~x} \equiv x)\enspace.
+% \end{equation}
+%%
 Note that the existence of a section implies that interpretation is
-total. Moreover, and importantly, it implies that $S$ carries the
+total. Moreover, and importantly, it implies that $G$ carries the
 structure required to interpret the syntax of $\omega$-category such
 as composition, identities, and all coherence cells, and that
-$\intpr{\text{-}}$ is coherent with it. For example, to define composition
-operation on $S$:
-\[
-\mathrm{comp} : (x~y : S) \rightarrow \Sigma(n : \Nat)(\domrm^n~ x
-\equiv \codrm^n~x) \rightarrow S 
-\]
-we put
-\[
-\mathrm{comp} ~x~y \quad=\quad \intpr{ \mathsf{comp}~(s \, x)~(s \,
-  y)~(s \ldots)}
-\]
-\begin{ondrej}
-  We want to show that whenever $\domrm^n~ x
-\equiv \codrm^n~x$, then ${s~x}\meets{s~y}$.
-\end{ondrej}
+$\intpr{\text{-}}$ is coherent with it. 
+For example, to define composition
+operation on $G$:
+\[\vdots\]
+% \[
+% \mathrm{comp} : (x~y : S) \rightarrow \Sigma(n : \Nat)(\domrm^n~ x
+% \equiv \codrm^n~x) \rightarrow S 
+% \]
+% we put
+% \[
+% \mathrm{comp} ~x~y \quad=\quad \intpr{ \mathsf{comp}~(s \, x)~(s \,
+%   y)~(s \ldots)}
+% \]
+% \begin{ondrej}
+%   We want to show that whenever $\domrm^n~ x
+% \equiv \codrm^n~x$, then ${s~x}\meets{s~y}$.
+% \end{ondrej}
 
 \subsection{Initiality}
 \begin{ondrej}
