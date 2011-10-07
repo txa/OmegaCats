@@ -32,8 +32,8 @@
 \newcommand{\codrm}{\mathrm{cod}}
 %\newcommand{\meets}{\mathsf{meets}}
 \newcommand{\meets}{\between}
-\newcommand{\zeromeets}{\mathsf{zero}_\between}
-\newcommand{\sucmeets}[1]{\mathsf{suc}_\between{#1}}
+\newcommand{\zeromeets}{\mathsf{zero}}
+\newcommand{\sucmeets}[1]{\mathsf{suc}}
 \newcommand{\telezero}[1]{\langle{#1}\rangle}
 %\newcommand{\telezero}[1]{\diamond}
 \newcommand{\telesuc}[3]{#1\llbracket {#2},{#3}\rrbracket}
@@ -166,10 +166,9 @@ contexts as follows:
 \]
 \[
 %\AxiomC{$\{\Gamma\}$}
-\AxiomC{$\{C~D:\Cat~\Gamma\}$}
 \AxiomC{$v : \mathsf{Var}~C$}
 \dblline
-\BinaryInfC{$\mathsf{vs}~v : \mathsf{Var}~(\mathsf{wk}~C~D)$}
+\UnaryInfC{$\mathsf{vs}~v : \mathsf{Var}~(\mathsf{wk}~C~D)$}
 \DisplayProof
 \]
 where $\mathsf{wk}$ is weakening defined for categories by
@@ -253,14 +252,13 @@ Finally we define the globular set of a context $\Gamma$ as
 \mathsf{glob}~\Gamma~=~\mathsf{glob}~(\bullet~\{\Gamma\})
 \end{equation}
 %
-A \emph{globular set morphism} $\glob{O}{H} \to \glob{O'}{H'}$ is an 
-\[f : O \to O'\]
-together with a collection:
-\[h ~ x ~ y : H ~ x ~ y \to H'~(f~x)~(f~y)\enspace.\]
+% A \emph{globular set morphism} $\glob{O}{H} \to \glob{O'}{H'}$ is an 
+% \[f : O \to O'\]
+% together with a collection:
+% \[h ~ x ~ y : H ~ x ~ y \to H'~(f~x)~(f~y)\enspace.\]
 
 
-
-Alternatively, we can define:
+We will need the following definition:
 \[
 %\AxiomC{$\{\Gamma\}$}
 \AxiomC{$C : \Cat~\Gamma$}
@@ -284,39 +282,9 @@ where $\Nat$ is the $\Set$ of natural numbers with constructors $0$ and $+1$.
 % &\mathsf{depth}~(C[a,b]) = (\mathsf{depth}~C) + 1
 % \end{align*}
 %
-Then the function 
-\begin{align*}
-\cell&~:~\Nat\rightarrow \Set& ~=~\lambda\,(n:\Nat)~.\, \Sigma(C : \Cat~\Gamma)(\mathsf{depth}~C\equiv n) \times
-\Obj~C
-\end{align*}
-% 
-where $\equiv$ denotes propositional equality and $\Sigma (a :
-A)(B~a)$ for $B : (a : A) \rightarrow \Set$ a dependent sum, defines
-a globular set.  We call an element of $\cell~n$ an
-\emph{$n$-cell}.
+Then any $x : \Obj~C$ such that $\mathsf{depth}~C \equiv n$, where
+$\equiv$ denotes propositional equality, is called an \emph{$n$-cell}.
 %
-Each $n$-cell has $n$ domains and $n$ codomains
-defined by:
-\[
-\AxiomC{$x : \Obj~(C [ a , b ])$}
-\UnaryInfC{$\dom~0~x = a \qquad \cod~0~x = b$}
-\DisplayProof
-\]
-\[
-\AxiomC{$x : \Obj~(C [ a , b ])$}
-\AxiomC{$k < \mathsf{depth}~C$}
-\BinaryInfC{$\dom~(k +1 )~x = \dom~k~a \qquad \cod~(k + 1)~x = \cod~k~b$}
-\DisplayProof
-\]
-%
-For each $(k+2)$-cell $x$ the so-called
-\emph{globularity axioms} follow at once:
-\begin{align*}
-\dom~(\dom~x)& \equiv \dom~(\cod~x)&\cod~(\dom~x)& \equiv \cod~(\cod~x)
-\end{align*}
-
-\newpage
-
 We use the usual arrow notation for categories and objects. For
 instance, $\bullet[a,b]$, $\bullet[a,b][f,g]$ and $\alpha :
 \Obj~(\bullet[a,b][f,g])$ are pictured respectively as follows:
@@ -405,12 +373,12 @@ composability:
 \end{remark}
 
 %
-In the following text we usually drop the index $\meets$ on
-$\zeromeets$ and $\sucmeets{}$ and write elements of $C\,\meets\,D$ just
-as natural numbers. 
-Note that it is readily provable by induction, and  using globularity,
-that 
-\mnote{This is essential and we also need the opposite direction }
+In the following text we elements of $C\,\meets\,D$ just as natural
+numbers. Note that it is readily provable by induction, and using
+globularity, that 
+\mnote{This is essential and we also need the
+  opposite direction }
+\mnote{Definitions of \textsf{cod} and \textsf{dom} missing}
 \begin{align*}
 &(C \meets D) \rightarrow (\mathsf{depth}~C \equiv
 \mathsf{depth}~D)\\
@@ -1129,31 +1097,65 @@ the key ingredients introduced so far:
 \section{Interpretation}
 \label{sec:interpretation}
 \subsection{Globular sets}
-Having defined the syntax for weak $\omega$-categories we now define
-what is an interpretation of the syntax to the end that any
-interpretation of the syntax defines a weak $\omega$-category. 
-The following is the key definition of this text:
+A weak $\omega$-category is a globular set, $G$, with certain
+constraints on existence of cells. For example, for each object $a$ in
+$G$ there must be an object $\id_a$ in $(\mathsf{hom}~G~a~a)$, and for
+$x$ in $(\mathsf{hom}~G~a~b)$ and $y$ in $(\mathsf{hom}~G~b~c)$ there
+must be an object in $(\mathsf{hom}~G~a~c)$. Abstractly we can
+formalise all such constraints by the existence of an action of the
+syntax of weak $\omega$-categories on $G$. The details follow:
 
 \begin{definition}
-A \emph{weak $\omega$ category} is given by the following well founded
-definition:
+A \emph{weak $\omega$ category} is given by the following data:
 \begin{enumerate}
-\item A context $\Gamma : \mathsf{Con}$
 \item A globular set $G : \Glob$ 
-
-\item An interpretation globular set morphism $\intpr{\text{-}} :
-  \mathsf{glob}~\Gamma \to G$ :
+\item An action of the syntax of objects on contexts, which are
+  lists of cells of $G$:
 \[
-\AxiomC{$\{C : \Cat ~ \Gamma\}$}
-\AxiomC{$x : \Obj~C$}
-\BinaryInfC{$\intpr{x} : \obj~(\intpr{C}^\Cat~\intpr{\Gamma}^\Con)$}
+\AxiomC{$\{\Gamma : \Con\}$}
+\AxiomC{$\{C : \Cat~\Gamma\}$}
+\AxiomC{$o : \Obj~C\qquad x : \intpr{\Gamma}$}
+\TrinaryInfC{$\intpr{o}~x : \mathsf{obj}~(\intpr{C}~x)$}
 \DisplayProof
 \]
-such that
+where the following extensions of $\intpr{\text{-}}$ to contexts,
+categories and variables are used:
+\[
+\AxiomC{$\Gamma : \Con$}
+\UnaryInfC{$\intpr{\Gamma} : \Set$}
+\DisplayProof
+\quad
+\AxiomC{$\phantom{\Gamma}$}
+\UnaryInfC{$\intpr{\varepsilon} = 1$}
+\DisplayProof
+\quad
+\AxiomC{$\phantom{\Gamma : \Con}$}
+%\AxiomC{$C : \Cat~\Gamma$}
+\UnaryInfC{$\intpr{\Gamma , C} = \Sigma(x : \intpr{\Gamma})(\intpr{C} ~ x)$}
+\DisplayProof
+\]
+\[
+\AxiomC{$C : \Cat ~ \Gamma$}
+\AxiomC{$x : \intpr{\Gamma}$}
+\BinaryInfC{$\intpr{C}~x : \Glob$}
+\DisplayProof
+\quad
+\AxiomC{$\phantom{\intpr{\Gamma}}$}
+\UnaryInfC{$\intpr{\bullet}~x = G$}
+\DisplayProof
+\AxiomC{$\phantom{\intpr{\Gamma}}$}
+\quad
+\UnaryInfC{$\intpr{\homcat{C}{a}{b}}~x = \mathsf{hom}~(\intpr{C}
+  x)~(\intpr{a} ~ x)~(\intpr{b}~x)$}
+\DisplayProof
+\]
+
+\[\vdots\]\mnote{to do: variables as projections}
+and such that
 \[
 \AxiomC{$\{C : \Cat~\Gamma\}$}
 \AxiomC{$v : \mathsf{Var}~C$}
-\BinaryInfC{$\intpr{\var~v} ~=~ \intpr{v}^\var~\intpr{\Gamma}^\Con$}
+\BinaryInfC{$\intpr{\var~v} ~=~ \intpr{v}~\intpr{\Gamma}$}
 \DisplayProof
 \qquad
 \AxiomC{$\phantom{x : \Obj~C}$}
@@ -1161,83 +1163,10 @@ such that
 \BinaryInfC{$\intpr{\wk~x~D}  ~=~ \intpr{x}$}
 \DisplayProof
 \]
-and where we assume the following definitions
-% as follows:
-\[
-\AxiomC{$\{ C : \Cat~\Gamma \}$}
-\UnaryInfC{$\intpr{\mathsf{vz}}^\var = \pi_2
-\qquad \intpr{\mathsf{vs}~v}^\var = \intpr{v}^\var \circ \pi_1$}
-\DisplayProof
-\]
-% and $\intpr{\text{-}}^\Con$ is defined as follows:
-\[
-\AxiomC{$\phantom{\{\}}$}
-\UnaryInfC{$\intpr{\varepsilon}^\Con = 1
-\qquad
-\intpr{\Gamma, C}^\Con = \Sigma(\overline{x} :
-\intpr{\Gamma}^\Con)(\intpr{C}^\Cat~\overline{x})$}
-\DisplayProof 
-\]
-\[
-\AxiomC{$\{\Gamma : \Con\}$}
-\AxiomC{$C : \Cat~\Gamma$}
-\AxiomC{$\overline{x} : \intpr{\Gamma}^\Con$}
-\TrinaryInfC{$\intpr{\bullet}^\Cat ~ \overline{x} = G
-\qquad
-\intpr{\homcat{C}{a}{b}}^\Cat ~ \overline{x} = (\mathsf{hom} ~
-(\intpr{C}^\Cat~\overline{x}))~(\intpr{a}~\overline{x})~(\intpr{b}~\overline{x}) 
-$}
-\DisplayProof
-\]
-
-
-\item a globular set morphism
-\[ s : G \longrightarrow \mathsf{glob}~\Gamma \]
-which is a section of $\intpr{\text{-}}$. 
 \end{enumerate}
 \end{definition}
 %
-\mnote{We might need that each homset is a set, and we should build
-  this into the definition of globular sets, and prove that our
-  interpretation is such. Otherwise everything seems so loose. I
-  believe this will crop up as soon as we try to compare our
-  definition to a standard one. }
 %
-Explicitly, a globular set morphism
-$\glob{f}{g} : \glob{O}{H} \to \glob{O'}{H'}$ is a \emph{section} of a
-morphism $\glob{h}{k} : \glob{O'}{H'} \to \glob{O}{H}$ if $f$ is a
-section of $h$, i.e.:
-\[
-(x : O) \rightarrow (h (f x) \equiv x)
-\]
-and each $g~x~y$ is a section of $k~(f~x)~(f~y)$. 
-%
-% \begin{equation}
-% (x : X) \rightarrow ( \intpr{s~x} \equiv x)\enspace.
-% \end{equation}
-%%
-Note that the existence of a section implies that interpretation is
-total. Moreover, and importantly, it implies that $G$ carries the
-structure required to interpret the syntax of $\omega$-category such
-as composition, identities, and all coherence cells, and that
-$\intpr{\text{-}}$ is coherent with it. 
-For example, to define composition
-operation on $G$:
-\[\vdots\]
-% \[
-% \mathrm{comp} : (x~y : S) \rightarrow \Sigma(n : \Nat)(\domrm^n~ x
-% \equiv \codrm^n~x) \rightarrow S 
-% \]
-% we put
-% \[
-% \mathrm{comp} ~x~y \quad=\quad \intpr{ \mathsf{comp}~(s \, x)~(s \,
-%   y)~(s \ldots)}
-% \]
-% \begin{ondrej}
-%   We want to show that whenever $\domrm^n~ x
-% \equiv \codrm^n~x$, then ${s~x}\meets{s~y}$.
-% \end{ondrej}
-
 \subsection{Initiality}
 \begin{ondrej}
   I feel this is important, but must yet fill in the details. Maybe
