@@ -1,4 +1,7 @@
 module SyntaxCon where
+
+open import Relation.Binary.PropositionalEquality
+
 {- Definition of a syntax for weak ω-categories (incomplete) -}
 
 mutual
@@ -12,7 +15,11 @@ mutual
   data Cat : (Γ : Con) → Set where
     • : ∀ {Γ} → Cat Γ 
     hom : ∀ {Γ} → HomSpec Γ → Cat Γ
-    wk : ∀ {Γ} → (C : Cat Γ) → ∀ {D} → Cat (Γ , D)
+    wkCat : ∀ {Γ} → (C : Cat Γ) → ∀ D → Cat (Γ , D)
+    {- wk should be defined recursively, otherwise we have equivalent expressions. -}
+
+  _,'_ : (Γ : Con)(C : Cat Γ) → Con
+  _,'_ = _,_
 
   {- A HomSpec specifies a homset by a category and two objects -}
   record HomSpec (Γ : Con) : Set where
@@ -53,20 +60,52 @@ mutual
      should add lots of morphisms recording equations and coherence. -}
 
   data Var : {Γ : Con}(C : Cat Γ) → Set where
-    vz : ∀ {Γ}{C : Cat Γ} → Var {Γ , C} (wk C {C})
-    vs : ∀ {Γ}{C D : Cat Γ} → Var {Γ} C → Var {Γ , D} (wk C {D})
+    vz : ∀ {Γ}{C : Cat Γ} → Var {Γ , C} (wkCat' C C)
+    vs : ∀ {Γ}{C : Cat Γ} → Var {Γ} C → (D : Cat Γ) → Var {Γ , D} (wkCat' C D)
 
   data Obj : {Γ : Con}(C : Cat Γ) → Set where 
     var : ∀ {Γ}{C : Cat Γ} → Var C → Obj C
-    id : ∀ {Γ}{C : Cat Γ }(a : Obj C) → Obj (hom (C [ a , a ]))
+    id : ∀ {Γ}{C : Cat Γ }(A : Obj C) → Obj (hom (C [ A , A ]))
     comp : ∀ {Γ}{C : Cat Γ}(Δ : Comp C) → Hom (compSrc₀ Δ) → Hom (compSrc₁ Δ) → Obj (hom (compTgt Δ))
-
-  {- We need to define an extra type for Variables, otherwise wk introduces equivalent expressions.
-     Also we should define weak for Cat recursively, otherwise we have the same problem.
--}
-
-
 
   {- Little hack needed because of Agda's current implementation of mutual. -}
   comp' : ∀ {Γ}{C : Cat Γ}(Δ : Comp C) → Hom (compSrc₀ Δ) → Hom (compSrc₁ Δ) → Hom (compTgt Δ)
   comp' = comp
+
+  wkCat' :  ∀ {Γ} → (C : Cat Γ) → ∀ D → Cat (Γ ,' D)
+  wkCat' = wkCat
+
+{-
+  {- weakening boilerplate... -}
+
+  wkCat :  ∀ {Γ} → (C : Cat Γ) → ∀ D → Cat (Γ ,' D)
+  wkCat • D = •
+  wkCat (hom Cab) D = hom (wkHomSpec Cab D)
+
+  wkHomSpec : ∀ {Γ} → HomSpec Γ → ∀ D → HomSpec (Γ ,' D)
+  wkHomSpec (C [ A , B ]) D = ((wkCat C D) [ wkObj A D , wkObj B D ])
+
+  wkObj : {Γ : Con}{C : Cat Γ} → Obj C → (D : Cat Γ) → Obj (wkCat C D)
+  wkObj (var x) D = var (vs x D)
+  wkObj (id A) D = id (wkObj A D)
+  wkObj (comp Δ f g) D = 
+    subst (λ x → Obj x) {!!} (comp (wkComp Δ D) {!!} {!!})
+  -- Obj (wkCat (hom (compTgt Δ)) D)
+  {- termination checker doesn't like subst, hence we need to close all
+     wkops under equality. -}
+
+  wkComp : {Γ : Con}{C : Cat Γ} → Comp C → (D : Cat Γ) → Comp (wkCat C D)
+  wkComp (obj→ a b c) D = obj→ (wkObj a D) (wkObj b D) (wkObj c D)
+  wkComp (hom→ Δ f f' g g') D = hom→ (wkComp Δ D) {!!} {!!} {!!} {!!}
+
+  wkCompTgt : {Γ : Con}{C : Cat Γ}(Δ : Comp C)(D : Cat Γ)
+    → compTgt (wkComp Δ D) ≡ wkHomSpec (compTgt Δ) D
+  wkCompTgt Δ D = {!!}
+
+{-
+  wkCompSrc₀ : {Γ : Con}{C : Cat Γ}(Δ : Comp C)(D : Cat Γ)
+    → wkObj (compSrc₀ Δ) D ≡ compSrc₀ (wkComp Δ D)
+  wkCompSrc₀ Δ D = ?
+-}
+
+-}
