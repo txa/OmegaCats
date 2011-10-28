@@ -18,26 +18,62 @@ open Glob.Glob
 Idω : Set → Glob
 Idω A = record { obj = A; hom = λ a b → ♯ Idω (a ≡ b) } 
 
+reflω' : ∀ {A} (a : A) → ∞ (⊤ ⇒ (♭ (hom (Idω A) a a)))
+reflω' a = ♯ record { obj→ = λ _ → refl; 
+                       hom→ = λ {_} {_} → reflω' refl }
 
-mutual 
+reflω : ∀ {A} (a : A) → ⊤ ⇒ (♭ (hom (Idω A) a a))
+reflω a = ♭ (reflω' a)
 
-  reflω' : ∀ {A} (a : A) → ∞ (⊤ ⇒ (♭ (hom (Idω A) a a)))
-  reflω' a = ♯ record { obj→ = λ _ → refl; 
-                         hom→ = λ {_} {_} → reflω' refl }
+congω' : ∀ {A B}(f : A → B)(a b : A) → ∞ (♭ (hom (Idω A) a b) ⇒ ♭ (hom (Idω B) (f a) (f b)))
+congω' f a b = ♯ record { obj→ = λ p → cong f p; 
+                           hom→ = λ {p} {q} → congω' (cong f) p q }
 
-  reflω : ∀ {A} (a : A) → ⊤ ⇒ (♭ (hom (Idω A) a a))
-  reflω a = ♭ (reflω' a)
+congω : ∀ {A B}(f : A → B)(a b : A) → ♭ (hom (Idω A) a b) ⇒ ♭ (hom (Idω B) (f a) (f b))
+congω f a b = ♭ (congω' f a b)
 
-mutual
+symω :  ∀ {A} (a b : A) → (♭ (hom (Idω A) a b)) ⇒ (♭ (hom (Idω A) b a))
+symω a b = record { obj→ = λ p → sym p; 
+                    hom→ = λ {p} {q} → congω' sym p q }
 
-  transωhom : ∀ {A} (a b c : A)(α α' : a ≡ b)(β β' : b ≡ c) →
-                     ∞ (♭ (hom (♭ (hom (Idω A) a b)) α α') × ♭ (hom (♭ (hom (Idω A) b c)) β β')
-                     ⇒ ♭ (hom (♭ (hom (Idω A) a c)) (trans α β) (trans α' β')))
-  transωhom a b c α α' β β' = ♯ record { obj→ = {!!}; hom→ = {!!} }
+{-
+sym : a ≡ b → b ≡ a
+sym1 : α ≡ β → sym α ≡ sym β
+sym2 : α ≡ β → sym1 α ≡ sym1 β
+-}
 
-  transω : ∀ {A} (a b c : A) → (♭ (hom (Idω A) a b)) × (♭ (hom (Idω A) b c)) ⇒ (♭ (hom (Idω A) a c))
-  transω a b c = record { obj→ = λ pq → trans (|proj₁| pq) (|proj₂| pq); 
-                          hom→ = {!!} }
+cong₂ω' : ∀ {A B C}(f : A |×| B → C)(ab ab' : A |×| B) → 
+         ∞ (♭ (hom (Idω A) (|proj₁| ab) (|proj₁| ab')) × (♭ (hom (Idω B) (|proj₂| ab) (|proj₂| ab')))
+         ⇒ ♭ (hom (Idω C) (f ab) (f ab')))
+cong₂ω' f ab ab' = ♯ record { obj→ = r ; 
+                                  hom→ = λ {pq} {pq'} → cong₂ω' r pq pq' }
+                       where r : |proj₁| ab ≡ |proj₁| ab' |×| |proj₂| ab ≡ |proj₂| ab' → f ab ≡ f ab'
+                             r pq = cong f (cong₂ _|,|_ (|proj₁| pq) (|proj₂| pq))
+
+
+cong₂ω : ∀ {A B C}(f : A |×| B → C)(ab ab' : A |×| B) → 
+          (♭ (hom (Idω A) (|proj₁| ab) (|proj₁| ab')) × (♭ (hom (Idω B) (|proj₂| ab) (|proj₂| ab')))
+         ⇒ ♭ (hom (Idω C) (f ab) (f ab')))
+cong₂ω f ab ab' = ♭ (cong₂ω' f ab ab')
+
+{- Should be a consequence of congω but relies on:
+   pq ≡ pq' != proj₁ pq ≡ proj₁ pq × proj₂ pq ≡ proj₂ pq
+ -}
+
+
+transω : ∀ {A} (a b c : A) → (♭ (hom (Idω A) a b)) × (♭ (hom (Idω A) b c)) ⇒ (♭ (hom (Idω A) a c))
+transω a b c = record { obj→ = t ; 
+                        hom→ = λ {pq} {pq'} → cong₂ω' t pq pq'  }
+                where t : (a ≡ b) |×| (b ≡ c) → a ≡ c
+                      t pq = trans (|proj₁| pq) (|proj₂| pq)
+
+
+
+{- 
+trans : a ≡ b × b ≡ c → a ≡ c
+trans1 : (α ≡ β) × (α' ≡ β') → trans (α , α') ≡ trans (β , β')
+...
+-}
 
 
 {-

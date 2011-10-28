@@ -1,5 +1,4 @@
-{-# OPTIONS  #-}
--- --no-positivity-check 
+{-# OPTIONS  --no-positivity-check -}
 module weakOmega where
 
 {- Towards defining of weak ω categories in Agda -}
