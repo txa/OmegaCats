@@ -80,19 +80,22 @@ data Var : {Γ : Con}(C : Cat Γ) → Set where
   vs : ∀ {Γ}{C : Cat Γ} → Var {Γ} C → (D : Cat Γ) → Var {Γ , D} (wkCat C D)
 
 idTel : ∀ {Γ}{C : Cat Γ }(a : Obj C)(n : ℕ) → Tel C n
+
+-- we need iterated identity starting from 0 such that id^0 a = a. 
+-- It's syntactically defined out of one-level id : a -> a 
 itId : ∀ {Γ}{C : Cat Γ}(a : Obj C)(n : ℕ) → Obj (C ++ idTel a n)
 
+-- composition of telescopes -- the monoidal action on the category of Telescopes
 compTel : ∀ {Γ}{n}{C : Cat Γ }{a b c : Obj C}(T : Tel (C [ b , c ]) n)(T' : Tel (C [ a , b ]) n) → Tel ( C [ a , c ] ) n
 
-
 -- the bottom half of the telescope where lambdas live
-λTel : ∀ {Γ}{n}{C : Cat Γ}{a b : Obj C} → (T : Tel (C [ a , b ]) n) → Tel (C [ a , b ]) n
+λTel : ∀ {Γ}{n}{C : Cat Γ}{a b : Obj C} → Tel (C [ a , b ]) n → Tel (C [ a , b ]) n
 
 -- the telescope where domains of lambdas live
-domλTel : ∀ {Γ}{n}{m}{C : Cat Γ}{a b : Obj C} → (T : Tel (C [ a , b ]) n) → (U : Tel (C [ a , b ] ++ T) m) → Tel (C [ a , b ] ++ (λTel T)) m
+domλTel : ∀ {Γ}{n}{m}{C : Cat Γ}{a b : Obj C} → (T : Tel (C [ a , b ]) n) → Tel (C [ a , b ] ++ T) m → Tel (C [ a , b ] ++ (λTel T)) m
 
 -- ... codomains of lambdas live
-codλTel : ∀ {Γ}{n}{m}{C : Cat Γ}{a b : Obj C} → (T : Tel (C [ a , b ]) n) → (U : Tel (C [ a , b ] ++ T) m) → Tel (C [ a , b ] ++ (λTel T)) m
+codλTel : ∀ {Γ}{n}{m}{C : Cat Γ}{a b : Obj C} → (T : Tel (C [ a , b ]) n) → Tel (C [ a , b ] ++ T) m → Tel (C [ a , b ] ++ (λTel T)) m
 -- The above makes sense if domλTel and codλTel coincide when U = •
 
 -- the domain of a lambda
@@ -150,23 +153,26 @@ codλTel T (U' [ a' , b' ]) =  codλTel T U' [ codλ T U' a' , codλ T U' b' ]
 
 
 -- I need to rearrange things in cod Tels
--- domλ : ∀ {Γ}{n m}{C : Cat Γ}{a b : Obj C} → (T : Tel (C [ a , b ]) n) → (U : Tel (C [ a , b ] ++ T) m) → (α : Obj ((C [ a , b ] ++ T) ++ U)) → Obj ((C [ a , b ] ++ λTel T) ++ (domλTel T U))
 {- SPEEDUP
+-- the tail of domλTel T ([ a' , b' ] U)
 domλTel-tail : ∀ {Γ}{n}{m}{C : Cat Γ}{a b : Obj C} → (T : Tel (C [ a , b ]) n) → (a' b' : Obj (C [ a , b ] ++ T)) → (U : Tel ((C [ a , b ] ++ T) [ a' , b' ]) m) → 
                              Tel ((C [ a , b ] ++ λTel T) [ domλ T • a' , domλ T • b' ]) m
 -}
 
+-- the tail of codλTel T ([ a' , b' ] U)
 codλTel-tail : ∀ {Γ}{n}{m}{C : Cat Γ}{a b : Obj C} → (T : Tel (C [ a , b ]) n) → (a' b' : Obj (C [ a , b ] ++ T)) → (U : Tel ((C [ a , b ] ++ T) [ a' , b' ]) m) → 
                              Tel ((C [ a , b ] ++ λTel T) [ codλ T • a' , codλ T • b' ]) m
 
-lem-codλTel-⇓ : ∀ {Γ}{n}{m}{C : Cat Γ}{a b : Obj C} → (T : Tel (C [ a , b ]) n) → (a' b' : Obj (C [ a , b ] ++ T)) → (U : Tel ((C [ a , b ] ++ T) [ a' , b' ]) m) → 
-                  codλTel T ([ a' , b' ] U) ⇓ ≡ codλTel-tail T a' b' U ⇓ 
-
-
 {- SPEEDUP
+-- just what the comment in front of domλTel-tail says 
 lem-domλTel-⇓ : ∀ {Γ}{n}{m}{C : Cat Γ}{a b : Obj C} → (T : Tel (C [ a , b ]) n) → (a' b' : Obj (C [ a , b ] ++ T)) → (U : Tel ((C [ a , b ] ++ T) [ a' , b' ]) m) → 
                   domλTel T ([ a' , b' ] U) ⇓ ≡ domλTel-tail T a' b' U ⇓ 
 -}
+
+-- ditto for cod
+lem-codλTel-⇓ : ∀ {Γ}{n}{m}{C : Cat Γ}{a b : Obj C} → (T : Tel (C [ a , b ]) n) → (a' b' : Obj (C [ a , b ] ++ T)) → (U : Tel ((C [ a , b ] ++ T) [ a' , b' ]) m) → 
+                  codλTel T ([ a' , b' ] U) ⇓ ≡ codλTel-tail T a' b' U ⇓ 
+
 
 lem-compTel• : ∀ {Γ}{C : Cat Γ}{m}{a b : Obj C} → (U : Tel (C [ a , b ]) m) → compTel (idTel (id b) m) U ⇓ ≡  domλTel • U ⇓
 lem-compTel[] : ∀ {Γ}{n}{m}{C : Cat Γ}{a b : Obj C} → (T : Tel (C [ a , b ]) n) → (a' b' : Obj (C [ a , b ] ++ T)) → (U : Tel ((C [ a , b ] ++ T) [ a' , b' ]) m) → 
@@ -186,7 +192,7 @@ lem-compTelidTeldomλTel⇓≡codλTel : ∀ {Γ}{n}{m}{C : Cat Γ}{a b : Obj C}
 -}
 
 codλ {Γ}{0}{m}{C}{a}{b} • U α = {!!} 
---  subst Obj (lem-U≡codλTel• U) α
+-- subst Obj (lem-U≡codλTel• U) α
 codλ {Γ}{suc n}{m}{C}{a}{b} (T [ a' , b' ]) U α = {!!} 
 -- subst Obj (lem-compTelidTeldomλTel⇓≡codλTel T a' b' U) (comp (idTel _ m) (domλTel-tail T a' b' U) (itId (ƛ T b') m) (subst Obj (lem-domλTel-⇓ T a' b' U) (domλ T ([ a' , b' ] U) (subst Obj (lem-prep≡ {Γ}{C [ a , b ] ++ T}{m}{a'}{b'} U) α)))) 
 
