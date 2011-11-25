@@ -1,3 +1,6 @@
+{-# OPTIONS --without-K #-}
+
+
 module WeakOmegaCat.Alpha where
 
 open import Data.Nat
@@ -183,110 +186,46 @@ lem-codαtel-tail⇓ : ∀ {Γ}{n m}{C : Cat Γ}{a b c d : Obj C} →
                  codαTel T U V ([ ta , tb ] t) ([ ua , ub ] u) ([ va , vb ] v) ⇓
                    ≡  codαTel-tail T U V ta tb ua ub va vb t u v ⇓
 
-domα = {!!} 
-{-
+-- domα = {!!} 
+
 domα {Γ}{0}{m}{C}{a}{b}{c}{d} • • • t u v f g h = subst Obj (lem-domα• t u v) (comp v (compTel u t) h (comp u t g f))
 domα {Γ}{suc n}{m}{C}{a}{b}{c}{d} (T [ f , f' ]) (U [ g , g' ]) (V [ h , h' ]) t u v x y z = subst Obj (lem-domα[] T U V f f' g g' h h' t u v ) (comp {a = domα T U V • • • f g h} {b = codα T U V • • • f g h} {c = codα T U V • • • f' g' h'} 
                                                                                              (codαTel-tail T U V f f' g g' h h' t u v) (idTel (α T U V f g h) m) 
                                                                                              (subst Obj (lem-codαTel-tail T U V f f' g g' h h' t u v ) (codα T U V ([ f , f' ] t) ([ g , g' ] u) ([ h , h' ] v) 
                                                                                                (subst Obj (lem-prep≡ t) x) (subst Obj (lem-prep≡ u) y) (subst Obj (lem-prep≡ v) z))) (itId (α T U V f g h) m)) 
--}
+
 codα • • • t u v f g h = subst Obj (lem-codα• t u v ) (comp (compTel v u) t (comp v u h g) f)
 codα (T [ a' , b' ]) U V t u v f g h = {!!}
 
 
 
 
-lem-domα• = {!!} 
-{-
+-- lem-domα• = {!!} 
+
 lem-domα• • • • = refl
 lem-domα• {Γ}{suc m}{C}{a}{b}{c}{d}(T [ at , bt ]) (U [ au , bu ]) (V [ av , bv ]) = J' (λ {X} eq → 
           _≡_ {_}{Cat Γ} (compTel V (compTel U T) ⇓ [ comp V (compTel U T) av (comp U T au at) , comp V (compTel U T) bv (comp U T bu bt) ])
                          (X [ subst Obj eq (comp V (compTel U T) av (comp U T au at))  , subst Obj eq (comp V (compTel U T) bv (comp U T bu bt)) ])) 
               refl (lem-domα• T U V )
--}
 
-{-
-((((C [ a , d ]) ++ αTel T U V) [ domα T U V • • • f g h ,
-        codα T U V • • • f' g' h' ])
-       ++
-       compTel (codαTel-tail T U V f f' g g' h h' t u v)
-       (idTel (α T U V f g h) m))
-      [
-      comp (codαTel-tail T U V f f' g g' h h' t u v)
-      (idTel (α T U V f g h) m)
-      (subst Obj (?4 T U V f f' g g' h h' t u v)
-       (codα T U V ([ f , f' ] t) ([ g , g' ] u) ([ h , h' ] v)
-        (subst Obj (lem-prep≡ t) f0) (subst Obj (lem-prep≡ u) g0)
-        (subst Obj (lem-prep≡ v) h0)))
-      (itId (α T U V f g h) m)
-      ,
-      comp (codαTel-tail T U V f f' g g' h h' t u v)
-      (idTel (α T U V f g h) m)
-      (subst Obj (?4 T U V f f' g g' h h' t u v)
-       (codα T U V ([ f , f' ] t) ([ g , g' ] u) ([ h , h' ] v)
-        (subst Obj (lem-prep≡ t) f0') (subst Obj (lem-prep≡ u) g0')
-        (subst Obj (lem-prep≡ v) h0')))
-      (itId (α T U V f g h) m)
-      ]
-      ≡
-      ((((C [ a , d ]) ++ αTel T U V) [ domα T U V • • • f g h ,
-        codα T U V • • • f' g' h' ])
-       ++ domαTel (T [ f , f' ]) (U [ g , g' ]) (V [ h , h' ]) t u v)
-      [
-      subst Obj (lem-domα[] T U V f f' g g' h h' t u v)
-      (comp (codαTel-tail T U V f f' g g' h h' t u v)
-       (idTel (α T U V f g h) m)
-       (subst Obj (?3 T U V f f' g g' h h' t u v)
-        (codα T U V ([ f , f' ] t) ([ g , g' ] u) ([ h , h' ] v)
-         (subst Obj (lem-prep≡ t) f0) (subst Obj (lem-prep≡ u) g0)
-         (subst Obj (lem-prep≡ v) h0)))
-       (itId (α T U V f g h) m))
-      ,
-      subst Obj (lem-domα[] T U V f f' g g' h h' t u v)
-      (comp (codαTel-tail T U V f f' g g' h h' t u v)
-       (idTel (α T U V f g h) m)
-       (subst Obj (?3 T U V f f' g g' h h' t u v)
-        (codα T U V ([ f , f' ] t) ([ g , g' ] u) ([ h , h' ] v)
-         (subst Obj (lem-prep≡ t) f0') (subst Obj (lem-prep≡ u) g0')
-         (subst Obj (lem-prep≡ v) h0')))
-       (itId (α T U V f g h) m))
-      ]
--}
 
-lem-codα• = {!!} 
-{-
+--lem-codα• = {!!} 
 lem-codα• • • • = refl
 lem-codα• {Γ}{suc m}{C}{a}{b}{c}{d}(T [ ta , tb ]) (U [ ua , ub ]) (V [ va , vb ]) = J' (λ {X} eq → 
       _≡_ {_}{Cat Γ} (((C [ a , d ]) ++ compTel (compTel V U) T) [ comp (compTel V U) T (comp V U va ua) ta , comp (compTel V U) T (comp V U vb ub) tb ])
       ( X [ subst Obj eq (comp (compTel V U) T (comp V U va ua) ta) , subst Obj eq (comp (compTel V U) T (comp V U vb ub) tb) ])) refl (lem-codα• T U V ) 
--}
-{-
-((C [ a , d ]) ++ compTel (compTel V U) T) [
-      comp (compTel V U) T (comp V U va ua) ta ,
-      comp (compTel V U) T (comp V U vb ub) tb ]
-      ≡
-      ((C [ a , d ]) ++ codαTel • • • T U V) [
-      subst Obj (lem-codα• T U V ta ua va)
-      (comp (compTel V U) T (comp V U va ua) ta)
-      ,
-      subst Obj (lem-codα• T U V tb ub vb)
-      (comp (compTel V U) T (comp V U vb ub) tb)
-      ]
--}
 
-codαTel-tail = {!!} 
-{-
+
+--codαTel-tail = {!!} 
 codαTel-tail T U V ta tb ua ub va vb • • • = • 
 codαTel-tail {Γ}{n}{suc m}{C} {a}{b}{c}{d} T U V ta tb ua ub va vb (t [ t1 , t2 ]) (u [ u1 , u2 ]) (v [ v1 , v2 ]) = codαTel-tail T U V ta tb ua ub va vb t u v [ subst Obj (lem-codαtel-tail⇓ T U V ta tb ua ub va vb t u v) (codα T U V ([ ta , tb ] t) ([ ua , ub ] u) ([ va , vb ] v) (subst Obj (lem-prep≡ t) t1) (subst Obj (lem-prep≡ u)  u1) (subst Obj (lem-prep≡ v) v1)   ) , subst Obj (lem-codαtel-tail⇓ T U V ta tb ua ub va vb t u v) (codα T U V ([ ta , tb ] t) ([ ua , ub ] u) ([ va , vb ] v) (subst Obj (lem-prep≡ t) t2) (subst Obj (lem-prep≡ u) u2) (subst Obj (lem-prep≡ v) v2)) ] 
--}
+
 
 lem-codαTel-tail T U V f f' g g' h h' t u v = {!!} 
 
 lem-codαtel-tail⇓ T U V ta tb ua ub va vb t u v = {!!} 
 
-lem-domα[] = {!!} 
-{-
+--lem-domα[] = {!!} 
 lem-domα[] {Γ}{n}{0}{C}{a}{b}{c}{d} T U V f f' g g' h h' • • • = refl
 lem-domα[] {Γ}{n}{suc m}{C}{a}{b}{c}{d} T U V f f' g g' h h' (t [ f0 , f0' ]) (u [ g0 , g0' ]) (v [ h0 , h0' ]) = 
   J' (λ {X} eq → 
@@ -326,5 +265,4 @@ lem-domα[] {Γ}{n}{suc m}{C}{a}{b}{c}{d} T U V f f' g g' h h' (t [ f0 , f0' ]) 
           (subst Obj (lem-prep≡ t) f0') (subst Obj (lem-prep≡ u) g0')
           (subst Obj (lem-prep≡ v) h0')))
         (itId (α T U V f g h) m))
-        ])) {!!} (lem-domα[] T U V f f' g g' h h' t u v) 
--}
+        ])) refl (lem-domα[] T U V f f' g g' h h' t u v) 
