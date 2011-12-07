@@ -1,6 +1,9 @@
 module WeakOmegaCat.Core where
 
-open import Data.Nat 
+open import Data.Nat
+open import Data.Empty
+open import Data.Unit
+open import Data.Product
 open import Relation.Binary.PropositionalEquality hiding ([_])
 
 -- this version of J is nicer
@@ -82,6 +85,14 @@ compTel : ∀ {Γ}{n}{C : Cat Γ }{a b c : Obj C}(T : Tel (C [ b , c ]) n)(T' : 
 -- the category for a lambda, 
 λTel : ∀ {Γ}{n}{C : Cat Γ}{a b : Obj C} → Tel (C [ a , b ]) n → Tel (C [ a , b ]) n
 αTel : ∀ {Γ}{n}{C : Cat Γ}{a b c d : Obj C} → Tel (C [ a , b ]) n → Tel (C [ b , c ]) n → Tel (C [ c , d ]) n → Tel (C [ a , d ]) n
+ρTel : ∀ {Γ}{n}{C : Cat Γ}{a b : Obj C} → Tel (C [ a , b ]) n → Tel (C [ a , b ]) n
+χTel : ∀ {Γ}{ m n}{C : Cat Γ}{a b c : Obj C}(u₁ : Tel (C [ a , b ]) n){a₁ b₁ c₁ : Obj (u₁ ⇓)} → 
+                         (t₁₁ : Tel (u₁ ⇓ [ a₁ , b₁ ]) m) → (t₁₂ : Tel (u₁ ⇓ [ b₁ , c₁ ]) m) → 
+                    (u₂ : Tel (C [ b , c ]) n){a₂ b₂ c₂ : Obj (u₂ ⇓)} →  
+                        (t₂₁ : Tel (u₂ ⇓ [ a₂ , b₂ ]) m) → (t₂₂ : Tel (u₂ ⇓ [ b₂ , c₂ ]) m) → Tel (C [ a , c ]) (n + 1 + n)
+
+
+hollow : ∀ {Γ}{C : Cat Γ} → Obj C → Set
 
 
 data Obj where 
@@ -95,7 +106,26 @@ data Obj where
   α : ∀ {Γ}{n}{C : Cat Γ}{a b c d : Obj C}( T : Tel (C [ a , b ]) n)(U : Tel (C [ b , c ]) n)(V : Tel (C [ c , d ]) n) → 
       (f : Obj (T ⇓))(g : Obj (U ⇓))(h : Obj (V ⇓)) → Obj (αTel (T [ f , f ]) (U [ g , g ]) (V [ h , h ]) ⇓)
   ƛ : ∀ {Γ}{n}{C : Cat Γ}{a b : Obj C}(T : Tel (C [ a , b ]) n)(f : Obj (T ⇓)) → Obj (λTel (T [ f , f ]) ⇓)
+  ρ : ∀ {Γ}{n}{C : Cat Γ}{a b : Obj C}(T : Tel (C [ a , b ]) n)(f : Obj (T ⇓)) → Obj (ρTel (T [ f , f ]) ⇓)
+  χ : ∀ {Γ}{ m n}{C : Cat Γ}{a b c : Obj C}
+             (u₁ : Tel (C [ a , b ]) n)(a₁ b₁ c₁ : Obj (u₁ ⇓))
+               (t₁₁ : Tel (u₁ ⇓ [ a₁ , b₁ ]) m)(α₁₁ : Obj (t₁₁ ⇓))
+               (t₁₂ : Tel (u₁ ⇓ [ b₁ , c₁ ]) m)(α₁₂ : Obj (t₁₂ ⇓))
+             (u₂ : Tel (C [ b , c ]) n)(a₂ b₂ c₂ : Obj (u₂ ⇓))
+               (t₂₁ : Tel (u₂ ⇓ [ a₂ , b₂ ]) m)(α₂₁ : Obj (t₂₁ ⇓))
+               (t₂₂ : Tel (u₂ ⇓ [ b₂ , c₂ ]) m)(α₂₂ : Obj (t₂₂ ⇓)) →
+                   Obj (χTel u₁ (t₁₁ [ α₁₁ , α₁₁ ]) (t₁₂ [ α₁₂ , α₁₂ ]) u₂ (t₂₁ [ α₂₁ , α₂₁ ]) (t₂₂ [ α₂₂ , α₂₂ ]) ⇓)
+  coh : ∀ {Γ}{C : Cat Γ}{a b : Obj C} → (f g : Obj (C [ a , b ])) → hollow f → hollow g → Obj ((C [ a , b ])[ f , g ])
 
+hollow (var y) = ⊥
+hollow (wk A D) = hollow A
+hollow (id a) = ⊤
+hollow (comp T U f g) = hollow f × hollow g
+hollow (α T U V f g h) = ⊤
+hollow (ƛ T f) = ⊤
+hollow (ρ T f) = ⊤
+hollow (χ u₁ a₁ b₁ c₁ t₁₁ α₁₁ t₁₂ α₁₂ u₂ a₂ b₂ c₂ t₂₁ α₂₁ t₂₂ α₂₂) = ⊤
+hollow (coh f g y y') = ⊤ 
 
 
 -- definition of wkCat
@@ -116,3 +146,5 @@ compTel (T [ f , g ]) (T' [ f' , g' ]) = (compTel T T') [ comp T T' f f' , comp 
 
 αTel = {!!} 
 λTel = {!!} 
+ρTel = {!!}
+χTel = {!!} 
