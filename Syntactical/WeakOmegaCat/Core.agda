@@ -1,7 +1,7 @@
 module WeakOmegaCat.Core where
 
-open import Data.Nat
-open import Relation.Binary.PropositionalEquality
+open import Data.Nat 
+open import Relation.Binary.PropositionalEquality hiding ([_])
 
 -- this version of J is nicer
 J' : {A : Set}{a : A}
@@ -40,7 +40,7 @@ _++_ :  ∀ {Γ}{n}(C : Cat Γ) → Tel C n → Cat Γ
 _⇓ : ∀ {Γ}{n}{C : Cat Γ} → Tel C n → Cat Γ
 
 
-data Tel {Γ}(C : Cat Γ) where
+data Tel{Γ}(C : Cat Γ)  where
   • : Tel C zero
   _[_,_] : ∀ {n}(T : Tel C n)(a b : Obj (C ++ T)) → Tel C (suc n)
 
@@ -48,7 +48,7 @@ data Tel {Γ}(C : Cat Γ) where
 
 -- definition of _++_
 C ++ • = C
-C ++ (T [ a , b ]) = (C ++ T) [ a , b ]
+C ++ (T [ a , b ]) = _[_,_] (C ++ T) a b
 
 
 _⇓ {Γ}{n}{C} T = C ++ T

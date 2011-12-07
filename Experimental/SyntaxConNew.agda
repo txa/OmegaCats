@@ -21,6 +21,7 @@ mutual
   _,'_ = _,_
 
   wkCat' :  ∀ {Γ} → (C : Cat Γ) → ∀ D → Cat (Γ ,' D)
+
   wkCat' = wkCat
 
   data Tel {Γ}(C : Cat Γ) : ℕ → Set where
