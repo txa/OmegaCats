@@ -10,7 +10,7 @@ module WeakOmegaCat.Lambda where
 
 
 open import Data.Nat
-open import Relation.Binary.PropositionalEquality  -- we use propositional equality for the boring stuff
+open import Relation.Binary.PropositionalEquality hiding ([_]) -- we use propositional equality for the boring stuff
 
 -- this version of J is nicer
 J' : {A : Set}{a : A}

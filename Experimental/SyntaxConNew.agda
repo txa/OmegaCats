@@ -21,7 +21,13 @@ data Cat (Γ : Con) where
 
 data Tel {Γ}(C : Cat Γ) : ℕ → Set
 
+<<<<<<< HEAD
 _++_ :  ∀ {Γ}{n}(C : Cat Γ) → Tel C n → Cat Γ
+=======
+  wkCat' :  ∀ {Γ} → (C : Cat Γ) → ∀ D → Cat (Γ ,' D)
+
+  wkCat' = wkCat
+>>>>>>> 55d421fef047e3a8deab4cb4084e7b9741cd6bc2
 
 data Tel{Γ}(C : Cat Γ)  where
     • : Tel C zero
