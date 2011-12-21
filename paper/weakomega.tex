@@ -403,9 +403,9 @@ examples of valid compositions for increasing $n$:
 \efig
 \end{align}
 %
-The examples \eqref{eq:comp1}-\eqref{eq:comp3} are compositions in
+Examples \eqref{eq:comp1}-\eqref{eq:comp3} are compositions in
 the category $\bullet$, while \eqref{eq:comp4} is a
-composition in $\bullet(a,b)$. We formalise this as follows.
+composition in $\homcat{\bullet}{a}{b}$. We formalise this as follows.
 
 \paragraph{Telescopes}
 Informally, a \emph{telescope} is a category relative to
@@ -475,6 +475,11 @@ with the implicit category made explicit:
   t \Downarrow$}
 \DisplayProof
 \]
+\mnote{We could make $\dblplus$ into a real concatenation of
+  telescopes and connect $\Downarrow$ and $\dblplus$ by lemmas }
+\mnote{However, the principal judgement of all this is $\cat{E}
+  \equiv \cat{E'}$ for some expressions $E$, $E'$.}
+%
 Note that only the left associative reading of $\dblplus$ makes sense
 so $C \dblplus\, t \dblplus\, u \, = \, (C \dblplus\, t) \dblplus\,
 u$ and the scope of $\Downarrow$ always extends as far to the left as
@@ -557,7 +562,7 @@ In a strict $\omega$-category units are accompanied by laws making
 them unital with respect to composition. In the weak setting such laws
 are replaced by coherence cells, which we discuss next.
 
-With the development of Section \label{sec:units}, we can express
+With the development of the previous two sections we can express
 compositions such as:
 \[
 \id\,b \circ f \qquad \id^2\,b \circ \alpha\qquad \id\,f'\circ \alpha
@@ -605,7 +610,8 @@ We want to define the cells that connect these cells to the cells:
 \morphism(250,50)<0,-100>[`;\alpha]
 \efig
 \]
-Before we present the formal development we make a few observations:
+
+Let us analyse the situation at hand.
 
 Firstly, note that the right-most case is just the left-most case in
 the category $\homcat{\bullet}{a}{b}$ so from now on we assume
@@ -613,7 +619,7 @@ everything is taking place in an arbitrary \emph{base category},
 $\cC$.
 
 For the left-most case, assuming $a$ and $b$ are 0-cells of
-  $\cC$, we simply introduce a 2-cell $\lambda_f$ of $\cC$:
+  $\cC$, we simply introduce the syntax for a 2-cell $\lambda_f$ of $\cC$:
 \[\bfig
 \qtriangle[a`b`b;f`f`\id\,b]
 \morphism(400,400)/<=/<-100,-100>[`;\lambda_f]
@@ -725,7 +731,7 @@ that the following makes sense:
 \end{equation}
 %
 Formally, we have the following definitions which generate all
-$\quad\lambda ~t~x$'s for all telescopes $t$ and objects $x$ in
+$\quad\lambda ~t~x\quad$'s for all telescopes $t$ and objects $x$ in
 them.
 %
 %
@@ -756,8 +762,8 @@ them.
 %
 %
 \item 
-The function $\dom\lambda$ and $\cod\lambda$ used above have the
-following types, where 
+Functions $\dom\lambda$ and $\cod\lambda$ used above have the
+following types:
 \[
 \AxiomC{$t : \Tel~\homcat{\mathcal{C}}{a}{b}~n$}
 \AxiomC{$u : \Tel~(t \Downarrow)~m$}
@@ -788,7 +794,7 @@ in terms of $\dom\lambda~\{n=k\}$ and $\lambda~\{n=k\}$ of the smaller dimension
 Similarly to $\lambda$'s we define the remaining coherence cells,
 i.e. $\rho$'s to witness \emph{right units}, $\alpha$'s to witness
 \emph{associativity} of composition and $\chi$'s to witness
-interchange. These are defined analogically to $\lambda$'s and so we give
+interchange. These are defined analogically to $\lambda$'s. Below we present
 only the top-level constructor forms. 
 \[
 \AxiomC{$t : \Tel~\homcat{\mathcal{C}}{a}{b}~n$}
@@ -832,9 +838,12 @@ t_{12} : \Tel~\telsuc{u_1}{b_1}{c_1}\Downarrow ~ m$}
 \DisplayProof
 \]
 
-We also include each of $\lambda$, $\rho$, $\alpha$ and $\chi$ in their
-reversed forms, denoted $\lambda^-$, $\rho^-$, $\alpha^-$ and $\chi^-$
-respectively, as each of them should be equivalences.
+We also include each of $\lambda$, $\rho$, $\alpha$ and $\chi$ in
+their reversed forms, denoted $\lambda^-$, $\rho^-$, $\alpha^-$ and
+$\chi^-$ respectively, as each of them should be equivalences. At this
+point, the only thing we have done is postulating two cells going in
+the opposite directions. The following section introduces the
+necessary syntax to make them true \emph{weak equivalences}.
 
 
 \subsection{Coherence cells between coherence cells}

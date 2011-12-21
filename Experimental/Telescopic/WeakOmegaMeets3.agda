@@ -1,5 +1,6 @@
 --{-# OPTIONS --show-implicit #-}
 {-# OPTIONS --universe-polymorphism #-}
+{-# OPTIONS --without-K #-}
 
 module WeakOmegaMeets3 where
 
@@ -20,6 +21,14 @@ J' : {A : Set}{a : A}
    → P {a} refl 
    → {b : A}(p : a ≡ b) → P p
 J' P m refl = m 
+
+
+{-
+K : {A : Set} (P : {x : A} → x ≡ x → Set) →
+         ( (x : A) → P {x} refl ) →
+         ∀ {x} (x≡x : x ≡ x) → P x≡x
+K {A} P p {x} refl  = p x 
+-}
 
 lem-subst-sym : {A  : Set}(P : A → Set){a b : A}(H : a ≡ b) → (x : P a) → x ≡ subst P (sym H) (subst P H x)
 lem-subst-sym P refl x = refl 
@@ -98,7 +107,7 @@ mutual
 
   -- left associative telescopes -- so called relative categories
   data Tele {Γ : Con} : Cat Γ → Set where
-    ○ : ∀ {C : Cat Γ} → Tele C
+    ○ : (C : Cat Γ) → Tele C
     _⟦_,_⟧ : ∀ {C : Cat Γ} → (T : Tele C) → (a b : Obj (cat T)) → Tele C 
 
   -- the categories might be of different depth, unless they meet
@@ -107,22 +116,23 @@ mutual
   -- which enforces equal depth of cats
   -- i.e. it holds that T telemets U → cat T meets cat U
   data _telemeets_ {Γ : Con} : ∀ {C D : Cat Γ} → Tele C → Tele D → Set where
-    ○meets : ∀ {C D : Cat Γ} → C meets D → ○ {Γ}{C} telemeets ○ {Γ}{D}
+    ○meets : ∀ {C D : Cat Γ} → C meets D → ○ {Γ} C telemeets ○ {Γ} D
     _⟦_,_⟧meets⟦_,_⟧ : ∀ {C D : Cat Γ}{ T : Tele C }{U : Tele D} → T telemeets U → (a b : Obj (cat T)) (a' b' : Obj (cat U)) → T ⟦ a , b ⟧ telemeets U ⟦ a' , b' ⟧
     _⟦_,_,_⟧meets : ∀ {C : Cat Γ}(T : Tele C)(a b c : Obj (cat T)) → T ⟦ a , b ⟧ telemeets T ⟦ b , c ⟧
                      
 
   cat : ∀ {Γ}{C : Cat Γ} → Tele C → Cat Γ 
-  cat {Γ}{C} ○ = C
+  cat {Γ}{C} (○ .C)  = C
   cat {Γ}{C} (y ⟦ a , b ⟧) = cat y [ a , b ]
 
-
+{-
   lem-cat-meets : ∀ {Γ}{C D : Cat Γ}(T : Tele C)(U : Tele D) → (T telemeets U) → cat T meets cat U
   lem-cat-meets .○ .○ (○meets y) = y
   lem-cat-meets (T ⟦ .a , .b ⟧) (U ⟦ .a' , .b' ⟧) (y ⟦ a , b ⟧meets⟦ a' , b' ⟧) = meets-suc (lem-cat-meets T U y) a b a' b'
   lem-cat-meets .(T ⟦ a , b ⟧) .(T ⟦ b , c ⟧) (T ⟦ a , b , c ⟧meets) = meets-zero a b c 
+-}
 
-  ○′ : ∀{Γ}{C : Cat Γ} → Tele C
+  ○′ : ∀{Γ}(C : Cat Γ) → Tele C
   ○′ = ○
 
 
@@ -203,7 +213,7 @@ D : Cat Γ
 
   
   lem-idTele-meets : ∀{Γ}{C : Cat Γ}{a b : Obj C} → (T : Tele (C [ a , b ]′)) → cat T meets cat (idTele (id′ b) (teledepth T))
-  lem-idTele-meets {Γ}{C}{a}{b} ○ = meets-zero a b b
+  lem-idTele-meets {Γ}{C}{a}{b} (○ ) = meets-zero a b b
   lem-idTele-meets {Γ}{C}{a}{b} (T ⟦ a' , b' ⟧) = meets-suc (lem-idTele-meets T) a' b' (itId (id b) (teledepth T)) (itId (id b) (teledepth T)) 
 
 {-
