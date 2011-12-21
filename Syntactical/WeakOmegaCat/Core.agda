@@ -1,7 +1,7 @@
 module WeakOmegaCat.Core where
 
 open import Data.Nat
-open import Relation.Binary.PropositionalEquality
+open import Relation.Binary.PropositionalEquality hiding ([_])
 
 -- this version of J is nicer
 J' : {A : Set}{a : A}
@@ -76,11 +76,28 @@ itId : ∀ {Γ}{C : Cat Γ}(a : Obj C)(n : ℕ) → Obj (idTel a n ⇓)
 
 compTel : ∀ {Γ}{n}{C : Cat Γ }{a b c : Obj C}(T : Tel (C [ b , c ]) n)(T' : Tel (C [ a , b ]) n) → Tel ( C [ a , c ] ) n
 
+invTel : ∀ {Γ}{n}{C : Cat Γ }{a b : Obj C}(T : Tel (C [ a , b ]) n) → Tel ( C [ b , a ] ) n
+invTel T = {!!}
 
 -- the bottom half of the telescope where alphas live
+{- Telescope morphisms -}
+
+data _⇒_ {Γ}{C : Cat Γ} : ∀ {n} (T U : Tel C n) → Set
+
+appTel : ∀ {Γ}{C : Cat Γ}{n m}{T U : Tel C n}(fs : T ⇒ U)(T' : Tel (C ++ T) m) → Tel (C ++ U) m
+
+appObj : ∀ {Γ}{C : Cat Γ}{n m}{T U : Tel C n}
+         (fs : T ⇒ U)(T' : Tel (C ++ T) m) → (Obj (T' ⇓)) → Obj ((appTel fs T') ⇓)
+
+appObj' : ∀ {Γ}{C : Cat Γ}{n}{T U : Tel C n}(fs : T ⇒ U) → (Obj (T ⇓)) → Obj (U ⇓)
 
 -- the category for a lambda, 
-λTel : ∀ {Γ}{n}{C : Cat Γ}{a b : Obj C} → Tel (C [ a , b ]) n → Tel (C [ a , b ]) n
+--λTel : ∀ {Γ}{n}{C : Cat Γ}{a b : Obj C} → Tel (C [ a , b ]) n → Tel (C [ a , b ]) n
+
+id' : ∀ {Γ}{C : Cat Γ }(a : Obj C) → Obj (C [ a , a ]) 
+
+λTel : ∀ {Γ}{n}{C : Cat Γ}{a b : Obj C}(T : Tel (C [ a , b ]) n) → ((compTel (idTel (id' b) n) T) ⇒ T)
+
 αTel : ∀ {Γ}{n}{C : Cat Γ}{a b c d : Obj C} → Tel (C [ a , b ]) n → Tel (C [ b , c ]) n → Tel (C [ c , d ]) n → Tel (C [ a , d ]) n
 
 
@@ -92,11 +109,14 @@ data Obj where
            (T : Tel (C [ b , c ]) n)(U : Tel (C [ a , b ]) n)
            (f : Obj (T ⇓))(g : Obj (U ⇓))
            → Obj (compTel T U ⇓)
+  inv : ∀ {Γ}{n}{C : Cat Γ }{a b : Obj C}(T : Tel (C [ a , b ]) n)(f : Obj (T ⇓)) → Obj ((invTel T) ⇓)
   α : ∀ {Γ}{n}{C : Cat Γ}{a b c d : Obj C}( T : Tel (C [ a , b ]) n)(U : Tel (C [ b , c ]) n)(V : Tel (C [ c , d ]) n) → 
       (f : Obj (T ⇓))(g : Obj (U ⇓))(h : Obj (V ⇓)) → Obj (αTel (T [ f , f ]) (U [ g , g ]) (V [ h , h ]) ⇓)
-  ƛ : ∀ {Γ}{n}{C : Cat Γ}{a b : Obj C}(T : Tel (C [ a , b ]) n)(f : Obj (T ⇓)) → Obj (λTel (T [ f , f ]) ⇓)
+  ƛ : ∀ {Γ}{n}{C : Cat Γ}{a b : Obj C}(T : Tel (C [ a , b ]) n)(f : Obj (T ⇓))
+                 → Obj ((T ⇓) [ appObj' (λTel T) (comp _ _ (itId (id' b) n) f) , f ])
+--  ƛ : ∀ {Γ}{n}{C : Cat Γ}{a b : Obj C}(T : Tel (C [ a , b ]) n)(f : Obj (T ⇓)) → Obj (λTel (T [ f , f ]) ⇓)
 
-
+id' = id
 
 -- definition of wkCat
 wkCat • D = •
@@ -114,5 +134,37 @@ compTel • • = •
 compTel (T [ f , g ]) (T' [ f' , g' ]) = (compTel T T') [ comp T T' f f' , comp T T' g g' ]
 
 
+comp₀ :  ∀ {Γ}{C : Cat Γ}{a b c : Obj C}
+           (f : Obj (C [ b , c ]))(g : Obj (C [ a , b ]))
+           → Obj (C [ a , c ])
+comp₀ f g = comp • • f g
+
+inv₀ : ∀ {Γ}{C : Cat Γ }{a b : Obj C}(f : Obj (C [ a , b ])) → Obj (C [ b , a ] )
+inv₀ f = {!!} -- inv • f
+
 αTel = {!!} 
-λTel = {!!} 
+--λTel = {!!} 
+
+
+data _⇒_ {Γ}{C : Cat Γ} where
+  • : • ⇒ •
+  _[_,_] : ∀ {n}{T U : Tel C n}
+           (fs : T ⇒ U){a a' : Obj (T ⇓)}{b b' : Obj (U ⇓)}
+           (f : Obj ((U ⇓)[ b , appObj' fs a ]))
+           (g : Obj ((U ⇓)[ appObj' fs a' , b' ]))
+           → (T [ a , a' ]) ⇒ (U [ b , b' ]) 
+
+appTel fs • = •
+appTel fs (T' [ a , b ]) = (appTel fs T') [ appObj fs T' a , appObj fs T' b ]
+
+appTel• : ∀ {Γ}{C : Cat Γ}{m}(T' : Tel C m) 
+       → T' ≡ appTel • T' 
+appTel• T' = {!!}
+
+appObj • T' a = subst (λ U' → Obj (_ ++ U')) (appTel• T') a 
+appObj (fs [ f , g ]) T' h = {!!} -- comp {!!} {!!} {!!} {!!}
+
+appObj' fs = appObj fs •
+
+λTel • = •
+λTel (T [ a , b ]) = (λTel T) [ inv₀ (ƛ T a) , (ƛ T b) ]
