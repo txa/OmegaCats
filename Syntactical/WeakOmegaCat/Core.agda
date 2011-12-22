@@ -1,4 +1,4 @@
-module WeakOmegaCat.Core where
+module Core where
 
 open import Data.Nat
 open import Data.Empty
