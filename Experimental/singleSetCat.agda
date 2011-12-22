@@ -111,7 +111,7 @@ module Freeω {S : Setoid zero zero}(G : GlobularSet S) where
 -- α
     src n (alpha {z}{y}{x}{m} h k) with ℕcompare n (suc m)
     src n (alpha {z}{y}{x}{.(n + i)} h k)             | less .n i = src n ( src (suc n) (alpha h k))
-    src .(suc m) (alpha {z}{y}{x}{m} h k)             | equal .(suc m) = comp m z (comp m y x k) {!compare' m m!}
+    src .(suc m) (alpha {z}{y}{x}{m} h k)             | equal .(suc m) = comp m z (comp m y x k) {!!}
     src .(suc (suc (m + i))) (alpha {z}{y}{x}{m} h k) | greater .(suc m) i = alpha h k  
 -- ƛ
     src n (lid m x) with ℕcompare n (suc m) 
@@ -137,7 +137,7 @@ module Freeω {S : Setoid zero zero}(G : GlobularSet S) where
     tgt n (emb s) = emb (|tgt| n s)
 -- α
     tgt n (alpha {z}{y}{x}{m} h k) with ℕcompare n (suc m)
-    tgt n (alpha {z}{y}{x}{.(n + i)} h k)                                    | less .n i = src n (src (suc n) (alpha {z}{y}{x}{(n + i)} h k))
+    tgt n (alpha {z}{y}{x}{.(n + i)} h k)                | less .n i = src n (src (suc n) (alpha {z}{y}{x}{(n + i)} h k))
     tgt .(suc n) (alpha {z}{y}{x} {n} h k)               | equal .(suc n) = comp n (comp n z y h) x {!k!}
     tgt .(suc (suc (n + i))) (alpha {z} {y} {x} {n} h k) | greater .(suc n) i = alpha {z}{y}{x}{n} h k
 -- ƛ

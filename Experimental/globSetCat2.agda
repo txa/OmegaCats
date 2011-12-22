@@ -12,7 +12,7 @@ open import Data.Fin hiding (#_;_<_;_+_) renaming (suc to fsuc;zero to fzero)
 open import Data.Product 
 open import Data.Empty 
 open import Data.Unit hiding (tt ; _≤_ )
-open import Level
+open import Level renaming (zero to lzero; suc to lsuc)
 open import Relation.Binary -- PropositionalEquality
 open import Relation.Binary.PropositionalEquality renaming (subst to ≡subst;trans to ≡trans;sym to ≡sym;cong to ≡cong;refl to ≡refl)
 open import Relation.Nullary.Core

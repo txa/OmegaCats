@@ -38,8 +38,18 @@ mutual
   comp' : ∀ {C}(Δ : Comp C) → Hom (compSrc₀ Δ) → Hom (compSrc₁ Δ) → Hom (compTgt Δ)
   comp' = comp
 
-{- example -}
 
+{- all categories are empty -}
+data ⊥ : Set where
+
+
+lemm₀ : (C : Cat) → Obj C → ⊥
+lemm₀ • ()
+lemm₀ (hom (cat [ src , dom ])) x with lemm₀ cat dom
+lemm₀ (hom (cat [ src , dom ])) x | () 
+
+
+{- example -}
 postulate
   a b c : Obj •
   f f' : Hom (• [ a , b ])
@@ -48,6 +58,7 @@ postulate
   β β' : Hom ((hom (• [ b , c ])) [ ⇑ g , ⇑ g' ])
   Θ : Hom ((hom ((hom (• [ a , b ])) [ ⇑ f , ⇑ f' ])) [ ⇑ α , ⇑ α' ])
   ψ : Hom ((hom ((hom (• [ b , c ])) [ ⇑ g , ⇑ g' ])) [ ⇑ β , ⇑ β' ])
+  ξ : Hom ((hom (• [ a , c ])) [ ⇑ (comp (obj a b c) g f) , ⇑ (comp (obj a b c) g' f') ])
 
 comp₀ : ∀ {C}{a b c : Obj C}(g : Hom (C [ b , c ]))(f : Hom (C [ a ,  b ])) → Hom (C [ a , c ])
 comp₀ {C} {a} {b} {c} g f = comp (obj a b c) g f

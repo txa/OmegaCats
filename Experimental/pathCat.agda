@@ -76,9 +76,11 @@ module Freeω (G : Glob) where
 --                       (β : obj (## (p-concat (pcons h y z) q)))
 --                         → Freeω (p-concat h (path-comp p q) 
 
+-- the problem lies here -- I need pcons in the type : i.e. I need to say something about concrete elements , 
+-- it's not generated all freely. Again, it has to do with deep compositions.
     compPath : ∀ {m n} → (h : Path m)(x y z : Freeω h)(p : ExtPath (pcons h x y) n)(q : ExtPath (pcons h y z) n) → ExtPath h n
     compPath = ? 
-
+-- comment this out and comp₊ to get it going
 
 
     embPath : ∀ {n} → |Path| G n → Path n
