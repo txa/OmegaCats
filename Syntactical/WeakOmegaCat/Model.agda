@@ -111,6 +111,25 @@ module Idω where
   evalVar X (vz {Γ} {C}) (_ , x) = evalWkCatObj X C x x
   evalVar X (vs {Γ} {C} x D) (γ , y) = evalWkCatObj X C y (evalVar X x γ) 
 
+{-
+  idω→evalCat :  ∀ X {Γ}(C : Cat Γ){γ : evalCon X Γ}{a b : Obj C}
+              → Idω (evalObj X a γ ≡ evalObj X b γ) ⇒ evalCat X (C [ a , b ]) γ
+-}
+
+  idω→evalCat :  ∀ X {Γ}(C : Cat Γ){γ : evalCon X Γ}
+              → Idω (obj (evalCat X C γ)) ⇒ evalCat X C γ
+--record { obj→ = λ x → x; hom→ =  λ {α} {β} → ♯ idω→evalCat X {!C!} } 
+-- record { obj→ = λ x → x; hom→ = λ {α} {β} → ♯ {!!} }
+--(idω→evalCat X {!C [ ? , ? ] !}) }
+
+
+
+
+  evalId : ∀ X {Γ}(C : Cat Γ){γ : evalCon X Γ}{a : Obj C}
+    → obj (♭ (hom (evalCat X C γ) (evalObj X a γ) (evalObj X a γ)))
+  evalId X • = refl
+  evalId X (C [ a , b ]) = {!!}
+
   evalObj X (var y) γ = evalVar X y γ
   evalObj X (wk {Γ} {C} A D) (γ , y) = evalWkCatObj X C y (evalObj X A γ)
   evalObj X (CoreCore.id a) γ = {!!}
@@ -120,3 +139,6 @@ module Idω where
   evalWkCat X (C [ a , b ]) x = 
     ♭ (hom→ (evalWkCat X C x))
 --    ♭ (hom→ (evalWkCat X C x) {α = evalObj X a _} {β = evalObj X b _}) 
+
+  idω→evalCat X • = Glob.id
+  idω→evalCat X (C [ a , b ]) = ♭ (hom→ {!idω→evalCat!}) -- ♭ (hom→ (idω→evalCat X C))
