@@ -79,7 +79,7 @@ module Idω where
   Idω A = record { obj = A; hom = λ a b → ♯ Idω (a ≡ b) } 
 
   evalCon : Set → Con → Set
---  evalCat' : (X : Set) → ∀ {Γ} (C : Cat Γ)(γ : evalCon X Γ) → Set
+  evalCat' : (X : Set) → ∀ {Γ} (C : Cat Γ)(γ : evalCon X Γ) → Set
   evalCat : (X : Set) → ∀ {Γ} (C : Cat Γ)(γ : evalCon X Γ) → Glob
   evalVar : ∀ X {Γ} {C : Cat Γ}(A : Var C)(γ : evalCon X Γ) 
      → Glob.obj (evalCat X C γ)
@@ -92,9 +92,15 @@ module Idω where
   evalCon X ε = ⊤
   evalCon X (Γ , C) = Σ (evalCon X Γ) (λ γ → Glob.obj (evalCat X C γ))
 
-  evalCat X • γ = Idω X
+  evalCat' X • γ = X
+  evalCat' X (C [ A , B ]) γ = evalObj X A γ ≡ evalObj X B γ
+  evalCat X C γ = Idω (evalCat' X C γ)
+
+{-
+ evalCat X • γ = Idω X
   evalCat X (C [ a , b ]) γ =
     ♭ (hom (evalCat X C γ) (evalObj X a γ) (evalObj X b γ))
+-}
 
   open _⇒_
 
@@ -111,34 +117,11 @@ module Idω where
   evalVar X (vz {Γ} {C}) (_ , x) = evalWkCatObj X C x x
   evalVar X (vs {Γ} {C} x D) (γ , y) = evalWkCatObj X C y (evalVar X x γ) 
 
-{-
-  idω→evalCat :  ∀ X {Γ}(C : Cat Γ){γ : evalCon X Γ}{a b : Obj C}
-              → Idω (evalObj X a γ ≡ evalObj X b γ) ⇒ evalCat X (C [ a , b ]) γ
--}
-
-  idω→evalCat :  ∀ X {Γ}(C : Cat Γ){γ : evalCon X Γ}
-              → Idω (obj (evalCat X C γ)) ⇒ evalCat X C γ
---record { obj→ = λ x → x; hom→ =  λ {α} {β} → ♯ idω→evalCat X {!C!} } 
--- record { obj→ = λ x → x; hom→ = λ {α} {β} → ♯ {!!} }
---(idω→evalCat X {!C [ ? , ? ] !}) }
-
-
-
-
-  evalId : ∀ X {Γ}(C : Cat Γ){γ : evalCon X Γ}{a : Obj C}
-    → obj (♭ (hom (evalCat X C γ) (evalObj X a γ) (evalObj X a γ)))
-  evalId X • = refl
-  evalId X (C [ a , b ]) = {!!}
-
   evalObj X (var y) γ = evalVar X y γ
   evalObj X (wk {Γ} {C} A D) (γ , y) = evalWkCatObj X C y (evalObj X A γ)
-  evalObj X (CoreCore.id a) γ = {!!}
+  evalObj X (CoreCore.id a) γ = refl
   evalObj X (comp T U f g) γ = {!!}
 
   evalWkCat X • x = Glob.id
   evalWkCat X (C [ a , b ]) x = 
     ♭ (hom→ (evalWkCat X C x))
---    ♭ (hom→ (evalWkCat X C x) {α = evalObj X a _} {β = evalObj X b _}) 
-
-  idω→evalCat X • = Glob.id
-  idω→evalCat X (C [ a , b ]) = ♭ (hom→ {!idω→evalCat!}) -- ♭ (hom→ (idω→evalCat X C))
