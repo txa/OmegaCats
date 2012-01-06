@@ -1,3 +1,4 @@
+{-# OPTIONS --without-K #-}
 module Idomega where
 
 open import CoreCore
@@ -11,41 +12,71 @@ open import Data.Nat
 open Glob.Glob
 open _⇒_
 
-data SemTel (G : Glob) : (n : ℕ) → Set 
-root : ∀ {G}{n} → SemTel G n → Glob
+data Path (G : Glob) : (n : ℕ) → Set 
+end : ∀ {G}{n} → Path G n → Glob
 
-data SemTel (G : Glob) where
-  • : SemTel G 0
-  _,[_,_] : ∀ {n}(T : SemTel G n)(a b : obj (root T)) → SemTel G (suc n)
+data Path (G : Glob) where
+  • : Path G 0
+  _,[_,_] : ∀ {n}(T : Path G n)(a b : obj (end T)) → Path G (suc n)
 
-root {G} • = G
-root (T ,[ a , b ]) = ♭ (hom (root T) a b)
+end {G} • = G
+end (T ,[ a , b ]) = ♭ (hom (end T) a b)
 
 Idω : Set → Glob
 Idω A = record { obj = A; hom = λ a b → ♯ Idω (a ≡ b) } 
 
-data SemTel' (X : Set) : (n : ℕ) → Set 
-root' : ∀ {X}{n} → SemTel' X n → Set
+data Path' (X : Set) : (n : ℕ) → Set 
+end' : ∀ {X}{n} → Path' X n → Set
 
-data SemTel' (X : Set) where
-  • : SemTel' X 0
-  _[_,_] : ∀ {n}(T : SemTel' X n)(a b : root' T) → SemTel' X (suc n)
+data Path' (X : Set) where
+  • : Path' X 0
+  _[_,_] : ∀ {n}(T : Path' X n)(a b : end' T) → Path' X (suc n)
   
-root' {X} • = X
-root' (T [ a , b ]) = a ≡ b
+end' {X} • = X
+end' (T [ a , b ]) = a ≡ b
 
-semCompTel : ∀ {X}{n}{a b c : X}
-           → SemTel' (b ≡ c) n → SemTel' (a ≡ b) n → SemTel' (a ≡ c) n
-semComp :  ∀ {X}{n}{a b c : X}
-           → (T : SemTel' (b ≡ c) n)(U : SemTel' (a ≡ b) n)
-           → root' T → root' U → root' (semCompTel T U)
+compPath : ∀ {X}{n}{a b c : X}
+           → Path' (b ≡ c) n → Path' (a ≡ b) n → Path' (a ≡ c) n
+comp' :  ∀ {X}{n}{a b c : X}
+           → (T : Path' (b ≡ c) n)(U : Path' (a ≡ b) n)
+           → end' T → end' U → end' (compPath T U)
 
-semCompTel • • = •
-semCompTel (T [ t , t' ]) (U [ u , u' ]) = 
-  (semCompTel T U) [ semComp T U t u , semComp T U t' u' ]
+compPath • • = •
+compPath (T [ t , t' ]) (U [ u , u' ]) = 
+  (compPath T U) [ comp' T U t u , comp' T U t' u' ]
 
-semComp • • f g = trans g f
-semComp (T [ t , t' ]) (U [ u , u' ]) f g = cong₂ (semComp T U) f g
+comp' • • f g = trans g f
+comp' (T [ t , t' ]) (U [ u , u' ]) f g = cong₂ (comp' T U) f g
+
+idPath : {A : Set}(n : ℕ) → A → Path' A n
+id' : {A : Set}(n : ℕ)(a : A) → end' (idPath n a)
+
+idPath zero a = •
+idPath (suc n) a = (idPath n a) [ (id' n a) , (id' n a) ]
+
+id' zero a = a
+id' (suc n) a = refl
+
+data Path⇒ (A : Set) : (n : ℕ)(p q : Path' A n) → Set 
+
+
+data Path⇒ (A : Set) where
+  • : Path⇒ A 0 • •
+    : (fs : Path'⇒ A n p q)
+    → Path'⇒ A (suc n) (p [ x , x' ]) (q [ y , y' ])
+  
+
+λPath : {A : Set}{a b : A}{n : ℕ}(p : Path' (b ≡ a) n) 
+        → end' (compPath (idPath n refl) p) → end' p
+
+λ' : {A : Set}{a b : A}{n : ℕ}(p : Path' (b ≡ a) n) →
+     (f : end' p) → λPath p (comp' (idPath n refl) p (id' n refl) f) ≡ f 
+
+λPath • x = x
+λPath (T [ a' , b' ]) x = {!!}
+
+λ' • refl = refl
+λ' (T [ a' , b' ]) f = {!!}
 
 
 
