@@ -77,10 +77,9 @@ idTel : ∀ {Γ}{C : Cat Γ }(a : Obj C)(n : ℕ) → Tel C n
 itId : ∀ {Γ}{C : Cat Γ}(a : Obj C)(n : ℕ) → Obj (idTel a n ⇓)
 
 
-compTel : ∀ {Γ}{n}{C : Cat Γ }{a b c : Obj C}(T : Tel (C [ b , c ]) n)(T' : Tel (C [ a , b ]) n) → Tel ( C [ a , c ] ) n
+_◎_ : ∀ {Γ}{n}{C : Cat Γ }{a b c : Obj C}(T : Tel (C [ b , c ]) n)(T' : Tel (C [ a , b ]) n) → Tel ( C [ a , c ] ) n
 
 invTel : ∀ {Γ}{n}{C : Cat Γ }{a b : Obj C}(T : Tel (C [ a , b ]) n) → Tel ( C [ b , a ] ) n
-invTel T = {!!}
 
 -- the bottom half of the telescope where alphas live
 {- Telescope morphisms -}
@@ -90,7 +89,7 @@ data _⇒_ {Γ}{C : Cat Γ} : ∀ {n} (T U : Tel C n) → Set
 appTel : ∀ {Γ}{C : Cat Γ}{n m}{T U : Tel C n}(fs : T ⇒ U)(T' : Tel (C ++ T) m) → Tel (C ++ U) m
 
 appObj : ∀ {Γ}{C : Cat Γ}{n m}{T U : Tel C n}
-         (fs : T ⇒ U)(T' : Tel (C ++ T) m) → (Obj (T' ⇓)) → Obj ((appTel fs T') ⇓)
+           (fs : T ⇒ U)(T' : Tel (C ++ T) m) → (Obj (T' ⇓)) → Obj ((appTel fs T') ⇓)
 
 appObj' : ∀ {Γ}{C : Cat Γ}{n}{T U : Tel C n}(fs : T ⇒ U) → (Obj (T ⇓)) → Obj (U ⇓)
 
@@ -99,7 +98,7 @@ appObj' : ∀ {Γ}{C : Cat Γ}{n}{T U : Tel C n}(fs : T ⇒ U) → (Obj (T ⇓))
 
 id' : ∀ {Γ}{C : Cat Γ }(a : Obj C) → Obj (C [ a , a ]) 
 
-λTel : ∀ {Γ}{n}{C : Cat Γ}{a b : Obj C}(T : Tel (C [ a , b ]) n) → ((compTel (idTel (id' b) n) T) ⇒ T)
+λTel⇒ : ∀ {Γ}{n}{C : Cat Γ}{a b : Obj C}(T : Tel (C [ a , b ]) n) → ((idTel (id' b) n) ◎ T) ⇒ T
 
 αTel : ∀ {Γ}{n}{C : Cat Γ}{a b c d : Obj C} → Tel (C [ a , b ]) n → Tel (C [ b , c ]) n → Tel (C [ c , d ]) n → Tel (C [ a , d ]) n
 {-
@@ -121,12 +120,12 @@ data Obj where
   comp : ∀ {Γ}{n}{C : Cat Γ}{a b c : Obj C}
            (T : Tel (C [ b , c ]) n)(U : Tel (C [ a , b ]) n)
            (f : Obj (T ⇓))(g : Obj (U ⇓))
-           → Obj (compTel T U ⇓)
+           → Obj ((T ◎ U) ⇓)
   inv : ∀ {Γ}{n}{C : Cat Γ }{a b : Obj C}(T : Tel (C [ a , b ]) n)(f : Obj (T ⇓)) → Obj ((invTel T) ⇓)
   α : ∀ {Γ}{n}{C : Cat Γ}{a b c d : Obj C}( T : Tel (C [ a , b ]) n)(U : Tel (C [ b , c ]) n)(V : Tel (C [ c , d ]) n) → 
       (f : Obj (T ⇓))(g : Obj (U ⇓))(h : Obj (V ⇓)) → Obj (αTel (T [ f , f ]) (U [ g , g ]) (V [ h , h ]) ⇓)
   ƛ : ∀ {Γ}{n}{C : Cat Γ}{a b : Obj C}(T : Tel (C [ a , b ]) n)(f : Obj (T ⇓))
-                 → Obj ((T ⇓) [ appObj' (λTel T) (comp _ _ (itId (id' b) n) f) , f ])
+                 → Obj ((T ⇓) [ appObj' (λTel⇒ T) (comp _ _ (itId (id' b) n) f) , f ])
 --  ƛ : ∀ {Γ}{n}{C : Cat Γ}{a b : Obj C}(T : Tel (C [ a , b ]) n)(f : Obj (T ⇓)) → Obj (λTel (T [ f , f ]) ⇓)
 {-
   ƛ : ∀ {Γ}{n}{C : Cat Γ}{a b : Obj C}(T : Tel (C [ a , b ]) n)(f : Obj (T ⇓)) → Obj (λTel (T [ f , f ]) ⇓)
@@ -166,17 +165,19 @@ itId a zero = a
 itId a (suc n) = id (itId a n)
 
 
-compTel • • = •
-compTel (T [ f , g ]) (T' [ f' , g' ]) = (compTel T T') [ comp T T' f f' , comp T T' g g' ]
-
+• ◎ • = •
+(T [ f , g ]) ◎ (T' [ f' , g' ]) = (T ◎ T') [ comp T T' f f' , comp T T' g g' ]
 
 comp₀ :  ∀ {Γ}{C : Cat Γ}{a b c : Obj C}
            (f : Obj (C [ b , c ]))(g : Obj (C [ a , b ]))
            → Obj (C [ a , c ])
 comp₀ f g = comp • • f g
 
+invTel • = •
+invTel (T [ a' , b' ]) = invTel T [ inv T a' , inv T b' ]
+
 inv₀ : ∀ {Γ}{C : Cat Γ }{a b : Obj C}(f : Obj (C [ a , b ])) → Obj (C [ b , a ] )
-inv₀ f = {!!} -- inv • f
+inv₀ f = inv • f
 
 αTel = {!!} 
 --λTel = {!!} 
@@ -193,14 +194,75 @@ data _⇒_ {Γ}{C : Cat Γ} where
 appTel fs • = •
 appTel fs (T' [ a , b ]) = (appTel fs T') [ appObj fs T' a , appObj fs T' b ]
 
-appTel• : ∀ {Γ}{C : Cat Γ}{m}(T' : Tel C m) 
-       → T' ≡ appTel • T' 
-appTel• T' = {!!}
+lem-appTel•Unit : ∀ {Γ}{C : Cat Γ}{m}(T' : Tel C m) → (T' ⇓) ≡ (appTel • T' ⇓)
+lem-appTel[] : ∀ {Γ}{C : Cat Γ}{m n}{T U : Tel C m}{a b : Obj (C ++ T)}{a' b' : Obj (C ++ U)} → 
+                       (fs : T ⇒ U)(f  : Obj ((C ++ U) [ a' , appObj' fs a ]))(g  : Obj ((C ++ U) [ appObj' fs b , b' ])) → (T' : Tel ((C ++ T) [ a , b ]) n) → ({!!} ≡ (appTel (fs [ f , g ]) T' ⇓))
 
-appObj • T' a = subst (λ U' → Obj (_ ++ U')) (appTel• T') a 
-appObj (fs [ f , g ]) T' h = {!!} -- comp {!!} {!!} {!!} {!!}
+{-
+codλTel-tail : ∀ {Γ}{n}{m}{C : Cat Γ}{a b : Obj C} → (T : Tel (C [ a , b ]) n) → (a' b' : Obj (C [ a , b ] ++ T)) → (U : Tel ((C [ a , b ] ++ T) [ a' , b' ]) m) → 
+                             Tel ((C [ a , b ] ++ λTel T) [ codλ T • a' , codλ T • b' ]) m
+-}
+
 
 appObj' fs = appObj fs •
 
-λTel • = •
-λTel (T [ a , b ]) = (λTel T) [ inv₀ (ƛ T a) , (ƛ T b) ]
+
+appTel-tail :  ∀ {Γ}{C : Cat Γ}{m n}{T U : Tel C n}(fs : T ⇒ U){a b : Obj (C ++ T)} → (T' : Tel ((C ++ T) [ a , b ]) m) → Tel ((C ++ U) [ appObj' fs a , appObj' fs b ]) m
+lem-appTel-tail : ∀ {Γ}{C : Cat Γ}{m n}{T U : Tel C n}(fs : T ⇒ U){a b : Obj (C ++ T)} → (T' : Tel ((C ++ T) [ a , b ]) m) →
+  (C ++ U) ++ appTel fs ([ a , b ] T') ≡ ((C ++ U) [ appObj fs • a , appObj fs • b ]) ++ (appTel-tail fs T')
+
+
+appTel-tail fs • = •
+appTel-tail fs {a}{b} (T' [ a' , b' ]) = (appTel-tail fs T') [ subst Obj (lem-appTel-tail fs T') (appObj fs ([ a , b ] T') (subst Obj (lem-prep≡ T') a'))  , 
+                                                               subst Obj (lem-appTel-tail fs T') (appObj fs ([ a , b ] T') (subst Obj (lem-prep≡ T') b')) ] 
+
+
+lem-appTel-tail fs • = refl
+lem-appTel-tail {Γ}{C}{suc m}{n}{T}{U} fs {a}{b} (T' [ a' , b' ]) = J' (λ {X} eq → _≡_ {_}{Cat Γ} (((C ++ U) ++ appTel fs ([ a , b ] T')) [
+      appObj fs ([ a , b ] T') (subst Obj (lem-prep≡ T') a') ,
+      appObj fs ([ a , b ] T') (subst Obj (lem-prep≡ T') b') ])
+      (X [
+        subst Obj eq
+        (appObj fs ([ a , b ] T') (subst Obj (lem-prep≡ T') a'))
+        ,
+        subst Obj eq
+        (appObj fs ([ a , b ] T') (subst Obj (lem-prep≡ T') b'))
+        ])) refl (lem-appTel-tail fs T') 
+
+
+appObj • T' a = subst Obj (lem-appTel•Unit T') a 
+appObj {Γ}{C}{suc n}{m}{T [ a , b ]}{U [ a' , b' ]}(fs [ f , g ]) T' x = subst Obj (lem-appTel[] fs f g T') (comp (idTel g m ◎ appTel-tail fs T') (idTel f m) (comp (idTel g m) (appTel-tail fs T') (itId g m) (subst Obj (lem-appTel-tail fs T') (appObj fs ([ a , b ] T') (subst Obj (lem-prep≡ T') x))) ) (itId f m))
+{-   -}
+{- subst Obj {!!} 
+                                                                           (comp (idTel g m ◎ appTel-tail fs T' ) (idTel f m) 
+                                                                             (comp (idTel g m) (appTel-tail fs T') (itId g m) (subst Obj (lem-appTel-tail fs T') (appObj fs ([ a , b ] T') ((subst Obj (lem-prep≡ T') x))) )) (itId f m))  -- comp (idTel g {!m!}) {!!} {!!} {!!} 
+-}
+lem-appTel•Unit • = refl
+lem-appTel•Unit {Γ}{C}{suc n}(T [ a , b ]) = J' (λ {X} eq → _≡_ {_}{Cat Γ} (T ⇓ [ a , b ]) (X [ subst Obj eq a , subst Obj eq b ])) refl (lem-appTel•Unit T)
+
+lem-appTel[] = {!!} 
+-- (subst Obj ? (appObj fs ([ a , b ] T') (subst Obj (lem-prep≡ T') x))))
+{-
+Goal: Obj (((C ++ U) [ b , b' ]) ++ appTel (fs [ f , g ]) T')
+————————————————————————————————————————————————————————————
+h  : Obj (((C ++ T) [ a , a' ]) ++ T')
+T' : Tel ((C ++ T) [ a , a' ]) m
+g  : Obj ((C ++ U) [ appObj fs • a' , b' ])
+f  : Obj ((C ++ U) [ b , appObj fs • a ])
+fs : T ⇒ U
+b' : Obj (C ++ U)
+b  : Obj (C ++ U)
+U  : Tel C n
+a' : Obj (C ++ T)
+a  : Obj (C ++ T)
+T  : Tel C n
+m  : ℕ
+n  : ℕ
+C  : Cat Γ
+Γ  : Con
+-}
+
+
+
+λTel⇒ • = •
+λTel⇒ (T [ a , b ]) = (λTel⇒ T) [ inv₀ (ƛ T a) , (ƛ T b) ]
