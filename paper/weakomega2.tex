@@ -1,0 +1,73 @@
+%\documentclass[conference,a4paper]{IEEEtran}
+\documentclass[a4paper]{article}
+
+\input{macros.tex}
+
+\begin{document}
+\title{A Syntactical Approach to Weak $\omega$-Groupoids}
+
+% author names and affiliations
+% use a multiple column layout for up to three different
+% affiliations
+% \author{\IEEEauthorblockN{Michael Shell}
+% \IEEEauthorblockA{Functional Programming Laboratory\\
+% School of Computer Science\\
+% University of Nottingham, UK}
+% \and
+% \IEEEauthorblockN{Ondrej Rypacek}
+% \IEEEauthorblockA{Department of Informatics\\
+% King's College London\\
+% London, UK
+% Email:ondrej.rypacek@kcl.ac.uk}
+% }
+
+\maketitle
+
+
+\begin{abstract}
+%\boldmath
+  When moving to a Type Theory without proof irrelevance the notion of
+  a setoid has to be generalized to the notion of a weak
+  $\omega$-groupoid. As a first step in this direction we study the
+  formalisation of weak $\omega$-groupoids in Type Theory. This is
+  motivated by Voevodsky's proposal of univalent type theory which is
+  incompatible with proof-irrelevance and the results by Lumsdaine and
+  Garner/van de Berg showing that the standard eliminator for equality
+  gives rise to a weak $\omega$-groupoid.
+\end{abstract}
+%\IEEEpeerreviewmaketitle
+
+\input{introduction.tex}
+
+\input{glob.tex}
+
+\input{syntax.tex}
+
+\input{structure.tex}
+
+\input{laws.tex}
+
+\input{coherence.tex}
+
+\input{idw.tex}
+
+\input{conclusion.tex}
+
+  
+
+\section*{Acknowledgment}
+
+
+The authors would like to thank...
+
+
+%\bibliographystyle{IEEEtran}
+%\bibliography{IEEEabrv,weakomega2.bib}
+\bibliographystyle{alpha}
+\bibliography{weakomega2}
+
+\end{document}
+
+
+
+

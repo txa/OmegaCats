@@ -1,0 +1,45 @@
+1. Introduction (txa)
+
+   Why, potential applications: eliminating univalence axiom
+   cite: Harber&Licata, Lumsdene
+
+    ref to opetopes paper (related work)
+    Batanin
+
+2. Globular sets (txa)
+
+   coinductive defn
+   presheaf?
+   define Idw
+
+3. Syntax (txa)
+
+   generic syntax
+   
+   Con,Cat,Obj,Var,Tel
+
+   Interpretation wrt globular sets
+
+   Syntax => globular set
+
+4. Structure (oxr)
+
+   composition
+   identity
+   inverses
+
+5. Laws (oxr)
+
+   telescope morphisms
+   inverse
+   lambda,rho,alpha,interchange,inverse-laws
+
+6. Coherence (oxr)
+
+   hollow (~ closed in a sense)
+
+7. Idw is an w-Groupoid (txa,oxr)
+
+8. Conclusions and further work (txa)
+
+bib

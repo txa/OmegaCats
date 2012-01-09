@@ -1,0 +1,41 @@
+
+\section{Coherence}
+\label{sec:coherence}
+
+\begin{quote}
+  \begin{itemize}
+  \item hollow (~ closed in a sense)
+  \end{itemize}
+\end{quote}
+
+\subsection{Coherence cells between coherence cells}
+Finally we add all coherence cells between parallel coherence
+cells and their compositions. To this end we define a predicate
+$\hollow$ on objects:
+\[
+\AxiomC{$x :  \Obj~C$}
+\UnaryInfC{$\hollow~x~:~\Set$}
+\DisplayProof
+\]
+%
+Such that all identities, $\alpha$'s, $\rho$'s, $\lambda$'s and
+$\chi$'s are hollow, and all weakenings and compositions of
+hollow cells are hollow. Then we introduce a constructor of $\Obj$:
+\[
+\AxiomC{$f ~ g : \Obj~\homcat{C}{a}{b}$}
+\AxiomC{$p : \hollow~f$}
+\AxiomC{$q : \hollow~g$}
+\TrinaryInfC{$\mathsf{coh}~f~g~p~q :
+  \Obj~\homcat{\homcat{C}{a}{b}}{f}{g}$}
+\DisplayProof
+\]
+%
+And we define $\hollow~(\mathsf{coh}~f~g~p~q) = \top$.
+
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "weakomega2"
+%%% End: 
