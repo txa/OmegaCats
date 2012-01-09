@@ -55,7 +55,7 @@ evalCat : (X : Set) → ∀ {Γ} (C : Cat Γ)(γ : evalCon X Γ) → Glob
 evalTel' : (X : Set) → ∀ {Γ}{C : Cat Γ}{n : ℕ}
   (T : Tel C n)(γ : evalCon X Γ) → Set
 evalTel : (X : Set) → ∀ {Γ}{C : Cat Γ}{n : ℕ}
-  (T : Tel C n)(γ : evalCon X Γ) → Glob
+  (T : Tel C n)(γ : evalCon X Γ) → SemTel (evalCat C γ) n
 
 evalVar : ∀ X {Γ} {C : Cat Γ}(A : Var C)(γ : evalCon X Γ) 
    → Glob.obj (evalCat X C γ)
