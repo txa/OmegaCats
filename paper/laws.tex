@@ -160,32 +160,32 @@ a telescope $u$ of depth $n$ a cell $\Phi\,m \,\alpha \longrightarrow
 \beta$ where $m$ is the data necessary to define a function
 $\Obj~(\cat{t}) \rightarrow \Obj~(\cat{u})$. We will call such an $m$
 a \emph{telescope morphism form $t$ to $u$}; formally $ m : t
-\rightleftharpoons u$. Then $\Phi$ has type $t \rightleftharpoons u
+\rightrightarrows u$. Then $\Phi$ has type $t \rightrightarrows u
 \rightarrow \Obj (\cat t) \rightarrow \Obj(\cat u)$. Formally, we
 define telescope morphisms as follows; in mutual recursion to their
 application to telescopes and objects in telescopes:
 \[
 \AxiomC{$t,u : \Tel\, C\, n $}
-\UnaryInfC{$t \rightleftharpoons u : \Set$}
+\UnaryInfC{$t \rightrightarrows u : \Set$}
 \DisplayProof
 \qquad
-\AxiomC{$\phantom{\bullet : \telzero \rightleftharpoons \telzero}$}
-\UnaryInfC{$\bullet : \telzero \rightleftharpoons \telzero$}
+\AxiomC{$\phantom{\bullet : \telzero \rightrightarrows \telzero}$}
+\UnaryInfC{$\bullet : \telzero \rightrightarrows \telzero$}
 \DisplayProof
 \]
 \[ 
-\AxiomC{$m : t \rightleftharpoons u \quad \alpha :
+\AxiomC{$m : t \rightrightarrows u \quad \alpha :
   \Obj\,(\telsuc{\cat{u}}{a'}{\appobj{m}{a}}) \quad
   \Obj\,(\telsuc{\cat{u}}{\appobj{m}{b}}{b'})$}
 \UnaryInfC{$\telsuc{m}{\alpha}{\beta} : \telsuc{t}{a}{b}
-    \rightleftharpoons \telsuc{u}{a'}{b'}$}
+    \rightrightarrows \telsuc{u}{a'}{b'}$}
 \DisplayProof
 \]
 where
-\[\AxiomC{$m : t \rightleftharpoons u \quad t' : \Tel\, (\cat{t})\,n$}
+\[\AxiomC{$m : t \rightrightarrows u \quad t' : \Tel\, (\cat{t})\,n$}
 \UnaryInfC{$\apptel{m}{t'} : \Tel\,(\cat{u})\,n$}
 \DisplayProof\]
-\[\AxiomC{$m : t \rightleftharpoons u \quad \{t' : \Tel\,
+\[\AxiomC{$m : t \rightrightarrows u \quad \{t' : \Tel\,
   (\cat{t})\,n\}\quad a : \Obj\,(\cat{u} \dblplus {u'})$}
 \UnaryInfC{$\appobj{m}{\{t'\}\,a} : \Obj\,(\cat{u}\dblplus \apptel{m}{t'})$}
 \DisplayProof\]
@@ -229,7 +229,7 @@ The hom-case follows the pattern outlined in Section \ref{sec:lambdas}.
 \[
 \AxiomC{$
   \begin{array}{c}
-\homcat{m}{\alpha}{\beta} : \homcat{t}{a}{b} \rightleftharpoons \homcat{u}{a'}{b'}\quad t' :
+\homcat{m}{\alpha}{\beta} : \homcat{t}{a}{b} \rightrightarrows \homcat{u}{a'}{b'}\quad t' :
 \Tel~(\cat{\homcat{t}{a}{b}}) ~ n\\
 x : \Obj~{(\cat{t'})}
 \end{array}
