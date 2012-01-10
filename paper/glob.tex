@@ -68,11 +68,28 @@ presheaf category over the diagram:
 \emph{insert diagram}
 
 with the globular identities:
-% \begin{eqnarray*}
-%   t_{i+1} \circ s_i & = & s_{i+1) \circ t_i \\
-%   t_{i+1} \circ t_i & = & s_{i+1} \circ t_i
-% \end{eqnarray*}
+\begin{eqnarray*}
+  t_{i+1} \circ s_i & = & s_{i+1} \circ t_i \\
+  t_{i+1} \circ t_i & = & s_{i+1} \circ t_i
+\end{eqnarray*}
+In the example of $\Idw\,A$ the presheaf is given by a family
+$F^A : \Nat \to set$:
+\begin{eqnarray*}
+  F^A\,0 & = & A\\
+  F^A\,1 & = & \Sigma a,b : A,a = b\\
+  F^A\,2 & = & \Sigma a,b : A,\Sigma \alpha,\beta: a = b, \alpha = \beta\\
+  \vdots & \vdots & \vdots \\
+  F^A\,(n+1) & = & \Sigma a,b:A,F^{a = b}\,n
+\end{eqnarray*}
+and source and target maps $s_i,t_I  F^A\,(n+1) \to F^A\,n$ satisfying the globular identities. 
+\begin{eqnarray*}
+s_0 (a,b,-) & = & a \\
+t_0 (a,b,-) & = & b \\  
+s_{n+1}\,(a,b,\alpha)  & = & (a , b, s_n\,alpha) \\
+t_{n+1}\,(a,b,\alpha)  & = & (a , b, t_n\,alpha) \\
+\end{eqnarray*}
 
+Mention Lumsdaine
 
 
 \begin{quote}
