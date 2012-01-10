@@ -1,13 +1,10 @@
-
 \section{Laws}
 \label{sec:laws}
 
 \begin{quote}
   \begin{itemize}
   \item telescope morphisms
-
   \item inverse
-
   \item lambda,rho,alpha,interchange,inverse-laws
 
   \end{itemize}
@@ -164,7 +161,44 @@ a telescope $u$ of depth $n$ a cell $\Phi\,m \,\alpha \longrightarrow
 $\Obj~(\cat{t}) \rightarrow \Obj~(\cat{u})$. We will call such an $m$
 a \emph{telescope morphism form $t$ to $u$}; formally $ m : t
 \rightleftharpoons u$. Then $\Phi$ has type $t \rightleftharpoons u
-\rightarrow \Obj (\cat t) \rightarrow \Obj(\cat u)$
+\rightarrow \Obj (\cat t) \rightarrow \Obj(\cat u)$. Formally, we
+define telescope morphisms as follows; in mutual recursion to their
+application to telescopes and objects in telescopes:
+\[
+\AxiomC{$t,u : \Tel\, C\, n $}
+\UnaryInfC{$t \rightleftharpoons u : \Set$}
+\DisplayProof
+\qquad
+\AxiomC{$\phantom{\bullet : \telzero \rightleftharpoons \telzero}$}
+\UnaryInfC{$\bullet : \telzero \rightleftharpoons \telzero$}
+\DisplayProof
+\]
+\[ 
+\AxiomC{$m : t \rightleftharpoons u \quad \alpha :
+  \Obj\,(\telsuc{\cat{u}}{a'}{\appobj{m}{a}}) \quad
+  \Obj\,(\telsuc{\cat{u}}{\appobj{m}{b}}{b'})$}
+\UnaryInfC{$\telsuc{m}{\alpha}{\beta} : \telsuc{t}{a}{b}
+    \rightleftharpoons \telsuc{u}{a'}{b'}$}
+\DisplayProof
+\]
+where
+\[\AxiomC{$m : t \rightleftharpoons u \quad t' : \Tel\, (\cat{t})\,n$}
+\UnaryInfC{$\apptel{m}{t'} : \Tel\,(\cat{u})\,n$}
+\DisplayProof\]
+\[\AxiomC{$m : t \rightleftharpoons u \quad \{t' : \Tel\,
+  (\cat{t})\,n\}\quad a : \Obj\,(\cat{t'})$}
+\UnaryInfC{$\appobj{m}{a} : \Obj\,(\cat{\apptel{m}{t'}})$}
+\DisplayProof\]
+\[ 
+\AxiomC{$\apptel{\telzero}{t}\;=\;t$}
+\DisplayProof
+\qquad
+\AxiomC{$\apptel{\telsuc{m}{\alpha}{\beta}}{t} \;=\; \telsuc{(\apptel{m}{t})}{\appobj{m}{\alpha}}{\appobj{m}{\beta}})$}
+\DisplayProof
+\]
+
+
+
 
 % ------------------------------
 

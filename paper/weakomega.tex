@@ -428,7 +428,7 @@ arbitrary category $C$ rather than $\bullet$\,:
 \[
 \AxiomC{$C : \Cat~\Gamma$}
 \dblline
-\UnaryInfC{$\telzero{C} : \Tel~C~0$}
+\UnaryInfC{$\telzero : \Tel~C~0$}
 \DisplayProof
 \quad
 \AxiomC{$T : \Tel~C~n$}
@@ -437,7 +437,7 @@ arbitrary category $C$ rather than $\bullet$\,:
 \DisplayProof
 \]
 \[
-\AxiomC{$\telzero{C} \Downarrow \, = \, C$}
+\AxiomC{$\telzero \Downarrow \, = \, C$}
 \DisplayProof
 \quad
 \AxiomC{$\telsuc{t}{a}{b} \Downarrow \, = \, \homcat{(t\Downarrow)}{a}{b}$}
@@ -450,7 +450,7 @@ called an \emph{object relative to $C$.}
 %
 An example of
 a telescope is
-$\telsuc{\telzero{\homcat{\homcat{\bullet}{a}{b}}{f}{g}}}{\alpha}{\alpha'}$:
+$\telsuc{\telzero}{\alpha}{\alpha'}$:
 \[\bfig
 \morphism(350,1150)|l|/{@{>}@/_.5em/}/<0,-300>[`;\alpha]
 \morphism(650,1150)|r|/{@{>}@/^.5em/}/<0,-300>[`;\alpha']
@@ -463,7 +463,7 @@ which is relative to the category
 \efig
 \]
 And 
-\[\cat{\telsuc{\telzero{\homcat{\homcat{\bullet}{a}{b}}{f}{g}}}{\alpha}{\alpha'}}\quad\equiv\quad\homcat{\homcat{\homcat{\bullet}{a}{b}}{f}{g}}{\alpha}{\alpha'}\enspace.\]
+\[\cat{\telsuc{\telzero}{\alpha}{\alpha'}}\quad\equiv\quad\homcat{\homcat{\homcat{\bullet}{a}{b}}{f}{g}}{\alpha}{\alpha'}\enspace.\]
 %
 So $\Downarrow$ just concatenates a telescope $t : \Tel~C$ to
 $C$. Alternatively we define $\dblplus$ as version of $\Downarrow$
@@ -513,7 +513,7 @@ where
 \]
 is defined by
 \[
-\AxiomC{$\telzero{C} \circ \telzero{C} \,=\,\telzero{C}$}
+\AxiomC{$\telzero \circ \telzero \,=\,\telzero$}
 \DisplayProof
 \quad
 \AxiomC{$\telsuc{u}{a'}{b'} \circ \telsuc{t}{a}{b} \,=\, \telsuc{(u
@@ -540,7 +540,7 @@ By iteration we obtain the unit for composition $n$ levels deep.
 Again, an iterated unit is defined at the same time as the telescopes
 it lies in:
 \[
-\AxiomC{$\idTel{a}{0} \,=\, \telzero{C}$}
+\AxiomC{$\idTel{a}{0} \,=\, \telzero$}
 \DisplayProof
 \quad
 \AxiomC{$\id^0 a \, =\, a$}
@@ -718,13 +718,13 @@ cell $x : \Obj (u\Downarrow)$ to a new telescope and a cell in it so
 that the following makes sense:
 \begin{equation}\label{eq:lambda-natur3}
 \bfig
-\Square[\dom\lambda~t~\telzero{t\Downarrow}~x`
-\cod\lambda~t~\telzero{t\Downarrow}~x`
-\dom\lambda~t~\telzero{t\Downarrow}~x'`
-\cod\lambda~t~\telzero{t\Downarrow}~x';
+\Square[\dom\lambda~t~\telzero~x`
+\cod\lambda~t~\telzero~x`
+\dom\lambda~t~\telzero~x'`
+\cod\lambda~t~\telzero~x';
 \lambda~t~x`
-\dom\lambda~t~\telsuc{\telzero{t\Downarrow}}{f}{f'}~\alpha`
-\cod\lambda~t~\telsuc{\telzero{t\Downarrow}}{f}{f'}~\alpha`
+\dom\lambda~t~\telsuc{\telzero}{f}{f'}~\alpha`
+\cod\lambda~t~\telsuc{\telzero}{f}{f'}~\alpha`
 \lambda~t~x']
 \morphism(500,300)/=>/<-200,-150>[`;\lambda_\alpha]
 \efig
@@ -753,10 +753,10 @@ them.
 \DisplayProof
 \]
 \begin{equation}\label{eq:lambda-tel-def}
-\AxiomC{$\lambda\Tel~\telzero{C} ~= ~ \telzero{C}$}
+\AxiomC{$\lambda\Tel~\telzero ~= ~ \telzero$}
 \DisplayProof
 \quad
-\AxiomC{$\lambda\Tel~(\telsuc{t}{f}{f'})~=~\telsuc{(\lambda\Tel~t)}{\dom\lambda~t~\telzero{t\Downarrow}~f}{\cod\lambda~t~\telzero{t\Downarrow}~f'}$}
+\AxiomC{$\lambda\Tel~(\telsuc{t}{f}{f'})~=~\telsuc{(\lambda\Tel~t)}{\dom\lambda~t~\telzero~f}{\cod\lambda~t~\telzero~f'}$}
 \DisplayProof
 \end{equation}
 %
