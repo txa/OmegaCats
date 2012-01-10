@@ -1,23 +1,14 @@
-\section{Globular Sets \textit{(txa)}}
+\section{Globular Sets}
 
-%\newcommand{\obj}{\mathrm{obj}}
-%\newcommand{\hom}{\mathrm{hom}}
-\newcommand{\objto}{\mathrm{obj}^{\to}}
-\newcommand{\homto}{\mathrm{hom}^{\to}}
-\newcommand{\Setoid}{\mathrm{Setoid}}
-%\newcommand{\Glob}{\mathrm{Glob}}
-\newcommand{\Prop}{\mathbf{Prop}}
-\newcommand{\Unit}{\mathbf{1}}
-\newcommand{\Idw}{\mathrm{Id}^\omega}
 
 In Type Theory we use the notion of a setoid to describe a set with a
 specific equality. That is a $A : \Setoid$ is given by the
 following data:
 \begin{eqnarray*}
   \obj_A & : & \Set \\
-  \hom_A & : & \obj_A \to \obj_A \to \Prop
+  \hom_A & : & \obj_A \rightarrow \obj_A \rightarrow \Prop
 \end{eqnarray*}
-and proof objects $\refl, \sym, \trans$ witnessing that $\hom$ is an
+and proof objects $\id, \sym{-}, \trans{-}{-}$ witnessing that $\hom$ is an
 equivalence relation. He we write $\Prop$ to denote the class of sets
 which have at most one inhabitant. This restriction is important when
 showing that the category of setoids has certain structure, in
@@ -27,8 +18,8 @@ equality we need to generalize the notion of a setoid so that the
 $\hom$-sets are generalized setoids again. It is not enough to just
 postulate the laws of an equivalence relation at each level, we also
 need some laws how these proofs interact. On the first level we
-require the laws of a groupoid, e.g. we want that $\trans\,refl\,p$ is
-equal to $p$. Here \emph{is equal} means that they are related by the
+require the laws of a groupoid, e.g. we want that $\trans{\id}{\alpha}$ is
+equal to $\alpha$. Here \emph{is equal} means that they are related by the
 equality relation of a setoid again. Clearly, the structure we are
 looking for is a weak $\omega$-groupoid. It is the goal of this paper
 to develop a formalisation of this structure. As a first step let's
@@ -37,15 +28,15 @@ the goupoid laws etc).
 We end up with a coinductive definition of a \emph{globular set} $G :
 \Glob$ given by
 \begin{eqnarray*}
-  \obj_A & : & \Set \\
-  \hom_A & : & \obj_A \to \obj_A \to \infty\,\Glob
+  \obj_G & : & \Set \\
+  \hom_G & : & \obj_G \rightarrow \obj_G \rightarrow \infty\,\Glob
 \end{eqnarray*}
 Here we use $\infty$ to indicate that $\Glob$ is defined
 coinductively. More formally, $\Glob$ is the terminal coalgebra of
-$\Sigma obj : \Set. obj \to \obj \to -$. Given globular sets
+$\Sigma obj : \Set. obj \rightarrow \obj \rightarrow -$. Given globular sets
 $A,B$ a morphism $f : \Glob(A , B)$ between them is given by 
 \begin{eqnarray*}
-  \objto_f & : & \obj_A \to \obj_B \\
+  \objto_f & : & \obj_A \rightarrow \obj_B \\
   \homto_f & : & \Pi a,b:\obj_A. \Glob(\hom_A\,a\,b,\hom_B(\objto_f\,a,\objto_f\,b))
 \end{eqnarray*}
 Note that this definition exploits the coinductive character of
@@ -64,16 +55,16 @@ set $A$, $\Idw\,A : \Glob$ can be defined as follows:
 \end{eqnarray*}
 Our definition of globular sets is equivalent to the usual one as a
 presheaf category over the diagram:
-
-\emph{insert diagram}
-
+\[
+0 \two^{s_0}_{t_0} 1 \two^{s_1}_{t_1} 2 \dots n \two^{s_n}_{t_n} (n+1) \dots  
+\]
 with the globular identities:
 \begin{eqnarray*}
   t_{i+1} \circ s_i & = & s_{i+1} \circ t_i \\
   t_{i+1} \circ t_i & = & s_{i+1} \circ t_i
 \end{eqnarray*}
 In the example of $\Idw\,A$ the presheaf is given by a family
-$F^A : \Nat \to set$:
+$F^A : \Nat \rightarrow set$:
 \begin{eqnarray*}
   F^A\,0 & = & A\\
   F^A\,1 & = & \Sigma a,b : A,a = b\\
@@ -81,24 +72,21 @@ $F^A : \Nat \to set$:
   \vdots & \vdots & \vdots \\
   F^A\,(n+1) & = & \Sigma a,b:A,F^{a = b}\,n
 \end{eqnarray*}
-and source and target maps $s_i,t_I  F^A\,(n+1) \to F^A\,n$ satisfying the globular identities. 
+and source and target maps $s_i,t_I  F^A\,(n+1) \rightarrow F^A\,n$ satisfying the globular identities. 
 \begin{eqnarray*}
 s_0 (a,b,-) & = & a \\
 t_0 (a,b,-) & = & b \\  
-s_{n+1}\,(a,b,\alpha)  & = & (a , b, s_n\,alpha) \\
-t_{n+1}\,(a,b,\alpha)  & = & (a , b, t_n\,alpha) \\
+s_{n+1}\,(a,b,\alpha)  & = & (a , b, s_n\,\alpha) \\
+t_{n+1}\,(a,b,\alpha)  & = & (a , b, t_n\,\alpha) \\
 \end{eqnarray*}
 
-Mention Lumsdaine
+It follows from the results
+\cite{lumsdaine,garnerAndDeBerg} that the eliminator $J$ is sufficent
+to establish that $\Idw\,A$ is a weak $\omega$ groupoid. In their work
+this is done on the meta level reasoning about models of type
+theory. In the present paper our goal is to show that this can be done
+inside Type Theory.
 
-
-\begin{quote}
-  \begin{itemize}\item coinductive defn
-  \item presheaf?
-  \item define Id$\omega$
-  \end{itemize}
-\end{quote}
- 
 %%% Local Variables:
 %%% TeX-master: "weakomega2"
 %%% End:
