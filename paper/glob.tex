@@ -1,9 +1,87 @@
 \section{Globular Sets \textit{(txa)}}
 
+%\newcommand{\obj}{\mathrm{obj}}
+%\newcommand{\hom}{\mathrm{hom}}
+\newcommand{\objto}{\mathrm{obj}^{\to}}
+\newcommand{\homto}{\mathrm{hom}^{\to}}
+\newcommand{\Setoid}{\mathrm{Setoid}}
+%\newcommand{\Glob}{\mathrm{Glob}}
+\newcommand{\Prop}{\mathbf{Prop}}
+\newcommand{\Unit}{\mathbf{1}}
+\newcommand{\Idw}{\mathrm{Id}^\omega}
+
+In Type Theory we use the notion of a setoid to describe a set with a
+specific equality. That is a $A : \Setoid$ is given by the
+following data:
+\begin{eqnarray*}
+  \obj_A & : & \Set \\
+  \hom_A & : & \obj_A \to \obj_A \to \Prop
+\end{eqnarray*}
+and proof objects $\refl, \sym, \trans$ witnessing that $\hom$ is an
+equivalence relation. He we write $\Prop$ to denote the class of sets
+which have at most one inhabitant. This restriction is important when
+showing that the category of setoids has certain structure, in
+particular forms a model of Type Theory. That is setoids can model a
+type theory with a proof-irrelevant equality. To model proof-relevant
+equality we need to generalize the notion of a setoid so that the
+$\hom$-sets are generalized setoids again. It is not enough to just
+postulate the laws of an equivalence relation at each level, we also
+need some laws how these proofs interact. On the first level we
+require the laws of a groupoid, e.g. we want that $\trans\,refl\,p$ is
+equal to $p$. Here \emph{is equal} means that they are related by the
+equality relation of a setoid again. Clearly, the structure we are
+looking for is a weak $\omega$-groupoid. It is the goal of this paper
+to develop a formalisation of this structure. As a first step let's
+ignore the proof objects (i.e. the data of an equivalence relation and
+the goupoid laws etc).
+We end up with a coinductive definition of a \emph{globular set} $G :
+\Glob$ given by
+\begin{eqnarray*}
+  \obj_A & : & \Set \\
+  \hom_A & : & \obj_A \to \obj_A \to \infty\,\Glob
+\end{eqnarray*}
+Here we use $\infty$ to indicate that $\Glob$ is defined
+coinductively. More formally, $\Glob$ is the terminal coalgebra of
+$\Sigma obj : \Set. obj \to \obj \to -$. Given globular sets
+$A,B$ a morphism $f : \Glob(A , B)$ between them is given by 
+\begin{eqnarray*}
+  \objto_f & : & \obj_A \to \obj_B \\
+  \homto_f & : & \Pi a,b:\obj_A. \Glob(\hom_A\,a\,b,\hom_B(\objto_f\,a,\objto_f\,b))
+\end{eqnarray*}
+Note that this definition exploits the coinductive character of
+$\Glob$. Identity and composition can be defined easily by ierating
+the set-theoretic definitions ad infinitum. As an example we can
+define the terminal object in $\Unit : \Glob$ by the equations
+\begin{eqnarray*}
+  \obj_\Unit & = & \Unit_\Set \\
+  \hom_\Unit\,x\,y & = & \Unit
+\end{eqnarray*}
+More interestingly, the globular set of identity proofs over a given
+set $A$, $\Idw\,A : \Glob$ can be defined as follows:
+\begin{eqnarray*}
+\obj_{\Idw\,A} & = & A \\
+\hom_{\Idw\,A}\,a\,b & = & \Idw\,(a = b)
+\end{eqnarray*}
+Our definition of globular sets is equivalent to the usual one as a
+presheaf category over the diagram:
+
+\emph{insert diagram}
+
+with the globular identities:
+% \begin{eqnarray*}
+%   t_{i+1} \circ s_i & = & s_{i+1) \circ t_i \\
+%   t_{i+1} \circ t_i & = & s_{i+1} \circ t_i
+% \end{eqnarray*}
+
+
+
 \begin{quote}
   \begin{itemize}\item coinductive defn
   \item presheaf?
   \item define Id$\omega$
   \end{itemize}
- \end{quote}
+\end{quote}
  
+%%% Local Variables:
+%%% TeX-master: "weakomega2"
+%%% End:
