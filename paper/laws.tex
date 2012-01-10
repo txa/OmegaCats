@@ -186,8 +186,8 @@ where
 \UnaryInfC{$\apptel{m}{t'} : \Tel\,(\cat{u})\,n$}
 \DisplayProof\]
 \[\AxiomC{$m : t \rightleftharpoons u \quad \{t' : \Tel\,
-  (\cat{t})\,n\}\quad a : \Obj\,(\cat{t'})$}
-\UnaryInfC{$\appobj{m}{a} : \Obj\,(\cat{\apptel{m}{t'}})$}
+  (\cat{t})\,n\}\quad a : \Obj\,(\cat{u} \dblplus {u'})$}
+\UnaryInfC{$\appobj{m}{\{t'\}\,a} : \Obj\,(\cat{u}\dblplus \apptel{m}{t'})$}
 \DisplayProof\]
 \[ 
 \AxiomC{$\apptel{\telzero}{t}\;=\;t$}
@@ -196,11 +196,82 @@ where
 \AxiomC{$\apptel{\telsuc{m}{\alpha}{\beta}}{t} \;=\; \telsuc{(\apptel{m}{t})}{\appobj{m}{\alpha}}{\appobj{m}{\beta}})$}
 \DisplayProof
 \]
+%
+To define $\appobj{}{}$ we need the following auxiliary function which
+extends a telescope relative to a hom-category on the left.
+\[
+\AxiomC{$t : \Tel~(\homcat{C}{a}{b})~(n+1)$}
+\UnaryInfC{$\suctel{a}{b}{t} : \Tel~C ~ n$}
+\DisplayProof
+\]
+\quad where
+\[
+\suctel{a}{b}{\telzero} = \telsuc{\telzero}{a}{b}\quad
+\suctel{a}{b}{(\telsuc{t}{c}{d})} = \telsuc{(\suctel{a}{b}{t})}{c}{d}
+\]
+Note that here $c$ and $d$ don't actually fit into the telescope
+$\suctel{a}{b}{t}$ because its definitionally different from
+$t$. However, it's straightforward to prove by induction that 
+%
+\begin{equation}\label{eq:lem-subtel} \cat{t} \quad \equiv \quad \cat{\suctel{a}{b}{t}}\enspace,
+\end{equation}
+% 
+and use the proof to make $c$ and $d$ fit. 
+However, in the interest of avoiding syntactical clutter we usually just silently assume
+that $c$ and $d$ fit or can be substituted to fit the context.
+
+We are now in the position do define $\appobj{}{}$ as follows:
+The base case is trivial:
+\[
+\appobj{\telzero}{x} \; = \; x
+\]
+The hom-case follows the pattern outlined in Section \ref{sec:lambdas}. 
+\[
+\AxiomC{$
+  \begin{array}{c}
+\homcat{m}{\alpha}{\beta} : \homcat{t}{a}{b} \rightleftharpoons \homcat{u}{a'}{b'}\quad t' :
+\Tel~(\cat{\homcat{t}{a}{b}}) ~ n\\
+x : \Obj~{(\cat{t'})}
+\end{array}
+$}
+\UnaryInfC{$\appobj{\homcat{m}{\alpha}{\beta}}{x}\;=\;\id^n\beta
+    \,\circ\, (\appobj{m}{\{\telsuc{t'}{a}{b}\}\,x}) \,\circ \, \id^n\alpha$}
+\DisplayProof
+\]
+%
+In summary, $\appobj{m}{x}$ is defined by induction on $m$ where in
+each step the depth of $m$ decreases by one and the relative depth of
+$x$ increases by one. To make the levels match the category $x$ lives
+in has to be \emph{whiskered} by the morphisms $\alpha$, $\beta$ for
+$m = \telsuc{m'}{\alpha}{\beta}$. When $m = \telzero$, the recursion
+stops. Here is a picture for $m =
+\telsuc{\telsuc{\telzero}{\varphi}{\gamma}}{\alpha}{\beta}$, $t' = \telzero$,
+$t = \telsuc{\telsuc{\telzero}{a}{b}}{f}{g}$, $u =
+\telsuc{\telsuc{\telzero}{a'}{b'}}{f'}{g'}$:
+\[\bfig
+\node a'(0,0)[a']
+\node b'(2000,0)[b']
+\node a(666,0)[\appobj{m}{a}]
+\node b(1372,0)[\appobj{m}{b}]
+\arrow/{@{>}@/^4em/}/[a'`b';f']
+\arrow|b|/{@{>}@/_4em/}/[a'`b';g']
+\arrow|m|/{@{>}@/^1.5em/}/[a'`a;\varphi]
+\arrow|m|/{@{>}@/^1.5em/}/[a`b;\appobj{m}{f}]
+\arrow|m|/{@{>}@/^1.5em/}/[b`b';\gamma]
+\arrow|m|/{@{>}@/_1.5em/}/[a'`a;\varphi]
+\arrow|m|/{@{>}@/_1.5em/}/[a`b;\appobj{m}{g}]
+\arrow|m|/{@{>}@/_1.5em/}/[b`b';\gamma]
+\morphism(330,50)|r|/=>/<0,-100>[`;\id_\varphi]
+\morphism(1705,50)|r|/=>/<0,-100>[`;\id_\gamma]
+\morphism(999,50)|r|/=>/<0,-100>[`;\appobj{m}{x}]
+\morphism(999,350)|r|/=>/<0,-100>[`;\alpha]
+\morphism(999,-250)|r|/=>/<0,-100>[`;\beta]
+\efig
+\]
 
 
 
-
-% ------------------------------
+ ------------------------------
 
 % making them unital with respect to
 % composition. In the weak setting such laws are replaced by coherence
@@ -487,6 +558,7 @@ $\chi^-$ respectively, as each of them should be equivalences. At this
 point, the only thing we have done is postulating two cells going in
 the opposite directions. The following section introduces the
 necessary syntax to make them true \emph{weak equivalences}.
+
 
 
 
