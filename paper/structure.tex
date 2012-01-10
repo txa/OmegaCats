@@ -137,16 +137,18 @@ arbitrary category $C$ rather than $\bullet$\,:
 \[
 \AxiomC{$\{C : \Cat~\Gamma\}$}
 \dblline
-\UnaryInfC{$\telzero{C} : \Tel~C~0$}
+\UnaryInfC{$\telzero : \Tel~C~0$}
 \DisplayProof
 \quad
 \AxiomC{$t : \Tel~C~n$}
-\AxiomC{$a~b : \Obj~(\cat{t})$}
+\AxiomC{$a,\,b : \Obj~(\cat{t})$}
 \BinaryInfC{$\telsuc{t}{a}{b} : \Tel ~ C ~ (n+1)$}
 \DisplayProof
 \]
 \[
-\AxiomC{$\telzero{C}~\{C\} \Downarrow \, = \, C$}
+\AxiomC{$\mathbf{where}$}\DisplayProof
+\]\[
+\AxiomC{$\telzero~\{C\} \Downarrow \, = \, C$}
 \DisplayProof
 \quad
 \AxiomC{$\telsuc{t}{a}{b} \Downarrow \, = \, \homcat{(t\Downarrow)}{a}{b}$}
@@ -165,7 +167,7 @@ For example, given a category
 \morphism(650,1150)|r|/{@{>}@/^.5em/}/<0,-300>[`;\alpha']
 \efig
 \enspace,\]
-\[\cat{\telsuc{\telzero{\homcat{\homcat{\bullet}{a}{b}}{f}{g}}}{\alpha}{\alpha'}}\quad\equiv\quad\homcat{\homcat{\homcat{\bullet}{a}{b}}{f}{g}}{\alpha}{\alpha'}\enspace.\]
+\[\cat{\telsuc{\telzero}{\alpha}{\alpha'}}\quad\equiv\quad\homcat{\homcat{\homcat{\bullet}{a}{b}}{f}{g}}{\alpha}{\alpha'}\enspace.\]
 %
 So $\Downarrow$ just concatenates a telescope $t : \Tel~C$ to $C$. The
 notation, $\Downarrow$, emphasises the category a telescope
@@ -212,13 +214,11 @@ is  a new constructor of $\Obj$ where
 \UnaryInfC{$u \circ  t  : \Tel~(\homcat{C}{a}{c})$}
 \DisplayProof
 \]
-is a function on telescopes defined by
+is a function on telescopes defined by cases
 \[
-\begin{array}{l}
-\telzero{C} \circ \telzero{C} \,=\,\telzero{C}\\
+{\telzero \circ \telzero{C} \,=\,\telzero\qquad
 \telsuc{u}{a'}{b'} \circ \telsuc{t}{a}{b} \,=\, \telsuc{(u
-    \circ t) }{a' \circ a}{b' \circ b}
-\end{array}
+    \circ t) }{a' \circ a}{b' \circ b}}
 \]
 
 \subsection{Units}\label{sec:units}
@@ -240,7 +240,7 @@ By iteration we obtain the unit for composition $n$ levels deep.
 Again, an iterated unit is defined at the same time as the telescope,
 $\idTel{}{}$, it lies in. The definition follows:
 \[
-\AxiomC{$\idTel{a}{0} \,=\, \telzero{C}$}
+\AxiomC{$\idTel{a}{0} \,=\, \telzero$}
 \DisplayProof
 \AxiomC{$\idTel{a}{(n+1)}\, = \,
   \telsuc{(\idTel{a}{n})}{\id^n a}{\id^n a}$}

@@ -40,7 +40,7 @@ We start introducing syntax for globular sets as follows:
 \DisplayProof
 \;;\;\]\[
 %\AxiomC{$\{\Gamma\}$}
-\AxiomC{$C : \mathsf{Cat}~\Gamma\quad a~b : \mathsf{Obj}~C$}
+\AxiomC{$C : \mathsf{Cat}~\Gamma\quad a,\,b : \mathsf{Obj}~C$}
 \UnaryInfC{$C[ \,a\,,\,b\,] : \mathsf{Cat}~\Gamma$}
 \DisplayProof
 \]
@@ -109,14 +109,16 @@ where $\mathsf{wk}$ is weakening defined for categories by
 induction on the structure in the obvious way: 
 \[
 %\AxiomC{$\{\Gamma\}$}
-\AxiomC{$C~D : \mathsf{Cat}~\Gamma$}
-\UnaryInfC{$\mathsf{wk}~C~D : \mathsf{Cat}~(\Gamma,D)\qquad\mathsf{wk}~\bullet~D\,=\,\bullet$}
+\AxiomC{$C,\,D : \mathsf{Cat}~\Gamma$}
+\UnaryInfC{$\mathsf{wk}~C~D : \mathsf{Cat}~(\Gamma,D)$}
 \DisplayProof
-\]
-\[
-\AxiomC{$C~D : \mathsf{Cat}~\Gamma$}
-\UnaryInfC{$\mathsf{wk}~(\homcat{C}{a}{b})~D\,=\,(\mathsf{wk}~C~D)[\mathsf{wk}~a~D,\mathsf{wk}~b~D]$}
-\DisplayProof
+\;\mathbf{where}\;
+\]\[
+\big\{
+\begin{array}{l}
+\mathsf{wk}~\bullet~D\,=\,\bullet\\
+\mathsf{wk}~(\homcat{C}{a}{b})~D\,=\,(\mathsf{wk}~C~D)[\mathsf{wk}~a~D,\mathsf{wk}~b~D]
+\end{array}
 \]
 % \mathsf{wk} : \{\Gamma\}()
 % \rightarrow 
@@ -160,7 +162,7 @@ we define globular sets coinductively as follows:
 \DisplayProof
 \quad
 \AxiomC{$ O : \Set$}
-\AxiomC{$ H : ( a ~ b : \Set) \rightarrow \mathsf{Glob}$}
+\AxiomC{$ H : ( a,\,b : \Set) \rightarrow \mathsf{Glob}$}
 % \noLine
 % \BinaryInfC{$C : (a ~ b : O) \rightarrow
 %   \Sigma(p : a \equiv b)((q : a \equiv b) \rightarrow p \equiv q)$}
@@ -196,10 +198,10 @@ We will need the following definition:
 \UnaryInfC{$\mathsf{depth}~C : \Nat$}
 \DisplayProof
 \;\mathbf{where}\;
-\begin{array}{l}
+\big\{{\begin{array}{l}
   \mathsf{depth}~\bullet\,=\,0\\
 \mathsf{depth}~(C[a,b])~=~(\mathsf{depth}~C) + 1
-\end{array}
+\end{array}}
 \quad
 %\AxiomC{$C : \Cat~\Gamma$}
 %\AxiomC{$a~b : \Obj~C$}
@@ -281,7 +283,7 @@ categories and variables are used:
 \BinaryInfC{$\intpr{C}~x : \Glob$}
 \DisplayProof
 \;\mathbf{where}\;\]\[
-\begin{array}{l}
+\big\{\begin{array}{l}
 \intpr{\bullet}~x = G\\
 \intpr{\homcat{C}{a}{b}}~x = \mathsf{hom}~(\intpr{C}
   x)~(\intpr{a} ~ x)~(\intpr{b}~x)
