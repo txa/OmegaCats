@@ -9,7 +9,7 @@ following data:
   \hom_A & : & \obj_A \rightarrow \obj_A \rightarrow \Prop
 \end{eqnarray*}
 and proof objects $\id, \sym{-}, \trans{-}{-}$ witnessing that $\hom$ is an
-equivalence relation. He we write $\Prop$ to denote the class of sets
+equivalence relation. Here we write $\Prop$ to denote the class of sets
 which have at most one inhabitant. This restriction is important when
 showing that the category of setoids has certain structure, in
 particular forms a model of Type Theory. That is setoids can model a
@@ -33,14 +33,14 @@ We end up with a coinductive definition of a \emph{globular set} $G :
 \end{eqnarray*}
 Here we use $\infty$ to indicate that $\Glob$ is defined
 coinductively. More formally, $\Glob$ is the terminal coalgebra of
-$\Sigma obj : \Set. obj \rightarrow \obj \rightarrow -$. Given globular sets
+$\Sigma \obj : \Set. \obj \rightarrow \obj \rightarrow -$. Given globular sets
 $A,B$ a morphism $f : \Glob(A , B)$ between them is given by 
 \begin{eqnarray*}
   \objto_f & : & \obj_A \rightarrow \obj_B \\
   \homto_f & : & \Pi a,b:\obj_A. \Glob(\hom_A\,a\,b,\hom_B(\objto_f\,a,\objto_f\,b))
 \end{eqnarray*}
 Note that this definition exploits the coinductive character of
-$\Glob$. Identity and composition can be defined easily by ierating
+$\Glob$. Identity and composition can be defined easily by iterating
 the set-theoretic definitions ad infinitum. As an example we can
 define the terminal object in $\Unit : \Glob$ by the equations
 \begin{eqnarray*}
@@ -64,7 +64,7 @@ with the globular identities:
   t_{i+1} \circ t_i & = & s_{i+1} \circ t_i
 \end{eqnarray*}
 In the example of $\Idw\,A$ the presheaf is given by a family
-$F^A : \Nat \rightarrow set$:
+$F^A : \Nat \rightarrow \Set$:
 \begin{eqnarray*}
   F^A\,0 & = & A\\
   F^A\,1 & = & \Sigma a,b : A,a = b\\
@@ -81,7 +81,7 @@ t_{n+1}\,(a,b,\alpha)  & = & (a , b, t_n\,\alpha) \\
 \end{eqnarray*}
 
 It follows from the results
-\cite{lumsdaine,garnerAndDeBerg} that the eliminator $J$ is sufficent
+\cite{lumsdaine10:weak-o-categories,berg08:types-are} that the eliminator $J$ is sufficent
 to establish that $\Idw\,A$ is a weak $\omega$ groupoid. In their work
 this is done on the meta level reasoning about models of type
 theory. In the present paper our goal is to show that this can be done
