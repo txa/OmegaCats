@@ -34,19 +34,16 @@ We start introducing syntax for globular sets as follows:
 \UnaryInfC{$\mathsf{Cat}~\Gamma : \mathsf{Set}$}
 \DisplayProof
 \;\mathbf{where}\;
-%\AxiomC{$\{\Gamma : \mathsf{Con} \}$}
 \AxiomC{$\phantom{\Gamma}$}
 \UnaryInfC{$\bullet : \mathsf{Cat}~\Gamma$}
 \DisplayProof
 \;;\;\]\[
-%\AxiomC{$\{\Gamma\}$}
 \AxiomC{$C : \mathsf{Cat}~\Gamma\quad a,\,b : \mathsf{Obj}~C$}
 \UnaryInfC{$C[ \,a\,,\,b\,] : \mathsf{Cat}~\Gamma$}
 \DisplayProof
 \]
 \[
 \mathbf{data}\;
-%\AxiomC{$\{\Gamma\}$}
 \AxiomC{$C : \mathsf{Cat}~\Gamma$}
 \UnaryInfC{$\mathsf{Obj}~C:\mathsf{Set}$}
 \DisplayProof
@@ -85,21 +82,17 @@ variables. Using De Bruijn indexing we introduce nameless variables in
 contexts as follows:
 \[
 \mathbf{data}\;
-%\AxiomC{$\{\Gamma\}$}
 \AxiomC{$C : \mathsf{Cat}~\Gamma$}
 \UnaryInfC{$\mathsf{Var}~C : \mathsf{Set}$}
 \DisplayProof
 \;\mathbf{where}\;
 \AxiomC{$\phantom{I}$}
-%\AxiomC{$\\{\Gamma\}$}
-%\AxiomC{$\{C : \Cat~\Gamma\}$}
 \dblline
 \UnaryInfC{$\mathsf{vz}:\mathsf{Var}~(\mathsf{wk}~C)$}
 \DisplayProof
 \;;
 \]
 \[
-%\AxiomC{$\{\Gamma\}$}
 \AxiomC{$v : \mathsf{Var}~C$}
 \dblline
 \UnaryInfC{$\mathsf{vs}~v : \mathsf{Var}~(\mathsf{wk}~C~D)$}
@@ -108,7 +101,6 @@ contexts as follows:
 where $\mathsf{wk}$ is weakening defined for categories by
 induction on the structure in the obvious way: 
 \[
-%\AxiomC{$\{\Gamma\}$}
 \AxiomC{$C,\,D : \mathsf{Cat}~\Gamma$}
 \UnaryInfC{$\mathsf{wk}~C~D : \mathsf{Cat}~(\Gamma,D)$}
 \DisplayProof
@@ -136,7 +128,6 @@ which is defined as a data constructor of $\mathsf{Obj}$.
 
 Variables become objects by the following data constructor of $\Obj$:
 \[
-%\AxiomC{$\{C\}$}
 \AxiomC{$v : \mathsf{Var}~C$}
 \dblline
 \UnaryInfC{$\mathsf{var}~v : \mathsf{Obj}~C$}
@@ -157,7 +148,7 @@ we define globular sets coinductively as follows:
 % % \emph{force}, $\flat$, on coinductive sets $S^\infty$
 % %\cite{}:
 \[
-\AxiomC{$\{\Gamma : \Con \}$}
+\AxiomC{$\phantom{\{\Gamma : \Con \}}$}
 \UnaryInfC{$\mathsf{Glob}:\Set$}
 \DisplayProof
 \quad
@@ -182,7 +173,7 @@ Then for each $\Gamma$ and  $C : \Cat~\Gamma$,
 %
 Finally we define the globular set of a context $\Gamma$ as
 \begin{equation}\label{eq:glob-of-gamma}
-\mathsf{glob}~\Gamma~=~\mathsf{glob}~(\bullet~\{\Gamma\})
+\mathsf{glob}~\Gamma~=~\mathsf{glob}~(\bullet)
 \end{equation}
 %
 % A \emph{globular set morphism} $\glob{O}{H} \to \glob{O'}{H'}$ is an 
@@ -193,7 +184,6 @@ Finally we define the globular set of a context $\Gamma$ as
 
 We will need the following definition:
 \[
-%\AxiomC{$\{\Gamma\}$}
 \AxiomC{$C : \Cat~\Gamma$}
 \UnaryInfC{$\mathsf{depth}~C : \Nat$}
 \DisplayProof
@@ -260,7 +250,6 @@ A \emph{weak $\omega$ category} is given by the following data:
 \item An action of the syntax of objects on contexts, which are
   lists of cells of $G$:
 \[
-\AxiomC{$\{C : \Cat~\Gamma\}$}
 \AxiomC{$o : \Obj~C\qquad x : \intpr{\Gamma}$}
 \BinaryInfC{$\intpr{o}~x : \mathsf{obj}~(\intpr{C}~x)$}
 \DisplayProof
