@@ -320,8 +320,8 @@ i.e. $\rho$'s to witness \emph{right units}, $\alpha$'s to witness
 interchange. These are defined analogically to $\lambda$'s. 
 
 To this end, note that everything in the definition of $\lambda$ is
-forced by the type of $\overrightarrow{\lambda}$. In general it's enough for
-each of $\rho$, $\alpha$ of $\chi$ to give the type of the respective telescope
+forced by the type of $\overrightarrow{\lambda}$. In general it is enough for
+each of $\rho$, $\alpha$ of $\chi$ to give the type of the telescope
 morphism. For right units we define:
 \[
 \AxiomC{$t : \Tel\,\homcat{C}{a}{b}\,n$}
@@ -329,16 +329,16 @@ morphism. For right units we define:
 \DisplayProof
 \]
 \[
-\AxiomC{$t : \Tel\,\homcat{C}{a}{b} m\quad u :
-  \Tel\,\homcat{C}{b}{c}\,n \quad v : \Tel\,\homcat{C}{c}{d}\,o$}
+\AxiomC{$t : \Tel~\homcat{C}{a}{b}~m\quad u :
+  \Tel~\homcat{C}{b}{c}~n \quad v : \Tel~\homcat{C}{c}{d}~o$}
 \UnaryInfC{$\overrightarrow{\alpha}\,t\,u\,v  : (v \circ u) \circ t
   \rightrightarrows v \circ(u \circ t)
 $}
 \DisplayProof
 \]
 %
-The of $\overrightarrow{\chi}$ is in $\omega$ case a bit more
-complicated so we start with an example. In the 2-categorical case,
+$\overrightarrow{\chi}$ is in the $\omega$ case a bit more
+complicated. In the simple 2-categorical case,
 the interchange law states that the two possible ways of composing the
 following diagram are equal. 
 \[
@@ -362,65 +362,90 @@ Formally:
 (\gamma'\ast \phi')\cdot(\gamma\ast\varphi)
 \end{equation}
 %
-In the higher dimensional case the expression of \eqref{eq:2cat-interchange}
-remains the same when $\ast$ is considered a composition in some $C$
-and $\cdot$ is a composition ...
-
-\begin{ondrej}I'm finishing here for today. This needs more brain than
-  I currently have.
-\end{ondrej}
-
-
-
+In the $\omega$-case \eqref{eq:2cat-interchange}
+remains syntactically the same but we consider each of $\varphi$,
+$\varphi'$, $\gamma$ and $\gamma'$ in their telescopes.  The following
+picture illustrates what we mean.
 \[
-\AxiomC{$t : \Tel~\homcat{\mathcal{C}}{a}{b}~n$}
-\AxiomC{$f : \Obj~(t \Downarrow)$}
-\BinaryInfC{$\rho~t~f : \Obj~
-  (\rho\Tel~\telsuc{t}{f}{f})\Downarrow$}
-\DisplayProof
+\bfig\scalefactor{2.3}
+\morphism/{@{>}@/^3.5em/}/<500,0>[a`b;]
+\morphism|b|/{@{>}@/_3.5em/}/<500,0>[a`b;]
+\morphism(500,0)/{@{>}@/^3.5em/}/<500,0>[b`c;]
+\morphism(500,0)|b|/{@{>}@/_3.5em/}/<500,0>[b`c;]
+\place(430,0)[\cdots]
+\place(930,0)[\cdots]
+\morphism(150,130)/{@{>}@/_1em/}/<0,-260>[`;]
+\morphism(340,130)/{@{>}@/^1em/}/<0,-260>[`;]
+%%
+\place(60,35)[_{u_1}]
+\place(50,0)[\cdots]
+\place(560,35)[_{u_2}] 
+\place(550,0)[\cdots]
+\morphism(650,130)/{@{>}@/_1em/}/<0,-260>[`;]
+\morphism(840,130)/{@{>}@/^1em/}/<0,-260>[`;]
+%%
+\morphism(150,95)/{@{>}@/^.5em/}/<200,0>[`;a_1]
+\morphism(150,-95)|b|/{@{>}@/_.5em/}/<200,0>[`;c_1]
+\morphism(150,0)|m|<200,0>[`;b_1]
+\place(155,55)[\cdots]
+\place(155,-55)[\cdots]
+\place(345,55)[\cdots]
+\place(345,-55)[\cdots]
+\morphism(200,100)/{@{>}@/_.2em/}/<0,-90>[`;]
+\morphism(300,100)/{@{>}@/^.2em/}/<0,-90>[`;]
+\morphism(200,-10)/{@{>}@/_.2em/}/<0,-90>[`;]
+\morphism(300,-10)/{@{>}@/^.2em/}/<0,-90>[`;]
+\place(165,85)[{_{t_{11}}}]
+\place(165,-15)[{_{t_{12}}}]
+\place(665,85)[{_{t_{21}}}]
+\place(665,-15)[{_{t_{22}}}]
+\place(655,55)[\cdots]
+\place(655,-55)[\cdots]
+\place(845,55)[\cdots]
+\place(845,-55)[\cdots]
+\morphism(650,95)/{@{>}@/^.5em/}/<200,0>[`;a_2]
+\morphism(650,-95)|b|/{@{>}@/_.5em/}/<200,0>[`;c_2]
+\morphism(650,0)|m|<200,0>[`;b_2]
+\morphism(700,100)/{@{>}@/_.2em/}/<0,-90>[`;]
+\morphism(800,100)/{@{>}@/^.2em/}/<0,-90>[`;]
+\morphism(700,-10)/{@{>}@/_.2em/}/<0,-90>[`;]
+\morphism(800,-10)/{@{>}@/^.2em/}/<0,-90>[`;]
+%
+% \morphism(225,55)<50,0>[`;\alpha_{11}]
+% \morphism(225,-55)<50,0>[`;\alpha_{12}]
+% \morphism(725,55)<50,0>[`;\alpha_{21}]
+% \morphism(725,-55)<50,0>[`;\alpha_{22}]
+\efig
 \]
-\smallskip
-\[
-\AxiomC{$t : \Tel~\homcat{\mathcal{C}}{a}{b}~n$}
-\noLine
-\UnaryInfC{$f : \Obj~t \Downarrow$}
-\AxiomC{$u : \Tel~\homcat{\mathcal{C}}{b}{c}~n$}
-\noLine
-\UnaryInfC{$g : \Obj~u \Downarrow$}
-\AxiomC{$v : \Tel~\homcat{\mathcal{C}}{c}{d}~n$}
-\noLine
-\UnaryInfC{$h : \Obj~v \Downarrow$}
-\TrinaryInfC{$\alpha~t~u~v~f~g~h : \Obj~(\alpha\Tel~\telsuc{t}{f}{f}~\telsuc{u}{g}{g}~\telsuc{v}{h}{h})\Downarrow$}
-\DisplayProof
-\]
-\smallskip
+%
+Where $\cdots$ indicate telescopes of arbitrary depth although $u_1$
+and $u_2$ have to be of the same length; as well as $t_{ij}, \; i,j \in \{1,2\}$.
+In this situation it's possible to form both the composition $(t_{22}\circ
+t_{21})\circ(t_{12}\circ t_{11})$ and also $(t_{22}\circ
+t_{12})\circ(t_{21}\circ t_{11})$. A telescope morphism from the
+former to the latter telescopes induce a coherence cell for
+interchange. The gory details follow:
 \[
 \AxiomC{$u_1 : \Tel~\homcat{\mathcal{C}}{a}{b}~n$}
 \AxiomC{$u_2 : \Tel~\homcat{\mathcal{C}}{b}{c}~n$}
 \noLine
-\BinaryInfC{$t_{11} : \Tel~\telsuc{u_1}{a_1}{b_1}\Downarrow ~ m \qquad
-t_{12} : \Tel~\telsuc{u_1}{b_1}{c_1}\Downarrow ~ m$}
+\BinaryInfC{$t_{11} :  \Tel~(\conctel{\homcat{C}{a}{b}}{u_1}) ~ m
+  \qquad t_{12} : \Tel~(\conctel{\homcat{C}{a}{b}}{u_1}) ~ m$}
 \noLine
-\UnaryInfC{$t_{21} : \Tel~\telsuc{u_2}{a_2}{b_2}\Downarrow ~ m \qquad
-  t_{22} : \Tel~\telsuc{u_2}{b_2}{c_2}\Downarrow ~ m$}
-\noLine
-\UnaryInfC{$\alpha_{11} : \Obj~t_{11}\Downarrow\qquad 
-\alpha_{12} : \Obj~t_{12}\Downarrow
-\qquad
-\alpha_{21} : \Obj~t_{21}\Downarrow
-\quad
-\alpha_{22} : \Obj~t_{22}\Downarrow$}
-\UnaryInfC{$\chi~\alpha_{11}~\alpha_{12}~\alpha_{21}~\alpha_{22}: \Obj~(\chi\Tel~t_{11}~t_{12}~t_{21}~t_{22})\Downarrow$}
+\UnaryInfC{$t_{21} : \Tel~(\conctel{\homcat{C}{b}{c}}{u_2}) ~ m 
+\qquad t_{22} : \Tel~(\conctel{\homcat{C}{b}{c}}{u_2})~ m$}
+% 
+\UnaryInfC{$\begin{array}{l}
+    \chi\,{t_{11}}\,{t_{12}}\,{t_{21}}\,{t_{22}} \;:\;\\     
+    \qquad(t_{22}\circ t_{21})\circ(t_{12}\circ t_{11}) \rightrightarrows (t_{22}\circ
+    t_{12})\circ(t_{21}\circ t_{11})
+  \end{array}$}
 \DisplayProof
 \]
 
-We also include each of $\lambda$, $\rho$, $\alpha$ and $\chi$ in
-their reversed forms, denoted $\lambda^-$, $\rho^-$, $\alpha^-$ and
-$\chi^-$ respectively, as each of them should be equivalences. At this
-point, the only thing we have done is postulating two cells going in
-the opposite directions. The following section introduces the
-necessary syntax to make them true \emph{weak equivalences}.
-
+\begin{ondrej}
+  Perhaps a bit  more details are needed?
+\end{ondrej}
 
 
 
