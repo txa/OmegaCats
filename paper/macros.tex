@@ -4,6 +4,7 @@
 
 \newcommand{\hollow}{\mathsf{hollow}}
 \newcommand{\dblplus}{+\hspace{-4pt}+}
+\newcommand{\conctel}[2]{#1 \dblplus \, #2}
 \newcommand{\glob}[2]{(\hspace{-2pt}({#1},{#2})\hspace{-2pt})}
 \newcommand{\ditto}{\mathrm{- " -}}
 \newcommand{\mnote}[1]{\marginpar{\footnotesize{#1}}}
@@ -25,7 +26,7 @@
 \newcommand{\domrm}{\mathrm{dom}}
 \newcommand{\codrm}{\mathrm{cod}}
 \newcommand{\appobj}[2]{#1 @ #2}
-\newcommand{\apptel}[2]{#1 @ #2}
+\newcommand{\apptel}[2]{#1\overrightarrow{@}#2}
 %\newcommand{\meets}{\mathsf{meets}}
 \newcommand{\meets}{\between}
 \newcommand{\zeromeets}{\mathsf{zero}}
@@ -33,10 +34,10 @@
 %\newcommand{\telzero}[1]{\langle{#1}\rangle}
 %\newcommand{\telzero}[1]{\diamond}
 \newcommand{\telzero}{\bullet}
-\newcommand{\telsuc}[3]{#1\llbracket {#2},{#3}\rrbracket}
+\newcommand{\telsuc}[3]{#1[ {#2},{#3}]}
 \newcommand{\cat}[1]{{#1}\Downarrow}
 \newcommand{\homcat}[3]{{#1}[#2,#3]}
-\newcommand{\suctel}[3]{\llbracket #1,#2 \rrbracket {#3}}
+\newcommand{\suctel}[3]{[ #1 , #2 ] {#3}}
 \newcommand{\budoteq}{\bullet_{\doteq}}
 \newcommand{\homdoteqcat}[3]{{#1}[#2,#3]_{\doteq}}
 \newcommand{\intpr}[1]{\llbracket #1 \rrbracket}
@@ -55,6 +56,7 @@
 \newcommand{\emptycon}{\varepsilon}
 \newcommand{\var}{\mathsf{var}}
 \newcommand{\wk}{\mathsf{wk}}
+\newcommand{\inv}[1]{{#1}^{-1}}
 
 \renewcommand{\to}{\longrightarrow}
 

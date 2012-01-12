@@ -185,20 +185,20 @@ where
 \[\AxiomC{$m : t \rightrightarrows u \quad t' : \Tel\, (\cat{t})\,n$}
 \UnaryInfC{$\apptel{m}{t'} : \Tel\,(\cat{u})\,n$}
 \DisplayProof\]
-\[\AxiomC{$m : t \rightrightarrows u \quad \{t' : \Tel\,
-  (\cat{t})\,n\}\quad a : \Obj\,(\cat{u} \dblplus {u'})$}
-\UnaryInfC{$\appobj{m}{\{t'\}\,a} : \Obj\,(\cat{u}\dblplus \apptel{m}{t'})$}
+\[\AxiomC{$m : t \rightrightarrows u \quad a : \Obj\,(\cat{t} \dblplus {'t})$}
+\UnaryInfC{$\appobj{m}{a} : \Obj\,(\cat{u}\dblplus \apptel{m}{t'})$}
 \DisplayProof\]
 \[ 
 \AxiomC{$\apptel{\telzero}{t}\;=\;t$}
 \DisplayProof
-\qquad
-\AxiomC{$\apptel{\telsuc{m}{\alpha}{\beta}}{t} \;=\; \telsuc{(\apptel{m}{t})}{\appobj{m}{\alpha}}{\appobj{m}{\beta}})$}
+\quad
+\AxiomC{$\apptel{\telsuc{m'}{\alpha}{\beta}}{t} \;=\; \telsuc{(\apptel{m'}{t})}{\appobj{m}{\alpha}}{\appobj{m}{\beta}})$}
 \DisplayProof
 \]
 %
-To define $\appobj{}{}$ we need the following auxiliary function which
-extends a telescope relative to a hom-category on the left.
+To define $\appobj{}{}$ we need the following auxiliary function,
+among others, which extends a telescope relative to a hom-category on
+the left.
 \[
 \AxiomC{$t : \Tel~(\homcat{C}{a}{b})~(n+1)$}
 \UnaryInfC{$\suctel{a}{b}{t} : \Tel~C ~ n$}
@@ -220,7 +220,7 @@ and use the proof to make $c$ and $d$ fit.
 However, in the interest of avoiding syntactical clutter we usually just silently assume
 that $c$ and $d$ fit or can be substituted to fit the context.
 
-We are now in the position do define $\appobj{}{}$ as follows:
+We are now in a position do define $\appobj{}{}$ as follows:
 The base case is trivial:
 \[
 \appobj{\telzero}{x} \; = \; x
@@ -229,22 +229,30 @@ The hom-case follows the pattern outlined in Section \ref{sec:lambdas}.
 \[
 \AxiomC{$
   \begin{array}{c}
-\homcat{m}{\alpha}{\beta} : \homcat{t}{a}{b} \rightrightarrows \homcat{u}{a'}{b'}\quad t' :
+\homcat{m'}{\alpha}{\beta} : \homcat{t}{a}{b} \rightrightarrows \homcat{u}{a'}{b'}\quad t' :
 \Tel~(\cat{\homcat{t}{a}{b}}) ~ n\\
 x : \Obj~{(\cat{t'})}
 \end{array}
 $}
-\UnaryInfC{$\appobj{\homcat{m}{\alpha}{\beta}}{x}\;=\;\id^n\beta
-    \,\circ\, (\appobj{m}{\{\telsuc{t'}{a}{b}\}\,x}) \,\circ \, \id^n\alpha$}
+\UnaryInfC{$\appobj{\homcat{m'}{\alpha}{\beta}}{x}\;=\;\id^n\beta
+    \,\circ\, (\appobj{m'}{x}) \,\circ \, \id^n\alpha$}
 \DisplayProof
 \]
 %
 In summary, $\appobj{m}{x}$ is defined by induction on $m$ where in
-each step the depth of $m$ decreases by one and the relative depth of
-$x$ increases by one. To make the levels match the category $x$ lives
-in has to be \emph{whiskered} by the morphisms $\alpha$, $\beta$ for
-$m = \telsuc{m'}{\alpha}{\beta}$. When $m = \telzero$, the recursion
-stops. Here is a picture for $m =
+each step the length of $m$ decreases by one and the depth of $x$, the
+length of the telescope $x$ lives is, increases by one. To make the
+levels match the category $x$ lives in has to be \emph{whiskered} by
+the morphisms $\alpha$, $\beta$ for $m =
+\telsuc{m'}{\alpha}{\beta}$. When $m = \telzero$, the recursion
+stops. The careful reader will have noticed that the expression
+$\appobj{m'}{x}$ above is not well typed as $x$ lives in
+$\conctel{\telsuc{t}{a}{b}}{t'}$ and we need an object in
+$\conctel{t}{\suctel{a}{b}{t'}}$. But this is easily fixed by
+substituting using \eqref{eq:lem-subtel}. Other similar inaccuracies
+are dealt with similarly. 
+
+Here is a picture for $m =
 \telsuc{\telsuc{\telzero}{\varphi}{\gamma}}{\alpha}{\beta}$, $t' = \telzero$,
 $t = \telsuc{\telsuc{\telzero}{a}{b}}{f}{g}$, $u =
 \telsuc{\telsuc{\telzero}{a'}{b'}}{f'}{g'}$:
@@ -269,247 +277,101 @@ $t = \telsuc{\telsuc{\telzero}{a}{b}}{f}{g}$, $u =
 \efig
 \]
 
+Having defined telescope morphisms, it's easy to define $\lambda$'s of all depths
+relative to an arbitrary category. All that is needed is to telescope a morphism, $\overrightarrow{\lambda}$: 
+\[\AxiomC{$t : \Tel~\homcat{C}{a}{b}~n $}
+\UnaryInfC{$\overrightarrow{\lambda}\,t : (\idTel (\id \, b) \, n) \circ t
+  \rightrightarrows t$}
+\DisplayProof
+\]
+together with a new constructor of $\Obj$:
+\[
+\AxiomC{$t : \Tel~\homcat{C}{a}{b}\, n \quad f : \Obj (\cat{t}) $}
+\UnaryInfC{$\lambda\,t\,f :
+  \Obj\,(\homcat{(\cat{t})}{\appobj{\overrightarrow{\lambda}t}{(\id^n
+      b\,\circ\, f)}}{f})$}
+\DisplayProof
+\]
+where 
+\[
+\AxiomC{$\overrightarrow{\lambda}\,\bullet ~=~ \bullet
+\qquad 
+\overrightarrow{\lambda}\,(\telsuc{t'}{a}{b}) ~ = ~
+\telsuc{(\overrightarrow{\lambda}\,t')}{\inv{(\lambda\,t\,a)}}{\lambda\,t\,b}$}\DisplayProof
+\]
+%
+Here we could define a pair of constructors $\lambda$ and
+$\inv{\lambda}$ for the two opposite directions of $\lambda$. Instead,
+as are interested only in groupoids, we define a generic constructor
+$\inv{}$ on cells in a homcategory:
+\[
+\AxiomC{$t : \Tel\,(\homcat{C}{a}{b})\,n$}
+\AxiomC{$a : \Obj~t$}
+\BinaryInfC{$\inv{a} : \Obj\,(\conctel{\homcat{C}{b}{a}}{\inv{t}})$}
+\DisplayProof\]
+where $\inv{}$ extends recursively to telescopes in the obvious way.
 
 
- ------------------------------
-
-% making them unital with respect to
-% composition. In the weak setting such laws are replaced by coherence
-% cells, which we discuss next.
-
-% With the development of the previous two sections we can express
-% compositions such as:
-% \[
-% \id\,b \circ f \qquad \id^2\,b \circ \alpha\qquad \id\,f'\circ \alpha
-% \]
-% pictured respectively from left to right as
-% \[
-% \bfig
-% \morphism[a`b;f]
-% \morphism(500,0)<250,0>[b`b;\id\,f]
-% \efig
-% \qquad
-% \bfig
-% \morphism/{@{>}@/^1em/}/[a`b;f]
-% \morphism|b|/{@{>}@/_1em/}/[a`b;f']
-% \morphism(250,50)<0,-100>[`;\alpha]
-% \morphism(500,0)/{@{>}@/^1em/}/[b`b;\id\,b]
-% \morphism(500,0)|b|/{@{>}@/_1em/}/[b`b;\id\,b]
-% \morphism(750,50)<0,-100>[`;\id^2 b]
-% \efig
-% \]\[
-% \bfig\scalefactor{1.2}
-% \morphism/{@{>}@/^1.7em/}/[a`b;f]
-% \morphism|-|[a`b;f']
-% \morphism(250,110)<0,-80>[`;\alpha]
-% %
-% \morphism|b|/{@{>}@/_1.7em/}/[a`b;f']
-% \morphism(250,-20)<0,-80>[`;\id\,f']
-% \efig
-% \enspace.\]
-% We want to define the cells that connect these cells to the cells:
-% \[
-% \bfig
-% \morphism[a`b;f]
-% \efig
-% \qquad
-% \bfig
-% \morphism/{@{>}@/^1em/}/[a`b;f]
-% \morphism|b|/{@{>}@/_1em/}/[a`b;f']
-% \morphism(250,50)<0,-100>[`;\alpha]
-% \efig
-% \qquad
-% \bfig
-% \morphism/{@{>}@/^1em/}/[a`b;f]
-% \morphism|b|/{@{>}@/_1em/}/[a`b;f']
-% \morphism(250,50)<0,-100>[`;\alpha]
-% \efig
-% \]
-
-% Let us analyse the situation at hand.
-
-% Firstly, note that the right-most case is just the left-most case in
-% the category $\homcat{\bullet}{a}{b}$ so from now on we assume
-% everything is taking place in an arbitrary \emph{base category},
-% $\cC$.
-
-% For the left-most case, assuming $a$ and $b$ are 0-cells of
-%   $\cC$, we simply introduce the syntax for a 2-cell $\lambda_f$ of $\cC$:
-% \[\bfig
-% \qtriangle[a`b`b;f`f`\id\,b]
-% \morphism(400,400)/<=/<-100,-100>[`;\lambda_f]
-% \efig\]
-
-% Having defined a 2-cell $\lambda_f$ for
-%   every 1-cell $f$, one can define a 3-cell $\lambda_\alpha$ for every
-%   2-cell $\alpha : f \Rightarrow f'$ as going from the left-hand side
-%   to the right-hand side below:
-% \[\bfig
-% \morphism/{@{>}@/^1em/}/[a`b;f]
-% \morphism(500,0)/{@{>}@/^1em/}/[b`b;\id\,f]
-% \morphism/{@{>}@/^3em/}/<1000,0>[a`b;f]
-% \morphism(500,250)/=>/<0,-100>[`;\lambda_f]
-% \morphism|b|/{@{>}@/_1em/}/[a`b;f']
-% \morphism(500,0)|b|/{@{>}@/_1em/}/[b`b;\id\,b]
-% \morphism(250,50)/=>/<0,-100>[`;\alpha]
-% \morphism(750,50)/=>/<0,-100>[`;\id^2 b]
-% \efig
-% \quad\Rrightarrow\quad
-% \bfig
-% \morphism/{@{>}@/^3em/}/<1000,0>[a`b;f]
-% \morphism|m|/{@{>}@/^1.6em/}/<1000,0>[a`b;f']
-% \morphism(500,290)/=>/<0,-100>[`;\alpha]
-% \morphism|b|/{@{>}@/_1em/}/[a`b;f']
-% \morphism(500,0)|b|/{@{>}@/_1em/}/[b`b;\id\,b]
-% \morphism(750,90)/=>/<0,-100>[`;\lambda_{f'}]
-% \efig
-% \]
-% Note however that because we are not working in a strict setting
-% the pasting together of the left-hand side is not unique. We pick a
-% particular one:
-% \[
-% \lambda_\alpha ~:~ ((\id^2 b) \circ \alpha) \cdot \lambda_f \Rrightarrow \lambda_{f'}\cdot
-% \alpha\enspace,
-% \]
-% where $\circ$ denotes composition in $\cC$ and $\cdot$ denotes
-% composition in $\homcat{\cC}{a}{b}$. In $\homcat{\cC}{a}{b}$ this is
-% the diagonal filler in the square
-% \begin{equation}\label{eq:lambda-natur}
-% \bfig
-% \Square[f`(\id\,b) \circ f` f'`(\id\,b)\circ f';\lambda_f`\alpha`(\id^2
-% b) \circ \alpha`\lambda_{f'}]
-% \morphism(500,300)/=>/<-200,-150>[`;\lambda_\alpha]
-% \efig
-% \end{equation}
-
-% This diagram expresses the naturality of the assignment $f \mapsto
-% \lambda_f$ with respect to cells $\alpha : f \Rightarrow f'$ 
-% witnessed by $\lambda_\alpha$. 
-% %
-
-% When we put:
-% \[
-% \AxiomC{$t : \Tel~\homcat{C}{a}{b}~n$}
-% \AxiomC{$x : \Obj~(t\Downarrow)$}
-% \BinaryInfC{$\dom\lambda_0~x~=~x \qquad
-%   \cod\lambda_0~x~=~\id^n(\id~b)\circ x$}
-% \DisplayProof
-% \]
-% \[
-% \AxiomC{$t : \Tel~\homcat{C}{a}{b}~n$}
-% \AxiomC{$x : \Obj~(t\Downarrow)$}
-% \BinaryInfC{$\lambda_n x : \Obj~(\telsuc{t}{\dom\lambda_n\, x
-%   }{\cod\lambda_n\,x}\Downarrow)$}
-% \DisplayProof
-% \]
-% then \eqref{eq:lambda-natur} can be rewritten as follows:
-% \begin{equation}\label{eq:lambda-natur2}
-% \bfig
-% \Square[\dom\lambda_0\,f`\cod\lambda_0\,f`\dom\lambda_0~f'`\cod\lambda_0~f';
-% \lambda_0 f`\dom\lambda_0~\alpha`\cod\lambda_0~\alpha`\lambda_0 f']
-% \morphism(500,300)/=>/<-200,-150>[`;\lambda_1 \alpha]
-% \efig\enspace,
-% \end{equation}
-% where necessarily 
-% \[
-% \AxiomC{$\dom\lambda_1\,\alpha = \cod\lambda_0\,\alpha\cdot
-%   \lambda_0\,f$}
-% \DisplayProof
-% \quad \AxiomC{$\cod\lambda_1\,\alpha = \lambda_0\, f'\cdot
-%   \dom\lambda_0\,\alpha$}
-% \DisplayProof
-% \]
-% Here $\cdot$ denotes vertical composition of 2-cells and $\circ$ is,
-% as before, horizontal composition.
-
-% %
-% To generalise and iterate \eqref{eq:lambda-natur2} we
-% introduce an $n+1$ cell $\quad\lambda~t~x\quad$ for each telescope
-% $\quad t :\Tel~\homcat{C}{a}{b}~n\quad$ and $\quad x :
-% \Obj~(t\Downarrow)\quad$. At the same time we introduce functions
-% $\dom\lambda$ and $\cod\lambda$ taking a telescope $t$, a telescope
-% $u$ relative to $t$, formally $u : \Tel ~ (t \Downarrow)~ m$ and a
-% cell $x : \Obj (u\Downarrow)$ to a new telescope and a cell in it so
-% that the following makes sense:
-% \begin{equation}\label{eq:lambda-natur3}
-% \bfig
-% \Square|ammb|[\dom\lambda~t~\telzero{t\Downarrow}~x`
-% \cod\lambda~t~\telzero{t\Downarrow}~x`
-% \dom\lambda~t~\telzero{t\Downarrow}~x'`
-% \cod\lambda~t~\telzero{t\Downarrow}~x';
-% \lambda~t~x`
-% \dom\lambda~t~\telsuc{\telzero{t\Downarrow}}{f}{f'}~\alpha`
-% \cod\lambda~t~\telsuc{\telzero{t\Downarrow}}{f}{f'}~\alpha`
-% \lambda~t~x']
-% \morphism(750,300)/=>/<-200,-150>[`;\lambda_\alpha]
-% \efig
-% \end{equation}
-% %
-% Formally, we have the following definitions which generate all
-% $\quad\lambda ~t~x\quad$'s for all telescopes $t$ and objects $x$ in
-% them.
-% %
-% %
-% \begin{enumerate}
-% \item $\Obj$ receives a new constructor:
-% \[
-% \AxiomC{$t : \Tel~\homcat{\mathcal{C}}{a}{b}~n$}
-% \AxiomC{$f : \Obj~(t \Downarrow)$}
-% \BinaryInfC{$\lambda~t~f : \Obj~
-%   (\lambda\Tel~\telsuc{t}{f}{f}\Downarrow)$}
-% \DisplayProof
-% \]
-% %
-% %
-% \item $\lambda\Tel$ is a function on telescopes:
-% \[
-% \AxiomC{$t : \Tel~\homcat{\mathcal{C}}{a}{b}~n$}
-% \UnaryInfC{$\lambda\Tel~t : \Tel~\homcat{\mathcal{C}}{a}{b}~n$}
-% \DisplayProof
-% \]
-% \begin{equation}\label{eq:lambda-tel-def}
-%   \begin{array}{l}
-%  \lambda\Tel~\telzero{C} ~= ~ \telzero{C}\\   
-%  \lambda\Tel~(\telsuc{t}{f}{f'})~=~\telsuc{(\lambda\Tel~t)}{\dom\lambda~t~\telzero{t\Downarrow}~f}{\cod\lambda~t~\telzero{t\Downarrow}~f'}
-%   \end{array}
-% \end{equation}
-% %
-% %
-% \item 
-% Functions $\dom\lambda$ and $\cod\lambda$ used above have the
-% following types:
-% \[
-% \AxiomC{$t : \Tel~\homcat{\mathcal{C}}{a}{b}~n$}
-% \AxiomC{$u : \Tel~(t \Downarrow)~m$}
-% \AxiomC{$x : \Obj~u\Downarrow$}
-% \TrinaryInfC{$\dom\lambda~t~u~x : \Obj~(\homcat{C}{a}{b} \dblplus
-%   ~ \lambda\Tel~t~ \dblplus~\dom\lambda\Tel~t~u)$}
-% \DisplayProof
-% \]
-% \[
-% \AxiomC{$t : \Tel~\homcat{\mathcal{C}}{a}{b}~n$}
-% \AxiomC{$u : \Tel~(t \Downarrow)~m$}
-% \AxiomC{$x : \Obj~u\Downarrow$}
-% \TrinaryInfC{$\cod\lambda~t~u~x : \Obj~(\homcat{C}{a}{b} \dblplus
-%   ~ \lambda\Tel~t~ \dblplus~\cod\lambda\Tel~t~u)$}
-% \DisplayProof
-% \]
-% %
-% We omit the definitions, which in full detail are a bit technical. Just
-% note that the base case, $n= 0$ is defined as above for
-% $\dom\lambda_0$ and $\cod\lambda_0$ respectively, and in the induction
-% step $\dom\lambda~\{n = k+1\}$ is defined in terms $\cod\lambda~\{n =
-% k\}$ and $\lambda~\{n = k\}$, and similarly $\cod\lambda~\{n=k+1\}$ is defined
-% in terms of $\dom\lambda~\{n=k\}$ and $\lambda~\{n=k\}$ of the smaller dimension.
-
-% \end{enumerate}
 
 \subsection{Right units, associativity and interchange}
 Similarly to $\lambda$'s we define the remaining coherence cells,
 i.e. $\rho$'s to witness \emph{right units}, $\alpha$'s to witness
 \emph{associativity} of composition and $\chi$'s to witness
-interchange. These are defined analogically to $\lambda$'s. Below we present
-only the top-level constructor forms. 
+interchange. These are defined analogically to $\lambda$'s. 
+
+To this end, note that everything in the definition of $\lambda$ is
+forced by the type of $\overrightarrow{\lambda}$. In general it's enough for
+each of $\rho$, $\alpha$ of $\chi$ to give the type of the respective telescope
+morphism. For right units we define:
+\[
+\AxiomC{$t : \Tel\,\homcat{C}{a}{b}\,n$}
+\UnaryInfC{$\overrightarrow{\rho}\,t : t \circ (\idTel\,(\id\,a)\,n)  t \rightrightarrows t$}
+\DisplayProof
+\]
+\[
+\AxiomC{$t : \Tel\,\homcat{C}{a}{b} m\quad u :
+  \Tel\,\homcat{C}{b}{c}\,n \quad v : \Tel\,\homcat{C}{c}{d}\,o$}
+\UnaryInfC{$\overrightarrow{\alpha}\,t\,u\,v  : (v \circ u) \circ t
+  \rightrightarrows v \circ(u \circ t)
+$}
+\DisplayProof
+\]
+%
+The of $\overrightarrow{\chi}$ is in $\omega$ case a bit more
+complicated so we start with an example. In the 2-categorical case,
+the interchange law states that the two possible ways of composing the
+following diagram are equal. 
+\[
+\bfig
+\morphism|m|<500,0>[a`b;f']
+\morphism/{@{>}@/^2em/}/<500,0>[a`b;f]
+\morphism|b|/{@{>}@/_2em/}/<500,0>[a`b;f'']
+\morphism(250,150)|r|/=>/<0,-100>[`;\varphi]
+\morphism(250,-50)|r|/=>/<0,-100>[`;\varphi']
+%
+\morphism(500,0)|m|<500,0>[b`c;g']
+\morphism(500,0)/{@{>}@/^2em/}/<500,0>[b`c;g]
+\morphism(500,0)|b|/{@{>}@/_2em/}/<500,0>[b`c;g'']
+\morphism(750,150)|r|/=>/<0,-100>[`;\gamma]
+\morphism(750,-50)|r|/=>/<0,-100>[`;\gamma']
+\efig
+\]
+Formally:
+\begin{equation}\label{eq:2cat-interchange}
+ (\gamma'\cdot\gamma)\ast(\varphi'\cdot\varphi) \quad = \quad
+(\gamma'\ast \phi')\cdot(\gamma\ast\varphi)
+\end{equation}
+%
+In the higher dimensional case the expression of \eqref{eq:2cat-interchange}
+remains the same when $\ast$ is considered a composition in some $C$
+and $\cdot$ is a composition ...
+
+\begin{ondrej}I'm finishing here for today. This needs more brain than
+  I currently have.
+\end{ondrej}
+
+
+
 \[
 \AxiomC{$t : \Tel~\homcat{\mathcal{C}}{a}{b}~n$}
 \AxiomC{$f : \Obj~(t \Downarrow)$}

@@ -1,4 +1,4 @@
-\section{Structure \textit{(oxr)}}
+b\section{Structure \textit{(oxr)}}
 \label{sec:structure}
 
 \begin{quote}
@@ -37,8 +37,8 @@ whole hom-categories. Informally: for $a$, $b$, $c$ as before, $f$,
 $g$, $n$-cells of homcategories $\cC(a,b)$ and $\cC(b,c)$,
 respectively, one requires an $n$-cell $g\circ f$ of $\cC(a,c)$. The
 fact that both $f$ and $g$ are of the same relative depth with respect
-to $\cC$ is important, as well the fact the homcategories $f$ and $g$
-lie in meet at a common object, $b$, of $\cC$. Following are some
+to $\cC$ is important, as well the fact the homcategories of $f$ and $g$
+meet at a common object, $b$, of $\cC$. Following are some
 examples of valid compositions for increasing $n$:
 \begin{align}
 \label{eq:comp1}
@@ -112,89 +112,70 @@ examples of valid compositions for increasing $n$:
 \efig
 \end{equation}
 % 
-Examples \eqref{eq:comp1},\eqref{eq:comp2} are compositions in
-the category $\bullet$, while \eqref{eq:comp4} is a
-composition in $\homcat{\bullet}{a}{b}$. We formalise this as follows.
 
 \subsubsection{Telescopes}
-Informally, a \emph{telescope} is a category relative to
-another category. Formally, telescopes, $\Tel$, are defined below at the same time as a
-\emph{normalisation} function $\Downarrow$, which takes a telescope to
-a category:
+Informally, a \emph{telescope} is a path from a category to one of its
+(indirect) hom-categories. 
+Formally, telescopes, $\Tel$, are defined below at the same
+time as their \emph{concatenation} onto a category, $\dblplus$, which takes a
+telescope to a category, and therefore allows us to put objects into a
+telescope:
 \[
 \AxiomC{$C : \Cat~\Gamma$}
 \AxiomC{$n : \Nat$}
 \BinaryInfC{$\Tel~C~n : \Set$}
 \DisplayProof
 \quad
-\AxiomC{$\{C : \Cat~\Gamma\}$}
-\AxiomC{$T : \Tel~C~n$}
-\BinaryInfC{$\cat{T}\, : \Cat~\Gamma$}
+\AxiomC{$t : \Tel~C~n$}
+\UnaryInfC{$C \dblplus\, t \,=\,
+  \Cat~\Gamma$}
 \DisplayProof
 \]
 Telescopes are like categories except that the base case is an
 arbitrary category $C$ rather than $\bullet$\,:
-\[
-\AxiomC{$\{C : \Cat~\Gamma\}$}
-\dblline
-\UnaryInfC{$\telzero : \Tel~C~0$}
+\[\AxiomC{$\phantom{C}$}
+\UnaryInfC{$\bullet : \Tel~C~0$}
 \DisplayProof
 \quad
-\AxiomC{$t : \Tel~C~n$}
-\AxiomC{$a,\,b : \Obj~(\cat{t})$}
-\BinaryInfC{$\telsuc{t}{a}{b} : \Tel ~ C ~ (n+1)$}
+\AxiomC{$t : \Tel~C~n \quad a, b : \Obj\,(\conctel{C}{t})$}
+\UnaryInfC{$ \telsuc{t}{a}{b} : \Tel~C~(n+1)$}
 \DisplayProof
-\]
-\[
-\AxiomC{$\mathbf{where}$}\DisplayProof
-\]\[
-\AxiomC{$\telzero~\{C\} \Downarrow \, = \, C$}
-\DisplayProof
-\quad
-\AxiomC{$\telsuc{t}{a}{b} \Downarrow \, = \, \homcat{(t\Downarrow)}{a}{b}$}
-\DisplayProof 
 \]
 %
-We say that an object $x : \Obj~(\cat{t})$ \emph{lies in (the
+%
+Note that only the left associative reading of $\dblplus$ makes sense
+so expressions like $C \dblplus\, t \dblplus\, u$ are unambiguous.
+
+We say that an object $x : \Obj~(\conctel{C}{t})$ \emph{lies in (the
   telescope) $t$}. When $t$ is relative to a category $C$, $x$ is
 called an \emph{object relative to $C$.} 
 %
+Alternatively, when the path from $C$ to its subcategory is not
+important we use the following syntactical shorthand:
+\[
+\AxiomC{$C : \Cat~\Gamma \quad t : \Tel~C~n$}
+\UnaryInfC{$\cat{t}\, : \Cat~\Gamma \qquad \cat{t}\,=\,\conctel{C}{t}$}
+\DisplayProof
+\]
+
 For example, given a category 
 \[\bfig
 \morphism(0,1000)/{@{>}@/^2em/}/<1000,0>[a`b;f]
 \morphism(0,1000)|b|/{@{>}@/_2em/}/<1000,0>[a`b;g]
-\morphism(350,1150)|l|/{@{>}@/_.5em/}/<0,-300>[`;\alpha]
-\morphism(650,1150)|r|/{@{>}@/^.5em/}/<0,-300>[`;\alpha']
+\morphism(350,1150)|l|/{@{>}@/_.5em/}/<0,-300>[`;\varphi]
+\morphism(650,1150)|r|/{@{>}@/^.5em/}/<0,-300>[`;\gamma]
 \efig
 \enspace,\]
-\[\cat{\telsuc{\telzero}{\alpha}{\alpha'}}\quad\equiv\quad\homcat{\homcat{\homcat{\bullet}{a}{b}}{f}{g}}{\alpha}{\alpha'}\enspace.\]
+one has:
+\[\cat{\telsuc{\telzero}{\varphi}{\gamma}}~ = ~
+\conctel{\homcat{\homcat{\bullet}{a}{b}}{f}{g}}{\telsuc{\telzero}{\varphi}{\gamma}} ~ = ~ \homcat{\homcat{\homcat{\bullet}{a}{b}}{f}{g}}{\varphi}{\gamma}\enspace.\]
 %
-So $\Downarrow$ just concatenates a telescope $t : \Tel~C$ to $C$. The
-notation, $\Downarrow$, emphasises the category a telescope
-defines. However sometimes we are more interested in the \emph{path}
-from a category to one of its subcategories. For that reason we define
-$\dblplus$ as version of $\Downarrow$ with the implicit category made
-explicit:
-\[
-\AxiomC{$C : \Cat~\Gamma$}
-\AxiomC{$t : \Tel~C~n$}
-\BinaryInfC{$C {\dblplus}\, t : \Cat~\Gamma \qquad C \dblplus\, t \,=\,
-  t \Downarrow$}
-\DisplayProof
-\]
-\mnote{We could make $\dblplus$ into a real concatenation of
-  telescopes and connect $\Downarrow$ and $\dblplus$ by lemmas }
-\mnote{However, the principal judgement of all this is $\cat{E}
-  \equiv \cat{E'}$ for some expressions $E$, $E'$.}
-%
-Note that only the left associative reading of $\dblplus$ makes sense
-so expressions like $C \dblplus\, t \dblplus\, u$ are unambiguous and $\Downarrow$ always extends as far to the left as
-sensible. 
+
 
 
 
 \subsubsection{Back to composition}
-We use telescopes to define the syntax for all compositions of an
+We use telescopes to define syntax for all compositions of an
 $\omega$-category. Note that these have to be defined mutually recursively with
 their extensions to telescopes:
 %
@@ -220,6 +201,21 @@ is a function on telescopes defined by cases
 \telsuc{u}{a'}{b'} \circ \telsuc{t}{a}{b} \,=\, \telsuc{(u
     \circ t) }{a' \circ a}{b' \circ b}}
 \]
+%
+Note that for a fixed category $C$, $\circ$ always defines the
+composition of $C$, called \emph{horizontal} in the 2-categorical
+case, which can be applied to all composable $n$-cells of $C$, where
+$n$ is the length of the telescopes $t$ and $u$. To compose cells
+``vertically'', one moves to a homcategory, $\homcat{C}{a}{b}$. In
+2-category theory, horizontal composition i usually denoted $\circ$ or
+$\ast$ or just by juxtaposition, whereas vertical composition by
+$\cdot$ and is never left out. In our case, we always use $\circ$ and
+the level we mean is contained in the (implicit) parameter $C$. For
+example, \eqref{eq:comp1},\eqref{eq:comp2} are both horizontal
+compositions -- $C = \bullet$ -- while \eqref{eq:comp4} is a
+vertical composition -- $C = \homcat{\bullet}{a}{b}$. 
+
+
 
 \subsection{Units}\label{sec:units}
 Any $n$-cell has $n$ compositions and so it should have $n$ units. We
