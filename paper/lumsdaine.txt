@@ -1,0 +1,45 @@
+To show coherence Peter shows that all closed equality proofs are equal. 
+He works in a pure type theory with just a base type X and equality types.
+
+Lemma 4.4
+By induction over the derivations he derives
+
+   |- G
+   ------------
+   x : X |- r^G : G
+
+   G |- A
+   ---------
+   x:X |- r^A : A(r^G)
+
+   G |- A = A'
+   -------------------
+   x:X |- r^A = r^A' : A(r^G)
+
+   G |- a : A
+   ---------------------
+   x:X |- a(r^G) = r^A : A(r^G)
+
+The interesting bits are the 2nd and 4th judgement:
+
+If A=X then r^A = x
+
+If A=Id(B,b,c) we know by IH that b = r^B = c
+and hence r^A = refl(c).
+
+For the last judgement:
+
+If G |- i : Gi then by construction of r^G we have that i(r^G) = r^Gi
+
+If G |- refl(a:A) : Id(A,a,a)
+we know by defn that r^Id(A,a,a) = refl(a(r^G)).
+
+Let's just consider a simple instance of J such as trans.
+Let G |- p : Id(A,a=b), G |- q:Id(A,b=c) 
+and we consider G |- trans(p,q) : Id(A,a,c)
+By IH we know that p=refl(a(r^G)), q=refl(b(r^G))
+and hence trans(p,q)=refl(A^r^G))=r^Id(A,a=c).
+
+
+
+   
