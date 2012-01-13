@@ -1,6 +1,32 @@
-
 \section{Conclusions and Further Work}
 \label{sec:conclusions}
+
+We have presented a novel approach to defining weak $\omega$-groupoids
+which is based on ideas from Type Theory. A central idea is to define
+the syntax of weak $\omega$-groupoids which is where Type Theory has
+its greatest strength. Indeed, we have formalized most of the material
+presented here in Agda \cite{agda}.  We believe that our approach is
+quite natural, in a way naive, since our approach to formalizing coherence
+cells seems a natural generalisation of the corresponding first
+order laws.
+
+The current formalisation is still
+quite big and we hope to find ways to simplify it. One interesting
+idea may be to use the recent approach to define opetopes based on
+dependent polynomial functors (i.e. indexed containers) \cite{opetopes},
+which has a very type-theoretic flavour.  
+
+We would like to use our framework to provide a formalisation of a
+variation of the results by in
+\cite{lumsdaine10:weak-o-categories,berg08:types-are} by showing that
+$\Idw$ is a weak $\omega$-groupoid. This is slightly different form
+their results because we are working insinde Type Theory instead of on
+a metalevel.
+
+The main challenge ahead is to formalize the notion of an
+$\omega$-groupoid model of Type Theory. Once this has been done we
+will be able to eliminate the univalence axiom and provide a
+computational interpretation of this principle.
 
 
 %%% Local Variables: 
