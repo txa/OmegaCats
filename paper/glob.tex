@@ -37,15 +37,16 @@ $\Sigma \obj : \Set. \obj \rightarrow \obj \rightarrow -$. Given globular sets
 $A,B$ a morphism $f : \Glob(A , B)$ between them is given by 
 \begin{eqnarray*}
   \objto_f & : & \obj_A \rightarrow \obj_B \\
-  \homto_f & : & \Pi a,b:\obj_A. \Glob(\hom_A\,a\,b,\hom_B(\objto_f\,a,\objto_f\,b))
+  \homto_f & : & \Pi a,b:\obj_A. \\
+  && \qquad\Glob(\hom_A\,a\,b,\hom_B(\objto_f\,a,\objto_f\,b))
 \end{eqnarray*}
 Note that this definition exploits the coinductive character of
 $\Glob$. Identity and composition can be defined easily by iterating
 the set-theoretic definitions ad infinitum. As an example we can
-define the terminal object in $\Unit : \Glob$ by the equations
+define the terminal object in $\Unit_\Glob : \Glob$ by the equations
 \begin{eqnarray*}
-  \obj_\Unit & = & \Unit_\Set \\
-  \hom_\Unit\,x\,y & = & \Unit
+  \obj_{\Unit_\Glob} & = & \Unit_\Set \\
+  \hom_{\Unit_\Glob}\,x\,y & = & \Unit_\Glob
 \end{eqnarray*}
 More interestingly, the globular set of identity proofs over a given
 set $A$, $\Idw\,A : \Glob$ can be defined as follows:

@@ -1,4 +1,4 @@
-\section{Syntax \textit{(txa)}}\label{sec:syntax}
+\section{Syntax}\label{sec:syntax}
 
 % \begin{quote}
 %   \begin{itemize}
@@ -33,7 +33,7 @@ additional syntax for objects and other auxilliary syntactic
 components. 
 
 Our framework consists of the following components which are defined
-by mutual induction 
+by mutual induction: 
 \footnote{This is an instance of an inductive-inductive
 definition in Type Theory, see \cite{SetzerForsberg,AltenkirchEtAl}.}
 \begin{description}
@@ -70,7 +70,7 @@ correspond to projections out of contexts.
 \DisplayProof
 \]
 \end{description}
-We now specify the constructors for the various sets (apart form
+We now specify the constructors for the various sets (apart from
 objects). We use unnamed variables ala deBruijn, hence contexts are
 basically a sequence of categories. However, note that this is a
 dependent context since the well-formedness of a category expression
@@ -181,12 +181,12 @@ following data:
 \begin{enumerate}
 \item An assignment of sets to contexts:
 \[
-%<<<<<<< HEAD
-\AxiomC{$o : \Obj~C\qquad x : \intpr{\Gamma}$}
-\UnaryInfC{$\intpr{o}~x : \mathsf{obj}~(\intpr{C}~x)$}
-%=======
-%\AxiomC{$\Gamma : \Con$}
-%\UnaryInfC{$\intpr{\Gamma} : \Set$}
+% %<<<<<<< HEAD
+% \AxiomC{$o : \Obj~C\qquad x : \intpr{\Gamma}$}
+% \UnaryInfC{$\intpr{o}~x : \mathsf{obj}~(\intpr{C}~x)$}
+% %=======
+\AxiomC{$\Gamma : \Con$}
+\UnaryInfC{$\intpr{\Gamma} : \Set$}
 %>>>>>>> 341cc994e3d493b5de0c47333fc330bf43f3a890
 \DisplayProof
 \]
@@ -223,7 +223,7 @@ subject to the following conditions:
 \intpr{\homcat{C}{a}{b}}~\gamma & = & \mathsf{hom}_{\intpr{C}
   \gamma}~(\intpr{a} ~ \gamma)~(\intpr{b}~\gamma)\\
 \intpr{\mathsf{var}~x}~\gamma  & = & \intpr{x}~\gamma \\
-\intpr{\wk~x}~(\gamma,x)  & = & \intpr{x}~\gamma\\
+\intpr{\wk~a}~(\gamma,b)  & = & \intpr{a}~\gamma\\
 \intpr{\mathsf{vz}}~(\gamma,a)  & = & a \\
 \intpr{\mathsf{vs}\,x}~(\gamma,a)  & = & \intpr{x}~\gamma
 \end{eqnarray*}
