@@ -1,6 +1,7 @@
 \section{Conclusions and Further Work}
 \label{sec:conclusions}
 
+\subsection{Summary}
 We have presented a novel approach to defining weak $\omega$-groupoids
 which is based on ideas from Type Theory. The central idea is to
 define the syntax of weak $\omega$-groupoids and then define a weak
@@ -11,6 +12,40 @@ we have formalized most of the material presented here in Agda
 coherence is natural, in a way naive, since it is a natural
 generalisation of the corresponding first order laws.
 
+\subsection{Related work}
+Although a direct comparison is a slippery road, so we leave it for a
+separate later work. Our definition is fundamentally different in that
+it's formulated in Type Theory rather than Category
+Theory. Many of the more direct approaches
+\cite{penon:1999,batanin98:monoidal-globular,leinster:2000} refer to
+the notion of strict $\omega$-category to generate coherence
+cells. However approach is not available in Type Theory because the
+notion of a \emph{strict} $\omega$-category is not possible without
+quotient types. 
+
+Nevertheless, there are  
+similarities of our approach to the categorical approaches, at the
+intuitive level, the most important of which we list below.
+\begin{itemize}
+\item Penon's definition \cite{penon:1999}, similarly to us, uses
+  binary rather than unbiased composition, and explicit
+  identities. 
+\item As we can't form quotients and compare for strict equality in
+  the underlying strict monoidal set, we, similarly to Street
+  \cite{street87:simplexes} generate coherence cells
+  inductively. 
+
+\item Batanin's \emph{spans} are essentially our telescopes. However
+  his composition is unbiased and therefore he trees in spans, which
+  are definable but of no importance to us. 
+\end{itemize}
+%
+However, as far as we know, there is no single definition that would
+integrate all these points into a single definition. 
+
+
+
+\subsection{Further work}
 The current formalisation is still
 quite complicated and we hope to find ways to simplify it. One interesting
 idea may be to use the syntactical approach to define opetopes based on
