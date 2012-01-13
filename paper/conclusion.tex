@@ -13,19 +13,22 @@ coherence is natural, in a way naive, since it is a natural
 generalisation of the corresponding first order laws.
 
 \subsection{Related work}
-Although a direct comparison is a slippery road, so we leave it for a
-separate later work. Our definition is fundamentally different in that
-it's formulated in Type Theory rather than Category
-Theory. Many of the more direct approaches
-\cite{penon:1999,batanin98:monoidal-globular,leinster:2000} refer to
-the notion of strict $\omega$-category to generate coherence
-cells. However approach is not available in Type Theory because the
-notion of a \emph{strict} $\omega$-category is not possible without
-quotient types. 
-
-Nevertheless, there are  
-similarities of our approach to the categorical approaches, at the
-intuitive level, the most important of which we list below.
+There exists a abundance of categorical definitions of weak
+$\omega$-categories and groupoids.  Although a direct comparison is a
+slippery road, we would like here to give a rough comparison of the
+key similarities and differences between our and other
+definitions. Most importantly, our definition is fundamentally
+different in that it's formulated in Type Theory rather than Category
+Theory. This means that we fundamentally couldn't just formalise any
+of the approaches
+\cite{penon:1999,batanin98:monoidal-globular,leinster:2000} at their
+heart there is to the notion of a strict $\omega$-category which
+drives the definition coherence cells. However the notion of a
+\emph{strict} $\omega$-category is not available to us without
+quotient types. This fact forces some of the choices we have made.
+Nevertheless, there are similarities of our approach to the
+categorical approaches, at an intuitive level, the most notable of
+which we list below.
 \begin{itemize}
 \item Penon's definition \cite{penon:1999}, similarly to us, uses
   binary rather than unbiased composition, and explicit
@@ -34,7 +37,6 @@ intuitive level, the most important of which we list below.
   the underlying strict monoidal set, we, similarly to Street
   \cite{street87:simplexes} generate coherence cells
   inductively. 
-
 \item Batanin's \emph{spans} are essentially our telescopes. However
   his composition is unbiased and therefore he trees in spans, which
   are definable but of no importance to us. 
