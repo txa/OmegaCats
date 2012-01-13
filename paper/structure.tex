@@ -112,9 +112,12 @@ examples of valid compositions for increasing $n$:
 \efig
 \end{equation}
 % 
+We formalise this as follows.
 
 \subsubsection{Telescopes}
-Informally, a \emph{telescope} is a path from a category to one of its
+Firstly, we have to define when two cells are \emph{composeable}. To
+this end we introduce \emph{telescopes}.
+Informally, a telescope is a path from a category to one of its
 (indirect) hom-categories. 
 Formally, telescopes, $\Tel$, are defined below at the same
 time as their \emph{concatenation} onto a category, $\dblplus$, which takes a
@@ -127,7 +130,7 @@ telescope:
 \DisplayProof
 \quad
 \AxiomC{$t : \Tel~C~n$}
-\UnaryInfC{$C \dblplus\, t \,=\,
+\UnaryInfC{$C \dblplus\, t \,:\,
   \Cat~\Gamma$}
 \DisplayProof
 \]
@@ -142,6 +145,8 @@ arbitrary category $C$ rather than $\bullet$\,:
 \DisplayProof
 \]
 %
+Here, we call $n$ the \emph{length of $t$}, and we say any $x :
+\Obj (\conctel{C}{t})$ to be \emph{of depth $n$}.
 %
 Note that only the left associative reading of $\dblplus$ makes sense
 so expressions like $C \dblplus\, t \dblplus\, u$ are unambiguous.
@@ -158,7 +163,7 @@ important we use the following syntactical shorthand:
 \DisplayProof
 \]
 
-For example, given a category 
+For example, given the category 
 \[\bfig
 \morphism(0,1000)/{@{>}@/^2em/}/<1000,0>[a`b;f]
 \morphism(0,1000)|b|/{@{>}@/_2em/}/<1000,0>[a`b;g]
@@ -176,7 +181,7 @@ one has:
 
 \subsubsection{Back to composition}
 We use telescopes to define syntax for all compositions of an
-$\omega$-category. Note that these have to be defined mutually recursively with
+$\omega$-category. These are defined mutually recursively with
 their extensions to telescopes:
 %
 \[
@@ -202,18 +207,19 @@ is a function on telescopes defined by cases
     \circ t) }{a' \circ a}{b' \circ b}}
 \]
 %
+Any $\alpha$ and $\beta$ as above are said to be \emph{composable}.
 Note that for a fixed category $C$, $\circ$ always defines the
-composition of $C$, called \emph{horizontal} in the 2-categorical
-case, which can be applied to all composable $n$-cells of $C$, where
+composition in $C$, called \emph{horizontal} in the 2-categorical
+case, which can be applied to all composable $(n+1)$-cells of $C$, where
 $n$ is the length of the telescopes $t$ and $u$. To compose cells
-``vertically'', one moves to a homcategory, $\homcat{C}{a}{b}$. In
-2-category theory, horizontal composition i usually denoted $\circ$ or
-$\ast$ or just by juxtaposition, whereas vertical composition by
-$\cdot$ and is never left out. In our case, we always use $\circ$ and
-the level we mean is contained in the (implicit) parameter $C$. For
+``vertically'', one moves to a homcategory. In
+2-category theory, horizontal composition is usually denoted $\circ$ or
+$\ast$ or is left out, whereas vertical composition by
+$\cdot\,$. In our case, we always use $\circ$ and
+the level we mean is contained in the (implicit) parameter  $C$. For
 example, \eqref{eq:comp1},\eqref{eq:comp2} are both horizontal
-compositions -- $C = \bullet$ -- while \eqref{eq:comp4} is a
-vertical composition -- $C = \homcat{\bullet}{a}{b}$. 
+compositions where $C = \bullet$, while \eqref{eq:comp4} is a
+vertical composition where $C = \homcat{\bullet}{a}{b}$. 
 
 
 
@@ -226,15 +232,15 @@ generate all from a single constructor $\id$ defined as follows:
 \DisplayProof
 \]
 %
-By iteration we obtain the unit for composition $n$ levels deep.
+By iteration we obtain the unit for horizontal composition of $n$-cells:
 \[
 \AxiomC{$a : \Obj~C$}
 \AxiomC{$ n : \Nat$}
 \BinaryInfC{$ \idTel{a}{n} : \Tel ~C~n \qquad \id^n a : \Obj~ (\idTel{a}{n} \Downarrow) $}
 \DisplayProof
 \]
-Again, an iterated unit is defined at the same time as the telescope,
-$\idTel{}{}$, it lies in. The definition follows:
+Again, an iterated unit is defined at the same time as its
+telescope.
 \[
 \AxiomC{$\idTel{a}{0} \,=\, \telzero$}
 \DisplayProof
