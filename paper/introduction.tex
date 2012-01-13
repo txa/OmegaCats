@@ -22,25 +22,25 @@ functional extensionality, univalence doesn't easily fit within the
 computational understanding of Type Theory, since it does not fit into
 the common pattern of introduction and elimination rules. The first
 author has suggested a solution of this problem for functional
-extensionality \cite{alti:lics99}: we can justify extensionality by a
+extensionality \cite{altenkirch99:extensional-equality}: we can justify extensionality by a
 translation based on the setoid model. This approach was later refined
-\cite{plpv08} to \emph{Observational Type Theory} which is the base
+\cite{altenkirch07:observational-equality} to \emph{Observational Type Theory} which is the base
 for the development of Epigram 2 \cite{epigram2}.
 
 However, Observational Type Theory relies essentially on UIP and hence
 is incompatible with Univalent Type Theory. To address this we need to
 replace setoids with a structure able to model non-unique identity
 proofs. A first step in this direction is the groupoid model
-\cite{HS:groupoid} but this forces UIP on the next level, i.e. for
+\cite{hofmann98:the-groupoid-interpretation} but this forces UIP on the next level, i.e. for
 equality between equality proofs. 
-\footnote{\cite{HarperLicata} have shown that the appropriate
+\footnote{\cite{licata:2011} have shown that the appropriate
   restriction of Univalence can be eliminated in this setting.}
 To be able to model Type Theory
 without UIP at any level we need to move to
 $\omega$-groupoids. Moreover, the equalities we need to assume are in
 general non-strict (i.e. they are not definitional equalities in the
 snese of Type Theory) and hence we need to look at weak
-$\omega$-groupoids. Indeed, as \cite{garner} and \cite{lumsdaine} have
+$\omega$-groupoids. Indeed, as \cite{berg08:types-are} and \cite{lumsdaine10:weak-o-categories} have
 shown: Type Theory with Identity types gives rise to a weak
 $\omega$-groupoid. 
 
