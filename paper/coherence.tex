@@ -2,15 +2,66 @@
 \section{Coherence}
 \label{sec:coherence}
 
+In the previous sections we showed how to define all coherence cells
+witnessing the axioms of a strict $\omega$-category. Namely, left and
+right units of composition, associativity of composition, and the
+interchange property. These can be composed to witnesses identity of
+cells which don't exactly match the sides of either of the axioms. 
+
+For instance, to witness the equality
+\[(g \,\id_{b})\,f \quad = \quad g\, f\]
+we can compose $\lambda$ after $\alpha$ to obtain a witness 
+\[p ~ \equiv~ \quad \id_{g}\lambda_f \cdot \alpha_{g,\id_g,f}  ~:~ (g
+\,\id_{b})\,f \longrightarrow   g\, f\]
+Another such witness is simply
+\[q ~ \equiv ~ \rho \, \id_f ~ : ~ (g\,\id_{b})\,f \longrightarrow   g\, f\quad.\]
+
+In the strict case
+equality of 1-cells is a proposition and therefore all proofs of
+equality of 1-cells are equal. In the weak 2-categorical case, 
+equality of 1-cells is not propositional -- it is witnessed by
+2-cells. In other words, only the first level is weakened.
+As equality of 2-cells is a proposition, one must add 
+further axioms about the introduced coherence 2-cells. 
+For instance:
+\begin{equation}\label{eq:lambda-alpha}
+\bfig
+\qtriangle<750,500>[(g\,\id_{b}) \,f ` g\,(\id_{b}\,f)`g\, f;
+\alpha_{g,\id_g,f}`\rho\,\id_f`\id_g\,\lambda_f]
+\efig
+\end{equation}
+% 
+In our case, when all levels are weakened the equality
+is replaced be a new 3-cell 
+\[\id_{g}\lambda_f \cdot \alpha_{g,\id_g,f}
+\longrightarrow \rho\,\id_f\]
+%
+Moreover, for any pair of such 3-cells, 
+\[p,\,q : \id_{g}\lambda_f \cdot \alpha_{g,\id_g,f}\longrightarrow
+\rho\,\id_f\] there must be 4-cell $p \longrightarrow q$, etc., all
+the way up to $\omega$. This is a weakening of propositionality of
+equality of $n$-cells in the strict setting. The following diagram
+illustrates this up to level 4:
+\begin{equation}\label{eq:lambda-alpha}
+\bfig\scalefactor{1.5}
+\qtriangle<750,500>[(g\,\id_{b}) \,f ` g\,(\id_{b}\,f)`g\, f;
+\alpha_{g,\id_g,f}`\rho\,\id_f`\id_g\,\lambda_f]
+\morphism(650,450)/{@{>}@/_1em/}/<-200,-200>[`;p]
+\morphism(700,400)|b|/{@{>}@/^1em/}/<-200,-200>[`;q]
+\morphism(480,400)|b|/..>/<170,-135>[`;]
+\efig
+\end{equation}
+%
+In summary and full generality: 
 \begin{quote}
-  \begin{itemize}
-  \item hollow (~ closed in a sense)
-  \end{itemize}
+  \emph{For any pair of coherence cells with the same domain and
+    target, there must be a mediating coherence cell.}
 \end{quote}
 
-\subsection{Coherence cells between coherence cells}
-Finally we add all coherence cells between parallel coherence
-cells and their compositions. To this end we define a predicate
+\subsection{Formalising coherence cells between coherence cells}
+
+%
+We formalise the above principle as follows. We define a predicate 
 $\hollow$ on objects:
 \[
 \AxiomC{$x :  \Obj~C$}
@@ -18,19 +69,41 @@ $\hollow$ on objects:
 \DisplayProof
 \]
 %
-Such that all identities, $\alpha$'s, $\rho$'s, $\lambda$'s and
-$\chi$'s are hollow, and all weakenings and compositions of
-hollow cells are hollow. Then we introduce a constructor of $\Obj$:
+Such that:
+\[
+\AxiomC{$\hollow\,(\id\,f)= \top$}
+\DisplayProof
+\]
+where $\top$ is the one element Set. 
+Moreover each $\lambda$, $\rho$, $\alpha$ and $\chi$ is hollow
+\[
+\AxiomC{$\hollow\,(\lambda\,\_\,\_) = \top \quad \hollow(\rho\,\_\,\_)
+  ~=~\top$}
+\noLine
+\UnaryInfC{$\hollow\,(\alpha,\_\,\_\,\_) = \top \quad
+  \hollow~(\chi\,\_\,\_\,\_\,\_) = \top$}
+\DisplayProof
+\]
+Further we close $\hollow$ under weakening and composition. 
+Finally, we introduce a constructor of $\Obj$:
 \[
 \AxiomC{$f ~ g : \Obj~\homcat{C}{a}{b}$}
 \AxiomC{$p : \hollow~f$}
 \AxiomC{$q : \hollow~g$}
-\TrinaryInfC{$\mathsf{coh}~f~g~p~q :
+\TrinaryInfC{$\mathsf{coh}~p~q :
   \Obj~\homcat{\homcat{C}{a}{b}}{f}{g}$}
 \DisplayProof
 \]
 %
-And we define $\hollow~(\mathsf{coh}~f~g~p~q) = \top$.
+and a clause of $\hollow$:
+\[
+\AxiomC{$\hollow\,(coh\,p\,q) = \top$}
+\]
+The last remaining case -- variables -- are not hollow:
+\[
+\AxiomC{$\hollow\,(\var v) = \bot$}
+\DisplayProof 
+\]
 
 
 
