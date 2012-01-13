@@ -1,4 +1,65 @@
 \section{Introduction \textit{(txa)}}
+
+The main motivation for the present work is the development of
+Univalent Type Theory by Voevodsky and others \cite{voevodsky}. In a
+nutshell, Univalent Type Theory is a variant of Martin-L\"of's Type
+Theory where we give up the principle of uniqueness of identity proofs
+(UIP) to make it possible to treat equivalence of structures
+(e.g. isomorphism of sets) as equality. While Voevodsky's motivation
+comes from Homotopy Theory, Univalent Type Theory has an intrinsic
+type theoretic motivation in enabling us to treat abstract structures
+as first class citizen making it possible to combine high level
+reasoning and concrete application without unnecessary clutter. 
+
+The central principle of Univalent Type Theory is the Univalence Axiom
+which states that equality of types is weakly equivalent to weak
+equivalence. Here weak equivalence is a notion motivated by homotopy
+theoretic models of type theory which can be alternatively understoond
+as a refinement of the notion of isomorphism in the absence of
+UIP. The Univalence axiom can be understood as a strong extensionality
+priniciple and indeed it implies functional extensionality. As with
+functional extensionality, univalence doesn't easily fit within the
+computational understanding of Type Theory, since they do not fit into
+the common pattern of introduction and elimination rules. The first
+author has suggested a solution of this problem for functional
+extensionality \cite{alti:lics99}: we can justify extensionality by a
+translation based on the setoid model. This approach was later refined
+\cite{plpv08} to \emph{Observational Type Theory} which is the base
+for the development of Epigram 2.
+
+However, Observational Type Theory relies essentially on UIP and hence
+is incompatible with Univalent Type Theory. To address this we need to
+replace setoids with a structure taking account of non-unique identity
+proofs. A first step in this direction is the groupoid model
+\cite{HS:groupoid} but this forces UIP on the next level, i.e. for
+equality between equality proofs. 
+\footnote{Indeed, \cite{HarperLicata} have shown that the appropriate
+  restriction of Univalence can be eliminated in this setting.}
+To be able to model Type Theory
+without UIP at any level we need to move to
+$\omega$-groupoids. Moreover, the equalities we need to assume are in
+general non-strict (i.e. they are not definitional equalities in the
+snese of Type Theory) and hence we need to look at weak
+$\omega$-groupoids. Indeed, as \cite{garner} and \cite{lumsdaine} have
+shown: Type Theory with Identity types gives rise to a weak
+$\omega$-groupoid. 
+
+Our goal is to eliminate unrestricted univalence by formalizing a weak
+$\omega$-groupoid model of Type Theory in Type Theory.  As a first
+step we need to implement the notion of a weak $\omega$-groupoid in
+Type Theory and this is what we do in the present paper.  An obvious
+possibility would have been to implement a categorical notion of weak
+$\omega$ groupoids (eg. based on globular operads) in Type
+Theory. However, this requires us to implement many categorical
+notions first and the resulting structure will not be very
+type-theoretic in flavour. Hence, we are looking for a more direct
+type-theoretic formulation of weak $\omega$-groupoids. In the present
+paper we attempt this by defining a weak $\omega$-groupoid to be a
+globular set with additional structure where this structure is given
+by interpreting a syntactic theory in the globular set.
+
+
+
 \begin{quote}
   \begin{itemize}
   \item 
@@ -7,3 +68,8 @@
   \item ref to opetopes paper (related work) Batanin
   \end{itemize}
 \end{quote}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "weakomega2"
+%%% End: 
