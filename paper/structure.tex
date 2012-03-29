@@ -4,14 +4,14 @@
 
 
 A category, strict or weak, is a globular set with additional
-structure. The difference between the strict and weak case is weather
+structure. The difference between the strict and the weak case is weather
 we adorn the structure with (equational) constraints or whether one instead
 of axioms introduces more structure, which witnesses rather than postulates
 the constraints; so-called \emph{coherence cells}. In this section we
-introduce the (syntax for the) structure of composition and units
+introduce the syntax for the structure of composition and units
 giving rise to syntax for what one could call a \emph{pre-monoidal
   globular category}, where composites and units are expressible but
-unconstrained by any coherence cells.
+unconstrained by coherence cells.
 
 \subsection{Composition}\label{sec:composition}
 %
@@ -106,10 +106,10 @@ examples of valid compositions for increasing $n$:
 We formalise this as follows.
 
 \subsubsection{Telescopes}
-Firstly, we have to define when two cells are \emph{composeable}. To
+Firstly, we have to define when two cells are \emph{composable}. To
 this end we introduce \emph{telescopes}.
 Informally, a telescope is a path from a category to one of its
-(indirect) hom-categories. 
+indirect hom-categories. 
 Formally, telescopes, $\Tel$, are defined below at the same
 time as their \emph{concatenation} onto a category, $\dblplus$, which takes a
 telescope to a category, and therefore allows us to put objects into a
@@ -193,7 +193,7 @@ is  a new constructor of $\Obj$ where
 \]
 is a function on telescopes defined by cases
 \[
-{\telzero \circ \telzero{C} \,=\,\telzero\qquad
+{\telzero \circ \telzero \,=\,\telzero\qquad
 \telsuc{u}{a'}{b'} \circ \telsuc{t}{a}{b} \,=\, \telsuc{(u
     \circ t) }{a' \circ a}{b' \circ b}}
 \]

@@ -14,7 +14,7 @@ For instance, to witness the equality
 we can compose $\lambda$ after $\alpha$ to obtain a witness 
 \[\id_{g}\lambda_f \cdot \alpha_{g,\id_g,f}  ~:~ (g
 \,\id_{b})\,f \longrightarrow   g\, f\]
-Another such witness is simply
+Another possibility is simply
 \[ \rho \, \id_f ~ : ~ (g\,\id_{b})\,f \longrightarrow   g\, f\quad.\]
 
 In the strict case
@@ -56,7 +56,7 @@ illustrates this up to level 4:
 In summary and full generality: 
 \begin{quote}
   \emph{For any pair of coherence cells with the same domain and
-    target, there must be a mediating coherence cell.}
+    codomain, there must be a mediating coherence cell.}
 \end{quote}
 
 \subsection{Formalising coherence cells between coherence cells}
@@ -85,7 +85,7 @@ Moreover each $\lambda$, $\rho$, $\alpha$ and $\chi$ is hollow
   \hollow~(\chi\,\_\,\_\,\_\,\_) = \top$}
 \DisplayProof
 \]
-Further we close $\hollow$ under weakening and composition. 
+Further we close $\hollow$ under weakening, composition and inverses. 
 Finally, we introduce a constructor of $\Obj$:
 \[
 \AxiomC{$f ~ g : \Obj~\homcat{C}{a}{b}$}
@@ -101,7 +101,7 @@ and a clause of $\hollow$:
 \AxiomC{$\hollow\,(\coh\,p\,q) = \top$}
 \DisplayProof 
 \]
-The last remaining case -- variables -- are not hollow:
+The last remaining case are variables, which are not hollow:
 \[
 \AxiomC{$\hollow\,(\var\, v) = \bot$}
 \DisplayProof 

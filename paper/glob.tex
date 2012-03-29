@@ -25,7 +25,7 @@ equality relation of a setoid again. Clearly, the structure we are
 looking for is a weak $\omega$-groupoid. It is the goal of this paper
 to develop a formalisation of this structure. As a first step let's
 ignore the proof objects (i.e. the data of an equivalence relation and
-the goupoid laws etc).
+the groupoid laws etc).
 We end up with a coinductive definition of a \emph{globular set} $G :
 \Glob$ given by
 \begin{eqnarray*}
@@ -62,8 +62,8 @@ presheaf category over the diagram:
 \]
 with the globular identities:
 \begin{eqnarray*}
-  t_{i+1} \circ s_i & = & s_{i+1} \circ t_i \\
-  t_{i+1} \circ t_i & = & s_{i+1} \circ t_i
+  s_{i+1} \circ s_i & = & s_{i+1} \circ t_i \\
+  t_{i+1} \circ t_i & = & t_{i+1} \circ s_i
 \end{eqnarray*}
 In the example of $\Idw\,A$ the presheaf is given by a family
 $F^A : \Nat \rightarrow \Set$:
