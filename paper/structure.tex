@@ -32,30 +32,25 @@ to $\cC$ is important, as well the fact the homcategories of $f$ and $g$
 meet at a common object, $b$, of $\cC$. Following are some
 examples of valid compositions for increasing $n$:
 \begin{align}
-\label{eq:comp1}
+%\label{eq:comp1}
+a \to^f b \to^g c
+&\quad\mapsto\quad
+a\to^{gf}c
+&
+%\label{eq:comp2}
 \bfig
-\morphism[a`b;f]
-\morphism(500,0)[b`c;g]
+\morphism/{@{>}@/^1em/}/<350,0>[a`b;f]
+\morphism|b|/{@{>}@/_1em/}/<350,0>[a`b;f']
+\morphism(175,50)|r|<0,-100>[`;\alpha]
+\morphism(350,0)/{@{>}@/^1em/}/<350,0>[b`c;g]
+\morphism(350,0)|b|/{@{>}@/_1em/}/<350,0>[b`c;g']
+\morphism(520,50)|r|<0,-100>[`;\beta]
 \efig
 &\quad\mapsto\quad
 \bfig
-\morphism[a`c;gf]
-\efig
-\\
-\label{eq:comp2}
-\bfig
-\morphism/{@{>}@/^1em/}/[a`b;f]
-\morphism|b|/{@{>}@/_1em/}/[a`b;f']
-\morphism(250,50)<0,-100>[`;\alpha]
-\morphism(500,0)/{@{>}@/^1em/}/[b`c;g]
-\morphism(500,0)|b|/{@{>}@/_1em/}/[b`c;g']
-\morphism(750,50)<0,-100>[`;\beta]
-\efig
-&\quad\mapsto\quad
-\bfig
-\morphism/{@{>}@/^1em/}/[a`c;gf]
-\morphism|b|/{@{>}@/_1em/}/[a`c;g'f']
-\morphism(250,50)<0,-100>[`;\beta\alpha]
+\morphism/{@{>}@/^1em/}/<350,0>[a`c;gf]
+\morphism|b|/{@{>}@/_1em/}/<350,0>[a`c;g'f']
+\morphism(175,50)|r|<0,-100>[`;\beta\alpha]
 \efig
 % \label{eq:comp3}
 % \bfig\scalefactor{1.2}
@@ -155,14 +150,13 @@ important we use the following syntactical shorthand:
 \]
 
 For example, given the category 
-\[\bfig
+$\bfig
 \morphism(0,1000)/{@{>}@/^2em/}/<1000,0>[a`b;f]
 \morphism(0,1000)|b|/{@{>}@/_2em/}/<1000,0>[a`b;g]
 \morphism(350,1150)|l|/{@{>}@/_.5em/}/<0,-300>[`;\varphi]
 \morphism(650,1150)|r|/{@{>}@/^.5em/}/<0,-300>[`;\gamma]
 \efig
-\enspace,\]
-one has:
+$, one has:
 \[\cat{\telsuc{\telzero}{\varphi}{\gamma}}~ = ~
 \conctel{\homcat{\homcat{\bullet}{a}{b}}{f}{g}}{\telsuc{\telzero}{\varphi}{\gamma}} ~ = ~ \homcat{\homcat{\homcat{\bullet}{a}{b}}{f}{g}}{\varphi}{\gamma}\enspace.\]
 %
@@ -183,21 +177,19 @@ their extensions to telescopes:
 $}
 \UnaryInfC{$\beta\circ \alpha : \Obj (u \circ t \Downarrow)$}
 \DisplayProof
-\]
-is  a new constructor of $\Obj$ where 
-\[
+\qquad
 \AxiomC{$t : \Tel~(\homcat{C}{a}{b})~n \qquad u :
   \Tel~(\homcat{C}{b}{c})~n$}
 \UnaryInfC{$u \circ  t  : \Tel~(\homcat{C}{a}{c})$}
 \DisplayProof
 \]
-is a function on telescopes defined by cases
-\[
-{\telzero \circ \telzero \,=\,\telzero\qquad
-\telsuc{u}{a'}{b'} \circ \telsuc{t}{a}{b} \,=\, \telsuc{(u
-    \circ t) }{a' \circ a}{b' \circ b}}
-\]
-%
+Where $\circ$ is a new constructor of $\Obj$ and $\circ$ for telescopes 
+is a function defined by cases
+\begin{align*}
+\telzero \circ \telzero & = \telzero\\
+\telsuc{u}{a'}{b'} \circ \telsuc{t}{a}{b} & = \telsuc{(u\circ t) }{a' \circ a}{b' \circ b}
+\end{align*}
+% 
 Any $\alpha$ and $\beta$ as above are said to be \emph{composable}.
 Note that for a fixed category $C$, $\circ$ always defines the
 composition in $C$, called \emph{horizontal} in the 2-categorical
@@ -208,7 +200,7 @@ $n$ is the length of the telescopes $t$ and $u$. To compose cells
 $\ast$ or is left out, whereas vertical composition by
 $\cdot\,$. In our case, we always use $\circ$ and
 the level we mean is contained in the (implicit) parameter  $C$. For
-example, \eqref{eq:comp1},\eqref{eq:comp2} are both horizontal
+example, examples in \eqref{eq:comp1} are both horizontal
 compositions where $C = \bullet$, while \eqref{eq:comp4} is a
 vertical composition where $C = \homcat{\bullet}{a}{b}$. 
 
@@ -232,20 +224,10 @@ By iteration we obtain the unit for horizontal composition of $n$-cells:
 \]
 Again, an iterated unit is defined at the same time as its
 telescope.
-\[
-\AxiomC{$\idTel{a}{0} \,=\, \telzero$}
-\DisplayProof
-\AxiomC{$\idTel{a}{(n+1)}\, = \,
-  \telsuc{(\idTel{a}{n})}{\id^n a}{\id^n a}$}
-\DisplayProof
-\]
-\[
-\AxiomC{$\id^0 a \, =\, a$}
-\DisplayProof
-\quad 
-\AxiomC{$\id^{(n+1)}a\,=\, \id\, (\id^n a)$}
-\DisplayProof
-\]
+\begin{align*}
+\idTel{a}{0} &= \telzero &\id^0 a & = a\\
+\idTel{a}{(n+1)}& = \telsuc{(\idTel{a}{n})}{\id^n a}{\id^n a}&\id^{(n+1)}a&= \id\, (\id^n a)
+\end{align*}
 
 
 

@@ -33,9 +33,8 @@ additional syntax for objects and other auxiliary syntactic
 components. 
 
 Our framework consists of the following components which are defined
-by mutual induction: 
-\footnote{This is an instance of an inductive-inductive
-definition in Type Theory, see \cite{alti:catind2}.}
+by mutual induction\footnote{This is an instance of an inductive-inductive
+definition in Type Theory, see \cite{alti:catind2}.}:
 \begin{description}
 \item[Contexts] 
 \[\mathsf{Con} : \mathsf{Set}\]
@@ -91,7 +90,7 @@ $a,b$ in a category $C$ we can form the hom category $C[a,b]$.
 \AxiomC{$\phantom{\Gamma}$}
 \UnaryInfC{$\bullet : \mathsf{Cat}~\Gamma$}
 \DisplayProof
-\]\[
+\qquad
 \AxiomC{$C : \mathsf{Cat}~\Gamma\quad a,\,b : \mathsf{Obj}~C$}
 \UnaryInfC{$C[ \,a\,,\,b\,] : \mathsf{Cat}~\Gamma$}
 \DisplayProof
@@ -102,8 +101,7 @@ We introduce nameless variables in contexts as follows:
 \dblline
 \UnaryInfC{$\mathsf{vz}:\mathsf{Var}~(\mathsf{wk}~C)$}
 \DisplayProof
-\]
-\[
+\qquad
 \AxiomC{$v : \mathsf{Var}~C$}
 \dblline
 \UnaryInfC{$\mathsf{vs}~v : \mathsf{Var}~(\mathsf{wk}~C~D)$}
@@ -115,7 +113,7 @@ induction on the structure in the obvious way:
 \AxiomC{$C,\,D : \mathsf{Cat}~\Gamma$}
 \UnaryInfC{$\mathsf{wk}~C~D : \mathsf{Cat}~(\Gamma,D)$}
 \DisplayProof
-\]\[
+\qquad
 \begin{array}{l}
 \mathsf{wk}~\bullet~D\,=\,\bullet\\
 \mathsf{wk}~(\homcat{C}{a}{b})~D\,=\,(\mathsf{wk}~C~D)[\mathsf{wk}~a~D,\mathsf{wk}~b~D]
@@ -204,8 +202,7 @@ following data:
 \AxiomC{$\gamma : \intpr{\Gamma}$}
 \TrinaryInfC{$\intpr{A}~\gamma : \obj_{\intpr{C}~\gamma}$}
 \DisplayProof
-\]
-\[
+\qquad
 \AxiomC{$C : \Cat ~ \Gamma$}
 \AxiomC{$x : \mathsf{Var}~C$}
 \AxiomC{$\gamma : \intpr{\Gamma}$}
@@ -214,18 +211,14 @@ following data:
 \]
 \end{enumerate}
 subject to the following conditions:
-\begin{eqnarray*}
-\intpr{\varepsilon}  & = & 1\\
-\intpr{\Gamma , C} & = & \Sigma \gamma : \intpr{\Gamma},\intpr{C} ~
-\gamma\\
-\intpr{\bullet}~\gamma & = & G\\
-\intpr{\homcat{C}{a}{b}}~\gamma & = & \mathsf{hom}_{\intpr{C}
-  \gamma}~(\intpr{a} ~ \gamma)~(\intpr{b}~\gamma)\\
-\intpr{\mathsf{var}~x}~\gamma  & = & \intpr{x}~\gamma \\
-\intpr{\wk~a}~(\gamma,b)  & = & \intpr{a}~\gamma\\
-\intpr{\mathsf{vz}}~(\gamma,a)  & = & a \\
-\intpr{\mathsf{vs}\,x}~(\gamma,a)  & = & \intpr{x}~\gamma
-\end{eqnarray*}
+\begin{align*}
+\intpr{\varepsilon}  & =  1 &\intpr{\mathsf{var}~x}~\gamma  & =  \intpr{x}~\gamma \\
+\intpr{\Gamma , C} & =  \Sigma \gamma : \intpr{\Gamma},\intpr{C} ~ \gamma&\intpr{\wk~a}~(\gamma,b)  & = \intpr{a}~\gamma\\
+\intpr{\bullet}~\gamma & =  G&\intpr{\mathsf{vz}}~(\gamma,a)  & =  a \\
+\intpr{\homcat{C}{a}{b}}~\gamma & =  \mathsf{hom}_{\intpr{C}
+  \gamma}~(\intpr{a} ~ \gamma)~(\intpr{b}~\gamma)&
+\intpr{\mathsf{vs}\,x}~(\gamma,a)  & = \intpr{x}~\gamma
+\end{align*}
 
 
 %%% Local Variables: 

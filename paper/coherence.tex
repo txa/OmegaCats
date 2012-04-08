@@ -63,27 +63,18 @@ In summary and full generality:
 
 %
 We formalise the above principle as follows. We define a predicate 
-$\hollow$ on objects:
-\[
-\AxiomC{$x :  \Obj~C$}
-\UnaryInfC{$\hollow~x~:~\Set$}
-\DisplayProof
-\]
-%
-Such that:
-\[
-\AxiomC{$\hollow\,(\id\,f)= \top$}
-\DisplayProof
-\]
-where $\top$ is the one element Set. 
+$\hollow$ on objects
+% \[
+% \AxiomC{$x :  \Obj~C$}
+% \UnaryInfC{$\hollow~x~:~\Set$}
+% \DisplayProof
+% \]
+% %
+such that $\hollow\,(\id\,f)= \top$ where $\top$ is the one element Set. 
 Moreover each $\lambda$, $\rho$, $\alpha$ and $\chi$ is hollow
 \[
-\AxiomC{$\hollow\,(\lambda\,\_\,\_) = \top \quad \hollow(\rho\,\_\,\_)
-  ~=~\top$}
-\noLine
-\UnaryInfC{$\hollow\,(\alpha,\_\,\_\,\_) = \top \quad
-  \hollow~(\chi\,\_\,\_\,\_\,\_) = \top$}
-\DisplayProof
+\hollow\,(\lambda\,\_\,\_) = \top \quad \hollow(\rho\,\_\,\_)
+  ~=~\top\quad \hollow\,(\alpha,\_\,\_\,\_) = \top \quad\hollow~(\chi\,\_\,\_\,\_\,\_) = \top
 \]
 Further we close $\hollow$ under weakening, composition and inverses. 
 Finally, we introduce a constructor of $\Obj$:
