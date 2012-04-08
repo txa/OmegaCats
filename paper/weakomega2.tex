@@ -1,4 +1,11 @@
-\documentclass[conference, a4paper]{IEEEtran}
+\documentclass[a4paper,UKenglish]{lipics}
+
+\usepackage{microtype}%if unwanted, comment out or use option "draft"
+
+%\graphicspath{{./graphics/}}%helpful if your graphic files are in another directory
+
+\bibliographystyle{plain}% the recommended bibstyle
+
 %\documentclass[a4paper]{article}
 
 \usepackage{latexsym, amsmath, amssymb}
@@ -9,29 +16,31 @@
 \usepackage{bussproofs}
 \input{macros.tex}
 
-
-\begin{document}
 \title{A Syntactical Approach to Weak $\omega$-Groupoids}
+\titlerunning{Weak $\omega$-Groupoids}
 
 % author names and affiliations
 % use a multiple column layout for up to three different
 % affiliations
-\author{\IEEEauthorblockN{Thorsten Altenkirch}
-\IEEEauthorblockA{Functional Programming Laboratory\\
+\author[1]{Thorsten Altenkirch}
+\author[2]{Ond\v{r}ej Ryp\'{a}\v{c}ek}
+\affil[1]{Functional Programming Laboratory\\
 School of Computer Science\\
 University of Nottingham, UK\\
-thorsten.altenkirch@nottingham.ac.uk
+thorsten.altenkirch@nottingham.ac.uk}
+\affil[2]{Department of Computer Science\\
+University of Sheffield, UK\\
+ondrej.rypacek@gmail.com
 }
-\and
-\IEEEauthorblockN{Ondrej Rypacek}
-\IEEEauthorblockA{Department of Informatics\\
-King's College London\\
-London, UK\\
-ondrej.rypacek@kcl.ac.uk}
-}
+
+\keywords{Type Theory,Category Theory,Higher dimensional structures}
+\subjclass{F.4.1. Lambda calculus and related systems,
+  F.4.1. Mechanical theorem proving, G.0}
+
+
+\begin{document}
 
 \maketitle
-
 
 \begin{abstract}
 %\boldmath
@@ -44,7 +53,7 @@ ondrej.rypacek@kcl.ac.uk}
   Garner/van de Berg showing that the standard eliminator for equality
   gives rise to a weak $\omega$-groupoid.
 \end{abstract}
-\IEEEpeerreviewmaketitle
+
 
 \input{introduction.tex}
 
@@ -74,8 +83,7 @@ Kris Kapulkin, Nicolai Krauss,  Thomas Streicher and Vladimir Voevodsky.
 
 
 
-\bibliographystyle{alpha}
-%\bibliographystyle{IEEEtran}
+%\bibliographystyle{alpha}
 \bibliography{IEEEabrv,weakomega2.bib}
 %\bibliography{weakomega2}
 
