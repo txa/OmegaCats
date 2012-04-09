@@ -11,11 +11,10 @@ cells which don't exactly match the sides of either of the axioms.
 
 For instance, to witness the equality
 \[(g \,\id_{b})\,f \quad = \quad g\, f\]
-we can compose $\lambda$ after $\alpha$ to obtain a witness 
+we can compose $\lambda$ after $\alpha$ to obtain a witnesses such as: 
 \[\id_{g}\lambda_f \cdot \alpha_{g,\id_g,f}  ~:~ (g
-\,\id_{b})\,f \longrightarrow   g\, f\]
-Another possibility is simply
-\[ \rho \, \id_f ~ : ~ (g\,\id_{b})\,f \longrightarrow   g\, f\quad.\]
+\,\id_{b})\,f \longrightarrow   g\, f\qquad\text{   and    }\qquad
+ \rho \, \id_f ~ : ~ (g\,\id_{b})\,f \longrightarrow   g\, f\quad.\]
 
 In the strict case
 equality of 1-cells is a proposition and therefore all proofs of
@@ -37,9 +36,8 @@ is replaced be a new 3-cell
 \[\id_{g}\lambda_f \cdot \alpha_{g,\id_g,f}
 \longrightarrow \rho\,\id_f\]
 %
-Moreover, for any pair of such 3-cells, 
-\[p,\,q : \id_{g}\lambda_f \cdot \alpha_{g,\id_g,f}\longrightarrow
-\rho\,\id_f\] there must be 4-cell $p \longrightarrow q$,  etc., all
+Moreover, for any pair of such 3-cells, $p,\,q : \id_{g}\lambda_f \cdot \alpha_{g,\id_g,f}\longrightarrow
+\rho\,\id_f$, there must be 4-cell $p \longrightarrow q$,  etc., all
 the way up to $\omega$. This is a weakening of propositionality of
 equality of $n$-cells in the strict setting. The following diagram
 illustrates this up to level 4:
@@ -71,13 +69,17 @@ $\hollow$ on objects
 % \]
 % %
 such that $\hollow\,(\id\,f)= \top$ where $\top$ is the one element Set. 
-Moreover each $\lambda$, $\rho$, $\alpha$ and $\chi$ is hollow
+Moreover each coherence cell is hollow
 \[
+\begin{array}{c}
 \hollow\,(\lambda\,\_\,\_) = \top \quad \hollow(\rho\,\_\,\_)
-  ~=~\top\quad \hollow\,(\alpha,\_\,\_\,\_) = \top \quad\hollow~(\chi\,\_\,\_\,\_\,\_) = \top
+  ~=~\top\quad \hollow\,(\alpha,\_\,\_\,\_) = \top
+  \quad\hollow~(\chi\,\_\,\_\,\_\,\_) = \top\\
+\hollow\,(\iota~f) = \top \quad \hollow\,(\kappa~f) = \top
+\end{array}
 \]
 Further we close $\hollow$ under weakening, composition and inverses. 
-Finally, we introduce a constructor of $\Obj$:
+Finally, we introduce a constructor of $\Obj$ and a clause of $\hollow$:
 \[
 \AxiomC{$f ~ g : \Obj~\homcat{C}{a}{b}$}
 \AxiomC{$p : \hollow~f$}
@@ -85,10 +87,7 @@ Finally, we introduce a constructor of $\Obj$:
 \TrinaryInfC{$\mathsf{coh}~p~q :
   \Obj~\homcat{\homcat{C}{a}{b}}{f}{g}$}
 \DisplayProof
-\]
-%
-and a clause of $\hollow$:
-\[
+\qquad
 \AxiomC{$\hollow\,(\coh\,p\,q) = \top$}
 \DisplayProof 
 \]
@@ -103,5 +102,5 @@ The last remaining case are variables, which are not hollow:
 
 %%% Local Variables: 
 %%% mode: latex
-%%% TeX-master: "weakomega2"
+%%% TeX-master: "weakomega-csl"
 %%% End: 

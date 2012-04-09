@@ -290,14 +290,15 @@ where
 %
 Here we could define a pair of constructors $\lambda$ and
 $\inv{\lambda}$ for the two opposite directions of $\lambda$. Instead,
-as we are interested only in groupoids, we define a generic constructor
+as we are interested in groupoids, we define a generic constructor
 $\inv{}$ on all cells of a homcategory:
 \[
-\AxiomC{$t : \Tel\,(\homcat{C}{a}{b})\,n$}
-\AxiomC{$a : \Obj~t$}
-\BinaryInfC{$\inv{a} : \Obj\,(\conctel{\homcat{C}{b}{a}}{\inv{t}})$}
+\AxiomC{$f : \Obj~(\homcat{C}{a}{b})$}
+\UnaryInfC{$\inv{f} : \Obj\,(\homcat{C}{b}{a})$}
 \DisplayProof\]
-where $\inv{}$ extends recursively to telescopes in the obvious way.
+The introduction of formal inverses
+forces the introduction of coherence cells witnessing them being left
+and right inverses. See the next section.
 
 
 
@@ -309,11 +310,10 @@ interchange. These are defined analogically to $\lambda$'s.
 
 To this end, note that everything in the definition of $\lambda$ is
 forced by the type of $\overrightarrow{\lambda}$. In general it is
-enough to give, for
-each of $\rho$, $\alpha$ of $\chi$,  the type of the telescope
-morphism. Just as in the case of $\lambda$, it is in each case just a
-``telecopisation'' of the ordinary case.
-For right units and associativity we define:
+enough to give for $\rho$ and $\alpha$ the
+type of the telescope morphism.
+Just as in the case of $\lambda$, it is in each case just
+a ``telecopisation'' of the ordinary case.  
 \[
 \AxiomC{$t : \Tel\,\homcat{C}{a}{b}\,n$}
 \UnaryInfC{$\overrightarrow{\rho}\,t : t \circ (\idTel\,(\id\,a)\,n)  \rightrightarrows t$}
@@ -326,8 +326,16 @@ For right units and associativity we define:
 $}
 \DisplayProof
 \]
+Because of the way we introduce identities, the laws of inverses are also simple:
+\[
+\AxiomC{$f : \Obj~(\homcat{C}{a}{b})$}
+\UnaryInfC{$\iota~f : \Obj~(\homcat{\homcat{C}{a}{a}}{\inv{f}\circ
+    f}{\id~a})\qquad\kappa~f : \Obj (\homcat{\homcat{C}{b}{b}}{f \circ \inv{f}}{\id~b})$}
+\DisplayProof
+\]
+
 %
-$\overrightarrow{\chi}$ is in the $\omega$ case a bit more
+The coherence cells witnessing interchange, $\overrightarrow{\chi}$ are in the $\omega$ case is more
 complicated. In the simple 2-categorical case,
 the interchange law states that the two possible ways of composing the
 following diagram are equal. 
@@ -416,7 +424,8 @@ In this situation, it is possible to form both the composition $(t_{22}\circ
 t_{21})\circ(t_{12}\circ t_{11})$ and also $(t_{22}\circ
 t_{12})\circ(t_{21}\circ t_{11})$. A telescope morphism from the
 former to the latter telescope induces a coherence cell for
-interchange. This is formalised as follows:
+interchange. This is formalised as follows, up to definitional
+equality of telescopes:
 \[
 \AxiomC{$u_1 : \Tel~\homcat{\mathcal{C}}{a}{b}~n\quad u_2 : \Tel~\homcat{\mathcal{C}}{b}{c}~n\quad
 t_{11} :  \Tel~(\conctel{\homcat{C}{a}{b}}{u_1}) ~ m$}
@@ -433,5 +442,5 @@ t_{11} :  \Tel~(\conctel{\homcat{C}{a}{b}}{u_1}) ~ m$}
 
 %%% Local Variables: 
 %%% mode: latex
-%%% TeX-master: "weakomega2"
+%%% TeX-master: "weakomega-csl"
 %%% End: 

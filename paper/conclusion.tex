@@ -6,11 +6,17 @@ We have presented a novel approach to defining weak $\omega$-groupoids
 which is based on ideas from Type Theory. The central idea is to
 define the syntax of weak $\omega$-groupoids and then define a weak
 $\omega$-groupoid as a globular set with an interpretation of the
-syntax, which is where Type Theory has its greatest strength. Indeed,
-we have formalized most of the material presented here in Agda
-\cite{agda}.  We believe that our approach to formalization of
-coherence is natural, in a way naive, since it is a natural
-generalisation of the corresponding first order laws.
+syntax, which is where Type Theory has its greatest strength. Our
+approach to formalization of coherence is natural, in a way naive,
+since it is a natural generalisation of the corresponding first order
+laws.
+
+We have formalized all of the material presented here in Agda
+\cite{agda}, except for the definition of the telescope morphism for
+$\chi$, which wasn't ready in time for submission. We believe this is
+a technicality, albeit a difficult one. The Agda source file is available
+from \cite{coreagda}.
+
 
 \subsection{Related work}
 There exists an abundance of categorical definitions of weak
@@ -21,11 +27,11 @@ importantly, our definition is fundamentally different in that it is
 formulated in Type Theory rather than Category Theory. This means that
 we couldn't just formalise any of the approaches
 \cite{penon:1999,batanin98:monoidal-globular,leinster:2000} because at
-their heart is to the notion of a strict $\omega$-category which
-drives the definition of coherence cells. However, the notion of a
-\emph{strict} $\omega$-category is not available in Type Theory
+their heart there is the notion of a strict $\omega$-category which
+drives the definition of coherence cells. However, it is unclear to how define
+\emph{strict} $\omega$-categories in Type Theory
 without quotient types. This forces some of the choices we have
-made. Nevertheless, at an intuitive level there are similarities of our approach to the
+made. Nevertheless, on an intuitive level there are similarities of our approach to the
 categorical approaches, some of which we mention below.
 \begin{itemize}
 \item Penon's definition \cite{penon:1999}, similarly to us, uses
@@ -36,12 +42,10 @@ categorical approaches, some of which we mention below.
   \cite{street87:simplexes} generate coherence cells
   inductively. 
 \item Batanin's \emph{spans} are essentially our telescopes. However
-  his composition is unbiased and therefore he trees in spans, which
-  are definable but of no importance to us. 
+  his composition is unbiased and therefore he considers trees in
+  spans, which are definable but of no importance to us.
 \end{itemize}
 %
-As far as we know, there is no single definition that would
-integrate all these points into a single definition. 
 
 
 
@@ -53,20 +57,22 @@ dependent polynomial functors (i.e. indexed containers) \cite{opetopes},
 which has a very type-theoretic flavour.  
 
 We would like to use our framework to provide a formalisation of a
-variation of the results by in
+variation of the results in
 \cite{lumsdaine10:weak-o-categories,berg08:types-are} by showing that
-$\Idw$ is a weak $\omega$-groupoid. This is slightly different form
-their results because we are working inside Type Theory rather than on
+$\Idw$ is a weak $\omega$-groupoid. Such a formalisation would be different form
+their results because we are working inside Type Theory, rather than on
 a meta-level.
 
-The main challenge ahead is to formalize the notion of an
+The main challenge ahead is to formalize the notion of a
 $\omega$-groupoid model of Type Theory. Once this has been done we
 will be able to eliminate the univalence axiom and provide a
 computational interpretation of this principle.
 
 
+
+
+
 %%% Local Variables: 
 %%% mode: latex
-%%% TeX-master: "weakomega2"
+%%% TeX-master: "weakomega-csl"
 %%% End: 
-
