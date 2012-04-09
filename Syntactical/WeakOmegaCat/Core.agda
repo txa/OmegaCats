@@ -1,6 +1,11 @@
 {-# OPTIONS --no-termination-check   #-}
 {-# OPTIONS --without-K  #-}
 
+-- (C) Ondrej Rypacek and Thorsten Altenkirch
+-- A syntactical approach to weak-omega groupoids : an implementation
+-- Note that the file compiles for about an hour in Agda 2.3.0.1. 
+
+
 module Core where
 
 open import Data.Nat
