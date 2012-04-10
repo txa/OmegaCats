@@ -17,8 +17,8 @@ category \cite{kelly:1982}. However, once
 the equational axioms are replaced by data -- \emph{coherence cells} -- their
 complexity rises steeply with dimension. 
 
-This combinatorial complexity of coherence cells has been a major
-obstacle in the development of weak $\omega$-categories. This has led
+The combinatorial complexity of coherence cells has been a major
+obstacle in the development of weak $\omega$-categories. It has led
 to the development of many diverse approaches to weak
 $\omega$-categories,
 e.g. \cite{street87:simplexes,batanin98:monoidal-globular,baez:1998,
@@ -85,8 +85,10 @@ expressing the naturality of the preceding lower lambda.
 
 Similarly one must introduce $\rho$'s to witness the right unit law,
 $\chi$'s to witness interchange, and $\alpha$'s to witness
-associativity. The example of $\lambda$
-has been chosen because of its relative simplicity. 
+associativity. In the case of groupoids where every arrow has an
+inverse there are $\iota$'s and $\kappa$'s to witness the left and
+right cancellation properties. The example of $\lambda$ has been
+chosen because of its relative simplicity.
 
 Moreover, all such coherence cells must satisfy a coherence property
 basically saying that any pair of $n$-cells from $d$ to $d'$ involving
@@ -157,7 +159,7 @@ $\Obj~(\cat{t}) \rightarrow \Obj~(\cat{u})$. We will call such an $m$
 a \emph{telescope morphism form $t$ to $u$}; formally $ m : t
 \rightrightarrows u$. Then $\Phi$ has type $t \rightrightarrows u
 \rightarrow \Obj (\cat t) \rightarrow \Obj(\cat u)$. Formally, we
-define telescope morphisms as follows; in mutual recursion to their
+define telescope morphisms as follows; in mutual recursion with their
 application to telescopes and objects in telescopes:
 \[
 \AxiomC{$t,u : \Tel\, C\, n $}
@@ -203,14 +205,15 @@ the left.
 \]
 Note that here $c$ and $d$ don't actually fit into the telescope
 $\suctel{a}{b}{t}$ because the latter is definitionally different from
-$t$. However, it's straightforward to prove by induction that 
+$t$. However, it is straightforward to prove by induction that 
 %
 \begin{equation}\label{eq:lem-subtel} \cat{t} \quad \equiv \quad \cat{\suctel{a}{b}{t}}\enspace,
 \end{equation}
 % 
 and use the proof to make $c$ and $d$ fit. 
-However, in the interest of avoiding syntactical clutter we usually just silently assume
-that $c$ and $d$ fit or can be substituted to fit the context.
+However, in the interest of clarity of the presentation we hereby just silently assume
+that $c$ and $d$ fit or can be substituted to fit the context. The
+full details can be found in \cite{coreagda}.
 
 We are now in the position do define $\appobj{}{}$ as follows:
 The base case is trivial:
@@ -231,7 +234,7 @@ $}
 In summary, $\appobj{m}{x}$ is defined by induction on $m$ where in
 each step the length of $m$ decreases by one and the depth of $x$
 increases by one. To make the levels match the category of $x$ 
-has to be \emph{whiskered} by the morphisms $\alpha$, $\beta$ for $m =
+has to be whiskered by the morphisms $\alpha$, $\beta$ for $m =
 \telsuc{m'}{\alpha}{\beta}$. When $m = \telzero$, the recursion
 stops. The meticulous reader will have noticed that the expression
 $\appobj{m'}{x}$ above is not well typed as $x$ lives in
@@ -240,7 +243,7 @@ $\conctel{t}{\suctel{a}{b}{t'}}$. But this is easily fixed by
 substituting using \eqref{eq:lem-subtel}. Other similar inaccuracies
 are dealt with similarly.
 
-Here is an illustration of $m =
+Here is an illustration for $m =
 \telsuc{\telsuc{\telzero}{\varphi}{\gamma}}{\alpha}{\beta}$, $t' = \telzero$,
 $t = \telsuc{\telsuc{\telzero}{a}{b}}{f}{g}$, $u =
 \telsuc{\telsuc{\telzero}{a'}{b'}}{f'}{g'}$:
@@ -265,10 +268,10 @@ $t = \telsuc{\telsuc{\telzero}{a}{b}}{f}{g}$, $u =
 \efig
 \]
 
-Having defined telescope morphisms, it's easy to define $\lambda$'s of all depths
-relative to an arbitrary category. All that is needed is a telescope
-morphism, $\overrightarrow{\lambda}$,  together with a new
-constructor, $\lambda$, of $\Obj$:
+Having defined telescope morphisms, it is relatively easy to define
+$\lambda$'s of all depths relative to an arbitrary category. All that
+is needed is a telescope morphism, $\overrightarrow{\lambda}$,
+together with a new constructor, $\lambda$, of $\Obj$:
 \[\AxiomC{$t : \Tel~\homcat{C}{a}{b}~n $}
 \UnaryInfC{$\overrightarrow{\lambda}\,t : (\idTel (\id \, b) \, n) \circ t
   \rightrightarrows t$}
@@ -297,16 +300,17 @@ $\inv{}$ on all cells of a homcategory:
 \UnaryInfC{$\inv{f} : \Obj\,(\homcat{C}{b}{a})$}
 \DisplayProof\]
 The introduction of formal inverses
-forces the introduction of coherence cells witnessing them being left
+forces the introduction of coherence cells witnessing their being left
 and right inverses. See the next section.
 
 
 
 \subsection{Right units, associativity and interchange}
 Similarly to $\lambda$'s we define the remaining coherence cells,
-i.e. $\rho$'s to witness \emph{right units}, $\alpha$'s to witness
-\emph{associativity} of composition and $\chi$'s to witness
-interchange. These are defined analogically to $\lambda$'s.
+i.e. $\rho$'s to witness right units, $\alpha$'s to witness
+associativity of composition, $\iota$'s and $\kappa$'s to witness
+inverses and $\chi$'s to witness interchange. These are defined
+analogically to $\lambda$'s.
 
 To this end, note that everything in the definition of $\lambda$ is
 forced by the type of $\overrightarrow{\lambda}$. In general it is
@@ -417,15 +421,14 @@ picture illustrates the idea:
 \efig
 \]
 %
-Where $\cdots$ indicate telescopes of arbitrary depth although $u_1$
-and $u_2$ have to be of the same length; and $t_{ij}, \; i,j \in
-\{1,2\}$ have to be of the same length. 
-In this situation, it is possible to form both the composition $(t_{22}\circ
-t_{21})\circ(t_{12}\circ t_{11})$ and also $(t_{22}\circ
+Where $\cdots$ indicate telescopes of arbitrary depth where $u_1$ and
+$u_2$ have to be of the same length; and $t_{ij}, \; i,j \in \{1,2\}$
+have to be of the same length.  In this situation, it is possible, up
+to definitional equality of telescopes, to form both the composition
+$(t_{22}\circ t_{21})\circ(t_{12}\circ t_{11})$ and also $(t_{22}\circ
 t_{12})\circ(t_{21}\circ t_{11})$. A telescope morphism from the
 former to the latter telescope induces a coherence cell for
-interchange. This is formalised as follows, up to definitional
-equality of telescopes:
+interchange. This is formalised as follows:
 \[
 \AxiomC{$u_1 : \Tel~\homcat{\mathcal{C}}{a}{b}~n\quad u_2 : \Tel~\homcat{\mathcal{C}}{b}{c}~n\quad
 t_{11} :  \Tel~(\conctel{\homcat{C}{a}{b}}{u_1}) ~ m$}

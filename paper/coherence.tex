@@ -4,26 +4,22 @@
 
 \subsection{The need of more coherence}
 In the previous sections we showed how to define all coherence cells
-witnessing the axioms of a strict $\omega$-category. Namely, left and
-right units of composition, associativity of composition, and the
-interchange property. These can be composed to witnesses identity of
-cells which don't exactly match the sides of either of the axioms. 
+witnessing the axioms of a strict $\omega$-groupoid. These can be
+composed to witnesses identity of cells which don't exactly match the
+sides of either of the axioms.
 
 For instance, to witness the equality
 \[(g \,\id_{b})\,f \quad = \quad g\, f\]
-we can compose $\lambda$ after $\alpha$ to obtain a witnesses such as: 
+we can compose $\lambda$ after $\alpha$ to obtain witnesses such as: 
 \[\id_{g}\lambda_f \cdot \alpha_{g,\id_g,f}  ~:~ (g
 \,\id_{b})\,f \longrightarrow   g\, f\qquad\text{   and    }\qquad
  \rho \, \id_f ~ : ~ (g\,\id_{b})\,f \longrightarrow   g\, f\quad.\]
 
-In the strict case
-equality of 1-cells is a proposition and therefore all proofs of
-equality of 1-cells are equal. In the weak 2-categorical case, 
-equality of 1-cells is not propositional -- it is witnessed by
-2-cells. In other words, only the first level is weakened.
-As equality of 2-cells is a proposition, one must add 
-further axioms about the introduced coherence 2-cells. 
-For instance:
+ In the strict case equality of 1-cells is a proposition and therefore
+ all proofs of equality of 1-cells are equal. In the weak
+ 2-categorical case, equality of 1-cells is not propositional but
+ equality of 2-cells is. In other words, equality of 1-cells is
+ witnessed by 2-cells which must satisfy new axioms.  For instance:
 \begin{equation}\label{eq:lambda-alpha}
 \bfig
 \qtriangle<750,500>[(g\,\id_{b}) \,f ` g\,(\id_{b}\,f)`g\, f;
