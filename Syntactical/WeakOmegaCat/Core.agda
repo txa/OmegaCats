@@ -17,7 +17,7 @@ J' P m refl = m
 {- Definition of a syntax for weak ω-categories (incomplete) -}
 
 data Con : Set -- contexts
-data Cat : Con → Set -- categories in contexts
+data Cat (Γ : Con) : Set -- categories in contexts
 data Tel : ∀ {Γ}(C : Cat Γ) → ℕ → Set -- telescopes are like categories, the index ℕ is there 
 -- to stand for depth in order for us to be able to enforce ballanceness. But is ballancedness important ? 
 data Obj : {Γ : Con}(C : Cat Γ) → Set  -- objects in categories in contexts
