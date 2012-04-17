@@ -17,8 +17,8 @@ category \cite{kelly:1982}. However, once
 the equational axioms are replaced by data -- \emph{coherence cells} -- their
 complexity rises steeply with dimension. 
 
-This combinatorial complexity of coherence cells has been a major
-obstacle in the development of weak $\omega$-categories. This has led
+The combinatorial complexity of coherence cells has been a major
+obstacle in the development of weak $\omega$-categories. It has led
 to the development of many diverse approaches to weak
 $\omega$-categories,
 e.g. \cite{street87:simplexes,batanin98:monoidal-globular,baez:1998,
@@ -85,8 +85,10 @@ expressing the naturality of the preceding lower lambda.
 
 Similarly one must introduce $\rho$'s to witness the right unit law,
 $\chi$'s to witness interchange, and $\alpha$'s to witness
-associativity. The example of $\lambda$
-has been chosen because of its relative simplicity. 
+associativity. In the case of groupoids where every arrow has an
+inverse there are $\iota$'s and $\kappa$'s to witness the left and
+right cancellation properties. The example of $\lambda$ has been
+chosen because of its relative simplicity.
 
 Moreover, all such coherence cells must satisfy a coherence property
 basically saying that any pair of $n$-cells from $d$ to $d'$ involving
@@ -117,6 +119,9 @@ $\lambda_\alpha$ and $\lambda^{-1}_\alpha$ are then introduced as
 \end{array}
 \enspace.\] 
 %
+%
+These arrows should be natural in 3-cells $\gamma : \alpha \Rrightarrow
+\alpha'$. 
 In a diagram:
 \[
 \bfig
@@ -125,11 +130,7 @@ f' ` f';\lambda^{-1}_f`\id^2_b\,\circ\,\alpha`\alpha`\lambda_{f'}]
 \morphism(300,180)/@3{->}/<200,0>[`;\lambda_\alpha]
 \morphism(300,320)/@3{<-}/<200,0>[`;\lambda^{-1}_\alpha]
 \efig
-\]
-%
-These arrows should be natural in 3-cells $\gamma : \alpha \Rrightarrow
-\alpha'$ in the following sense: 
-\[
+\qquad
 \bfig
 \square/<-`>`>`>/<1000,750>[ \lambda_{f'}\ast (\id^2_b \circ \alpha)
 \ast \lambda^{-1}_f ` \alpha  ` \lambda_{f'}\ast(\id^2_b \circ
@@ -158,7 +159,7 @@ $\Obj~(\cat{t}) \rightarrow \Obj~(\cat{u})$. We will call such an $m$
 a \emph{telescope morphism form $t$ to $u$}; formally $ m : t
 \rightrightarrows u$. Then $\Phi$ has type $t \rightrightarrows u
 \rightarrow \Obj (\cat t) \rightarrow \Obj(\cat u)$. Formally, we
-define telescope morphisms as follows; in mutual recursion to their
+define telescope morphisms as follows; in mutual recursion with their
 application to telescopes and objects in telescopes:
 \[
 \AxiomC{$t,u : \Tel\, C\, n $}
@@ -168,8 +169,7 @@ application to telescopes and objects in telescopes:
 \AxiomC{$\phantom{\bullet : \telzero \rightrightarrows \telzero}$}
 \UnaryInfC{$\bullet : \telzero \rightrightarrows \telzero$}
 \DisplayProof
-\]
-\[ 
+\qquad
 \AxiomC{$m : t \rightrightarrows u \quad \alpha :
   \Obj\,(\telsuc{\cat{u}}{a'}{\appobj{m}{a}}) \quad
   \Obj\,(\telsuc{\cat{u}}{\appobj{m}{b}}{b'})$}
@@ -180,18 +180,16 @@ application to telescopes and objects in telescopes:
 where
 \[\AxiomC{$m : t \rightrightarrows u \quad t' : \Tel\, (\cat{t})\,n$}
 \UnaryInfC{$\apptel{m}{t'} : \Tel\,(\cat{u})\,n$}
-\DisplayProof\]
-\[\AxiomC{$m : t \rightrightarrows u \quad a : \Obj\,(\cat{t} \dblplus {'t})$}
+\DisplayProof
+\qquad
+\AxiomC{$m : t \rightrightarrows u \quad a : \Obj\,(\cat{t} \dblplus {'t})$}
 \UnaryInfC{$\appobj{m}{a} : \Obj\,(\cat{u}\dblplus \apptel{m}{t'})$}
 \DisplayProof\]
-\[ 
-\AxiomC{$\apptel{\telzero}{t}\;=\;t$}
-\DisplayProof
-\quad
-\AxiomC{$\apptel{\telsuc{m'}{\alpha}{\beta}}{t} \;=\; \telsuc{(\apptel{m'}{t})}{\appobj{m}{\alpha}}{\appobj{m}{\beta}})$}
-\DisplayProof
-\]
-%
+\begin{align*}
+\apptel{\telzero}{t}&=t\\
+\apptel{\telsuc{m'}{\alpha}{\beta}}{t} &= \telsuc{(\apptel{m'}{t})}{\appobj{m}{\alpha}}{\appobj{m}{\beta}})
+\end{align*}
+% 
 To define $\appobj{}{}$ we need the following auxiliary function,
 among others, which extends a telescope relative to a hom-category on
 the left.
@@ -199,22 +197,23 @@ the left.
 \AxiomC{$t : \Tel~(\homcat{C}{a}{b})~n$}
 \UnaryInfC{$\suctel{a}{b}{t} : \Tel~C ~ (n+1)$}
 \DisplayProof
-\]
-\quad where
-\[
-\suctel{a}{b}{\telzero} = \telsuc{\telzero}{a}{b}\quad
-\suctel{a}{b}{(\telsuc{t}{c}{d})} = \telsuc{(\suctel{a}{b}{t})}{c}{d}
+\qquad \text{where} \qquad
+\begin{array}{rl}
+\suctel{a}{b}{\telzero}& =~ \telsuc{\telzero}{a}{b}\\
+\suctel{a}{b}{(\telsuc{t}{c}{d})}&=\; \telsuc{(\suctel{a}{b}{t})}{c}{d}
+\end{array}
 \]
 Note that here $c$ and $d$ don't actually fit into the telescope
 $\suctel{a}{b}{t}$ because the latter is definitionally different from
-$t$. However, it's straightforward to prove by induction that 
+$t$. However, it is straightforward to prove by induction that 
 %
 \begin{equation}\label{eq:lem-subtel} \cat{t} \quad \equiv \quad \cat{\suctel{a}{b}{t}}\enspace,
 \end{equation}
 % 
 and use the proof to make $c$ and $d$ fit. 
-However, in the interest of avoiding syntactical clutter we usually just silently assume
-that $c$ and $d$ fit or can be substituted to fit the context.
+However, in the interest of clarity of the presentation we hereby just silently assume
+that $c$ and $d$ fit or can be substituted to fit the context. The
+full details can be found in \cite{coreagda}.
 
 We are now in the position do define $\appobj{}{}$ as follows:
 The base case is trivial:
@@ -224,11 +223,8 @@ The base case is trivial:
 The hom-case follows the pattern outlined in Section \ref{sec:lambdas}. 
 \[
 \AxiomC{$
-  \begin{array}{c}
-\homcat{m'}{\alpha}{\beta} : \homcat{t}{a}{b} \rightrightarrows \homcat{u}{a'}{b'}\quad t' :
-\Tel~(\cat{\homcat{t}{a}{b}}) ~ n\\
-x : \Obj~{(\cat{t'})}
-\end{array}
+\homcat{m'}{\alpha}{\beta} : \homcat{t}{a}{b} \rightrightarrows \homcat{u}{a'}{b'}\qquad t' :
+\Tel~(\cat{\homcat{t}{a}{b}}) ~ n\qquad x : \Obj~{(\cat{t'})}
 $}
 \UnaryInfC{$\appobj{\homcat{m'}{\alpha}{\beta}}{x}\;=\;\id^n\beta
     \,\circ\, (\appobj{m'}{x}) \,\circ \, \id^n\alpha$}
@@ -238,7 +234,7 @@ $}
 In summary, $\appobj{m}{x}$ is defined by induction on $m$ where in
 each step the length of $m$ decreases by one and the depth of $x$
 increases by one. To make the levels match the category of $x$ 
-has to be \emph{whiskered} by the morphisms $\alpha$, $\beta$ for $m =
+has to be whiskered by the morphisms $\alpha$, $\beta$ for $m =
 \telsuc{m'}{\alpha}{\beta}$. When $m = \telzero$, the recursion
 stops. The meticulous reader will have noticed that the expression
 $\appobj{m'}{x}$ above is not well typed as $x$ lives in
@@ -247,7 +243,7 @@ $\conctel{t}{\suctel{a}{b}{t'}}$. But this is easily fixed by
 substituting using \eqref{eq:lem-subtel}. Other similar inaccuracies
 are dealt with similarly.
 
-Here is an illustration of $m =
+Here is an illustration for $m =
 \telsuc{\telsuc{\telzero}{\varphi}{\gamma}}{\alpha}{\beta}$, $t' = \telzero$,
 $t = \telsuc{\telsuc{\telzero}{a}{b}}{f}{g}$, $u =
 \telsuc{\telsuc{\telzero}{a'}{b'}}{f'}{g'}$:
@@ -272,15 +268,15 @@ $t = \telsuc{\telsuc{\telzero}{a}{b}}{f}{g}$, $u =
 \efig
 \]
 
-Having defined telescope morphisms, it's easy to define $\lambda$'s of all depths
-relative to an arbitrary category. All that is needed is a telescope morphism, $\overrightarrow{\lambda}$: 
+Having defined telescope morphisms, it is relatively easy to define
+$\lambda$'s of all depths relative to an arbitrary category. All that
+is needed is a telescope morphism, $\overrightarrow{\lambda}$,
+together with a new constructor, $\lambda$, of $\Obj$:
 \[\AxiomC{$t : \Tel~\homcat{C}{a}{b}~n $}
 \UnaryInfC{$\overrightarrow{\lambda}\,t : (\idTel (\id \, b) \, n) \circ t
   \rightrightarrows t$}
 \DisplayProof
-\]
-together with a new constructor of $\Obj$:
-\[
+\qquad
 \AxiomC{$t : \Tel~\homcat{C}{a}{b}\, n \quad f : \Obj (\cat{t}) $}
 \UnaryInfC{$\lambda\,t\,f :
   \Obj\,(\homcat{(\cat{t})}{\appobj{\overrightarrow{\lambda}t}{(\id^n
@@ -292,41 +288,41 @@ where
 \AxiomC{$\overrightarrow{\lambda}\,\bullet ~=~ \bullet
 \qquad 
 \overrightarrow{\lambda}\,(\telsuc{t'}{a}{b}) ~ = ~
-\telsuc{(\overrightarrow{\lambda}\,t')}{\inv{(\lambda\,t\,a)}}{\lambda\,t\,b}$}\DisplayProof
+\telsuc{(\overrightarrow{\lambda}\,t')}{\inv{(\lambda\,t'\,a)}}{\lambda\,t'\,b}$}\DisplayProof
 \]
 %
 Here we could define a pair of constructors $\lambda$ and
 $\inv{\lambda}$ for the two opposite directions of $\lambda$. Instead,
-as we are interested only in groupoids, we define a generic constructor
+as we are interested in groupoids, we define a generic constructor
 $\inv{}$ on all cells of a homcategory:
 \[
-\AxiomC{$t : \Tel\,(\homcat{C}{a}{b})\,n$}
-\AxiomC{$a : \Obj~t$}
-\BinaryInfC{$\inv{a} : \Obj\,(\conctel{\homcat{C}{b}{a}}{\inv{t}})$}
+\AxiomC{$f : \Obj~(\homcat{C}{a}{b})$}
+\UnaryInfC{$\inv{f} : \Obj\,(\homcat{C}{b}{a})$}
 \DisplayProof\]
-where $\inv{}$ extends recursively to telescopes in the obvious way.
+The introduction of formal inverses
+forces the introduction of coherence cells witnessing their being left
+and right inverses. See the next section.
 
 
 
 \subsection{Right units, associativity and interchange}
 Similarly to $\lambda$'s we define the remaining coherence cells,
-i.e. $\rho$'s to witness \emph{right units}, $\alpha$'s to witness
-\emph{associativity} of composition and $\chi$'s to witness
-interchange. These are defined analogically to $\lambda$'s.
+i.e. $\rho$'s to witness right units, $\alpha$'s to witness
+associativity of composition, $\iota$'s and $\kappa$'s to witness
+inverses and $\chi$'s to witness interchange. These are defined
+analogically to $\lambda$'s.
 
 To this end, note that everything in the definition of $\lambda$ is
 forced by the type of $\overrightarrow{\lambda}$. In general it is
-enough to give, for
-each of $\rho$, $\alpha$ of $\chi$,  the type of the telescope
-morphism. Just as in the case of $\lambda$, it is in each case just a
-``telecopisation'' of the ordinary case.
-For right units and associativity we define:
+enough to give for $\rho$ and $\alpha$ the
+type of the telescope morphism.
+Just as in the case of $\lambda$, it is in each case just
+a ``telecopisation'' of the ordinary case.  
 \[
 \AxiomC{$t : \Tel\,\homcat{C}{a}{b}\,n$}
 \UnaryInfC{$\overrightarrow{\rho}\,t : t \circ (\idTel\,(\id\,a)\,n)  \rightrightarrows t$}
 \DisplayProof
-\]
-\[
+\qquad
 \AxiomC{$t : \Tel~\homcat{C}{a}{b}~m\quad u :
   \Tel~\homcat{C}{b}{c}~n \quad v : \Tel~\homcat{C}{c}{d}~o$}
 \UnaryInfC{$\overrightarrow{\alpha}\,t\,u\,v  : (v \circ u) \circ t
@@ -334,8 +330,16 @@ For right units and associativity we define:
 $}
 \DisplayProof
 \]
+Because of the way we introduce identities, the laws of inverses are also simple:
+\[
+\AxiomC{$f : \Obj~(\homcat{C}{a}{b})$}
+\UnaryInfC{$\iota~f : \Obj~(\homcat{\homcat{C}{a}{a}}{\inv{f}\circ
+    f}{\id~a})\qquad\kappa~f : \Obj (\homcat{\homcat{C}{b}{b}}{f \circ \inv{f}}{\id~b})$}
+\DisplayProof
+\]
+
 %
-$\overrightarrow{\chi}$ is in the $\omega$ case a bit more
+The coherence cells witnessing interchange, $\overrightarrow{\chi}$ are in the $\omega$ case is more
 complicated. In the simple 2-categorical case,
 the interchange law states that the two possible ways of composing the
 following diagram are equal. 
@@ -417,29 +421,23 @@ picture illustrates the idea:
 \efig
 \]
 %
-Where $\cdots$ indicate telescopes of arbitrary depth although $u_1$
-and $u_2$ have to be of the same length; and $t_{ij}, \; i,j \in
-\{1,2\}$ have to be of the same length. 
-In this situation, it is possible to form both the composition $(t_{22}\circ
-t_{21})\circ(t_{12}\circ t_{11})$ and also $(t_{22}\circ
+Where $\cdots$ indicate telescopes of arbitrary depth where $u_1$ and
+$u_2$ have to be of the same length; and $t_{ij}, \; i,j \in \{1,2\}$
+have to be of the same length.  In this situation, it is possible, up
+to definitional equality of telescopes, to form both the composition
+$(t_{22}\circ t_{21})\circ(t_{12}\circ t_{11})$ and also $(t_{22}\circ
 t_{12})\circ(t_{21}\circ t_{11})$. A telescope morphism from the
 former to the latter telescope induces a coherence cell for
 interchange. This is formalised as follows:
 \[
-\AxiomC{$u_1 : \Tel~\homcat{\mathcal{C}}{a}{b}~n$}
-\AxiomC{$u_2 : \Tel~\homcat{\mathcal{C}}{b}{c}~n$}
+\AxiomC{$u_1 : \Tel~\homcat{\mathcal{C}}{a}{b}~n\quad u_2 : \Tel~\homcat{\mathcal{C}}{b}{c}~n\quad
+t_{11} :  \Tel~(\conctel{\homcat{C}{a}{b}}{u_1}) ~ m$}
 \noLine
-\BinaryInfC{$t_{11} :  \Tel~(\conctel{\homcat{C}{a}{b}}{u_1}) ~ m
-  \qquad t_{12} : \Tel~(\conctel{\homcat{C}{a}{b}}{u_1}) ~ m$}
-\noLine
-\UnaryInfC{$t_{21} : \Tel~(\conctel{\homcat{C}{b}{c}}{u_2}) ~ m 
-\qquad t_{22} : \Tel~(\conctel{\homcat{C}{b}{c}}{u_2})~ m$}
+\UnaryInfC{$t_{12} : \Tel~(\conctel{\homcat{C}{a}{b}}{u_1}) ~ m\quad t_{21} : \Tel~(\conctel{\homcat{C}{b}{c}}{u_2}) ~ m 
+\quad t_{22} : \Tel~(\conctel{\homcat{C}{b}{c}}{u_2})~ m$}
 % 
-\UnaryInfC{$\begin{array}{l}
-    \chi\,{t_{11}}\,{t_{12}}\,{t_{21}}\,{t_{22}} \;:\;\\     
-    \qquad(t_{22}\circ t_{21})\circ(t_{12}\circ t_{11}) \rightrightarrows (t_{22}\circ
-    t_{12})\circ(t_{21}\circ t_{11})
-  \end{array}$}
+\UnaryInfC{$\chi\,{t_{11}}\,{t_{12}}\,{t_{21}}\,{t_{22}} \;:\;(t_{22}\circ t_{21})\circ(t_{12}\circ t_{11}) \rightrightarrows (t_{22}\circ
+    t_{12})\circ(t_{21}\circ t_{11})$}
 \DisplayProof
 \]
 
@@ -447,5 +445,5 @@ interchange. This is formalised as follows:
 
 %%% Local Variables: 
 %%% mode: latex
-%%% TeX-master: "weakomega2"
+%%% TeX-master: "weakomega-csl"
 %%% End: 

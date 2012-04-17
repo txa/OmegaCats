@@ -4,27 +4,22 @@
 
 \subsection{The need of more coherence}
 In the previous sections we showed how to define all coherence cells
-witnessing the axioms of a strict $\omega$-category. Namely, left and
-right units of composition, associativity of composition, and the
-interchange property. These can be composed to witnesses identity of
-cells which don't exactly match the sides of either of the axioms. 
+witnessing the axioms of a strict $\omega$-groupoid. These can be
+composed to witnesses identity of cells which don't exactly match the
+sides of either of the axioms.
 
 For instance, to witness the equality
 \[(g \,\id_{b})\,f \quad = \quad g\, f\]
-we can compose $\lambda$ after $\alpha$ to obtain a witness 
+we can compose $\lambda$ after $\alpha$ to obtain witnesses such as: 
 \[\id_{g}\lambda_f \cdot \alpha_{g,\id_g,f}  ~:~ (g
-\,\id_{b})\,f \longrightarrow   g\, f\]
-Another possibility is simply
-\[ \rho \, \id_f ~ : ~ (g\,\id_{b})\,f \longrightarrow   g\, f\quad.\]
+\,\id_{b})\,f \longrightarrow   g\, f\qquad\text{   and    }\qquad
+ \rho \, \id_f ~ : ~ (g\,\id_{b})\,f \longrightarrow   g\, f\quad.\]
 
-In the strict case
-equality of 1-cells is a proposition and therefore all proofs of
-equality of 1-cells are equal. In the weak 2-categorical case, 
-equality of 1-cells is not propositional -- it is witnessed by
-2-cells. In other words, only the first level is weakened.
-As equality of 2-cells is a proposition, one must add 
-further axioms about the introduced coherence 2-cells. 
-For instance:
+ In the strict case equality of 1-cells is a proposition and therefore
+ all proofs of equality of 1-cells are equal. In the weak
+ 2-categorical case, equality of 1-cells is not propositional but
+ equality of 2-cells is. In other words, equality of 1-cells is
+ witnessed by 2-cells which must satisfy new axioms.  For instance:
 \begin{equation}\label{eq:lambda-alpha}
 \bfig
 \qtriangle<750,500>[(g\,\id_{b}) \,f ` g\,(\id_{b}\,f)`g\, f;
@@ -37,9 +32,8 @@ is replaced be a new 3-cell
 \[\id_{g}\lambda_f \cdot \alpha_{g,\id_g,f}
 \longrightarrow \rho\,\id_f\]
 %
-Moreover, for any pair of such 3-cells, 
-\[p,\,q : \id_{g}\lambda_f \cdot \alpha_{g,\id_g,f}\longrightarrow
-\rho\,\id_f\] there must be 4-cell $p \longrightarrow q$,  etc., all
+Moreover, for any pair of such 3-cells, $p,\,q : \id_{g}\lambda_f \cdot \alpha_{g,\id_g,f}\longrightarrow
+\rho\,\id_f$, there must be 4-cell $p \longrightarrow q$,  etc., all
 the way up to $\omega$. This is a weakening of propositionality of
 equality of $n$-cells in the strict setting. The following diagram
 illustrates this up to level 4:
@@ -63,30 +57,25 @@ In summary and full generality:
 
 %
 We formalise the above principle as follows. We define a predicate 
-$\hollow$ on objects:
+$\hollow$ on objects
+% \[
+% \AxiomC{$x :  \Obj~C$}
+% \UnaryInfC{$\hollow~x~:~\Set$}
+% \DisplayProof
+% \]
+% %
+such that $\hollow\,(\id\,f)= \top$ where $\top$ is the one element Set. 
+Moreover each coherence cell is hollow
 \[
-\AxiomC{$x :  \Obj~C$}
-\UnaryInfC{$\hollow~x~:~\Set$}
-\DisplayProof
-\]
-%
-Such that:
-\[
-\AxiomC{$\hollow\,(\id\,f)= \top$}
-\DisplayProof
-\]
-where $\top$ is the one element Set. 
-Moreover each $\lambda$, $\rho$, $\alpha$ and $\chi$ is hollow
-\[
-\AxiomC{$\hollow\,(\lambda\,\_\,\_) = \top \quad \hollow(\rho\,\_\,\_)
-  ~=~\top$}
-\noLine
-\UnaryInfC{$\hollow\,(\alpha,\_\,\_\,\_) = \top \quad
-  \hollow~(\chi\,\_\,\_\,\_\,\_) = \top$}
-\DisplayProof
+\begin{array}{c}
+\hollow\,(\lambda\,\_\,\_) = \top \quad \hollow(\rho\,\_\,\_)
+  ~=~\top\quad \hollow\,(\alpha,\_\,\_\,\_) = \top
+  \quad\hollow~(\chi\,\_\,\_\,\_\,\_) = \top\\
+\hollow\,(\iota~f) = \top \quad \hollow\,(\kappa~f) = \top
+\end{array}
 \]
 Further we close $\hollow$ under weakening, composition and inverses. 
-Finally, we introduce a constructor of $\Obj$:
+Finally, we introduce a constructor of $\Obj$ and a clause of $\hollow$:
 \[
 \AxiomC{$f ~ g : \Obj~\homcat{C}{a}{b}$}
 \AxiomC{$p : \hollow~f$}
@@ -94,10 +83,7 @@ Finally, we introduce a constructor of $\Obj$:
 \TrinaryInfC{$\mathsf{coh}~p~q :
   \Obj~\homcat{\homcat{C}{a}{b}}{f}{g}$}
 \DisplayProof
-\]
-%
-and a clause of $\hollow$:
-\[
+\qquad
 \AxiomC{$\hollow\,(\coh\,p\,q) = \top$}
 \DisplayProof 
 \]
@@ -112,5 +98,5 @@ The last remaining case are variables, which are not hollow:
 
 %%% Local Variables: 
 %%% mode: latex
-%%% TeX-master: "weakomega2"
+%%% TeX-master: "weakomega-csl"
 %%% End: 
