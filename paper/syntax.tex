@@ -29,13 +29,12 @@ We start by presenting a syntactical framework which is a syntax for
 globular sets. This syntax could be used to identify any globular set
 with structure (e.g. weak or strict $\omega$-categories), the specific
 aspects of a weak $\omega$-groupoid will be introduced later by adding
-additional syntax for objects and other auxilliary syntactic
+additional syntax for objects and other auxiliary syntactic
 components. 
 
 Our framework consists of the following components which are defined
-by mutual induction: 
-\footnote{This is an instance of an inductive-inductive
-definition in Type Theory, see \cite{alti:catind2}.}
+by mutual induction\footnote{This is an instance of an inductive-inductive
+definition in Type Theory, see \cite{alti:catind2}.}:
 \begin{description}
 \item[Contexts] 
 \[\mathsf{Con} : \mathsf{Set}\]
@@ -72,7 +71,7 @@ correspond to projections out of contexts.
 \end{description}
 We now specify the constructors for the various sets (apart from
 objects). We use unnamed variables ala deBruijn, hence contexts are
-basically a sequence of categories. However, note that this is a
+basically sequences of categories. However, note that this is a
 dependent context since the well-formedness of a category expression
 may depend on the previous context.
 \[
@@ -85,26 +84,24 @@ may depend on the previous context.
 \DisplayProof
 \]
 There are two ways to form category expressions: there is the top
-level category dentoted by $\bullet$ and given any two objects 
+level category denoted by $\bullet$ and given any two objects 
 $a,b$ in a category $C$ we can form the hom category $C[a,b]$.
 \[
 \AxiomC{$\phantom{\Gamma}$}
 \UnaryInfC{$\bullet : \mathsf{Cat}~\Gamma$}
 \DisplayProof
-\]\[
+\qquad
 \AxiomC{$C : \mathsf{Cat}~\Gamma\quad a,\,b : \mathsf{Obj}~C$}
 \UnaryInfC{$C[ \,a\,,\,b\,] : \mathsf{Cat}~\Gamma$}
 \DisplayProof
 \]
-Using De Bruijn indexing we introduce nameless variables in
-contexts as follows:
+We introduce nameless variables in contexts as follows:
 \[
 \AxiomC{$\phantom{I}$}
 \dblline
 \UnaryInfC{$\mathsf{vz}:\mathsf{Var}~(\mathsf{wk}~C)$}
 \DisplayProof
-\]
-\[
+\qquad
 \AxiomC{$v : \mathsf{Var}~C$}
 \dblline
 \UnaryInfC{$\mathsf{vs}~v : \mathsf{Var}~(\mathsf{wk}~C~D)$}
@@ -116,7 +113,7 @@ induction on the structure in the obvious way:
 \AxiomC{$C,\,D : \mathsf{Cat}~\Gamma$}
 \UnaryInfC{$\mathsf{wk}~C~D : \mathsf{Cat}~(\Gamma,D)$}
 \DisplayProof
-\]\[
+\qquad
 \begin{array}{l}
 \mathsf{wk}~\bullet~D\,=\,\bullet\\
 \mathsf{wk}~(\homcat{C}{a}{b})~D\,=\,(\mathsf{wk}~C~D)[\mathsf{wk}~a~D,\mathsf{wk}~b~D]
@@ -174,7 +171,7 @@ Given a globular set we define what we mean by an interpretation of
 the syntax. Once we have specified all the constructors for objects a
 weak $\omega$-groupoid is given by such an interpretation. The
 interpretation of the structural components given in the present
-section is fiexd. Again this is reminiscent of enviroment models.
+section is fixed. Again this is reminiscent of environment models.
 
 An \emph{interpretation} in a globular set $G:\Glob$ is given by the
 following data:
@@ -197,7 +194,7 @@ following data:
 \BinaryInfC{$\intpr{C}~\gamma : \Glob$}
 \DisplayProof
 \]
-\item An assignements of elements of object sets to object
+\item An assignment of elements of object sets to object
   expressions and variables
 \[
 \AxiomC{$C : \Cat ~ \Gamma$}
@@ -205,8 +202,7 @@ following data:
 \AxiomC{$\gamma : \intpr{\Gamma}$}
 \TrinaryInfC{$\intpr{A}~\gamma : \obj_{\intpr{C}~\gamma}$}
 \DisplayProof
-\]
-\[
+\qquad
 \AxiomC{$C : \Cat ~ \Gamma$}
 \AxiomC{$x : \mathsf{Var}~C$}
 \AxiomC{$\gamma : \intpr{\Gamma}$}
@@ -215,21 +211,17 @@ following data:
 \]
 \end{enumerate}
 subject to the following conditions:
-\begin{eqnarray*}
-\intpr{\varepsilon}  & = & 1\\
-\intpr{\Gamma , C} & = & \Sigma \gamma : \intpr{\Gamma},\intpr{C} ~
-\gamma\\
-\intpr{\bullet}~\gamma & = & G\\
-\intpr{\homcat{C}{a}{b}}~\gamma & = & \mathsf{hom}_{\intpr{C}
-  \gamma}~(\intpr{a} ~ \gamma)~(\intpr{b}~\gamma)\\
-\intpr{\mathsf{var}~x}~\gamma  & = & \intpr{x}~\gamma \\
-\intpr{\wk~a}~(\gamma,b)  & = & \intpr{a}~\gamma\\
-\intpr{\mathsf{vz}}~(\gamma,a)  & = & a \\
-\intpr{\mathsf{vs}\,x}~(\gamma,a)  & = & \intpr{x}~\gamma
-\end{eqnarray*}
+\begin{align*}
+\intpr{\varepsilon}  & =  1 &\intpr{\mathsf{var}~x}~\gamma  & =  \intpr{x}~\gamma \\
+\intpr{\Gamma , C} & =  \Sigma \gamma : \intpr{\Gamma},\intpr{C} ~ \gamma&\intpr{\wk~a}~(\gamma,b)  & = \intpr{a}~\gamma\\
+\intpr{\bullet}~\gamma & =  G&\intpr{\mathsf{vz}}~(\gamma,a)  & =  a \\
+\intpr{\homcat{C}{a}{b}}~\gamma & =  \mathsf{hom}_{\intpr{C}
+  \gamma}~(\intpr{a} ~ \gamma)~(\intpr{b}~\gamma)&
+\intpr{\mathsf{vs}\,x}~(\gamma,a)  & = \intpr{x}~\gamma
+\end{align*}
 
 
 %%% Local Variables: 
 %%% mode: latex
-%%% TeX-master: "weakomega2"
+%%% TeX-master: "weakomega-csl"
 %%% End: 

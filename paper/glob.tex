@@ -25,7 +25,7 @@ equality relation of a setoid again. Clearly, the structure we are
 looking for is a weak $\omega$-groupoid. It is the goal of this paper
 to develop a formalisation of this structure. As a first step let's
 ignore the proof objects (i.e. the data of an equivalence relation and
-the goupoid laws etc).
+the groupoid laws etc).
 We end up with a coinductive definition of a \emph{globular set} $G :
 \Glob$ given by
 \begin{eqnarray*}
@@ -38,8 +38,7 @@ $\Sigma \obj : \Set. \obj \rightarrow \obj \rightarrow -$. Given globular sets
 $A,B$ a morphism $f : \Glob(A , B)$ between them is given by 
 \begin{eqnarray*}
   \objto_f & : & \obj_A \rightarrow \obj_B \\
-  \homto_f & : & \Pi a,b:\obj_A. \\
-  && \qquad\Glob(\hom_A\,a\,b,\hom_B(\objto_f\,a,\objto_f\,b))
+  \homto_f & : & \Pi a,b:\obj_A.\Glob(\hom_A\,a\,b,\hom_B(\objto_f\,a,\objto_f\,b))
 \end{eqnarray*}
 Note that this definition exploits the coinductive character of
 $\Glob$. Identity and composition can be defined easily by iterating
@@ -62,8 +61,8 @@ presheaf category over the diagram:
 \]
 with the globular identities:
 \begin{eqnarray*}
-  t_{i+1} \circ s_i & = & s_{i+1} \circ t_i \\
-  t_{i+1} \circ t_i & = & s_{i+1} \circ t_i
+  s_{i+1} \circ s_i & = & s_{i+1} \circ t_i \\
+  t_{i+1} \circ t_i & = & t_{i+1} \circ s_i
 \end{eqnarray*}
 In the example of $\Idw\,A$ the presheaf is given by a family
 $F^A : \Nat \rightarrow \Set$:
@@ -75,12 +74,12 @@ $F^A : \Nat \rightarrow \Set$:
   F^A\,(n+1) & = & \Sigma a,b:A,F^{a = b}\,n
 \end{eqnarray*}
 and source and target maps $s_i,t_i :  F^A\,(n+1) \rightarrow F^A\,n$ satisfying the globular identities. 
-\begin{eqnarray*}
-s_0 (a,b,-) & = & a \\
-t_0 (a,b,-) & = & b \\  
-s_{n+1}\,(a,b,\alpha)  & = & (a , b, s_n\,\alpha) \\
-t_{n+1}\,(a,b,\alpha)  & = & (a , b, t_n\,\alpha) \\
-\end{eqnarray*}
+\[
+\begin{array}{rclcrcl}
+s_0 (a,b,-) & = & a &\qquad\qquad\qquad&  s_{n+1}\,(a,b,\alpha)  & = & (a , b, s_n\,\alpha) \\
+t_0 (a,b,-) & = & b &\qquad&t_{n+1}\,(a,b,\alpha)  & = & (a , b, t_n\,\alpha) 
+\end{array}
+\]
 
 % It follows from the results
 % \cite{lumsdaine10:weak-o-categories,berg08:types-are} that the eliminator $J$ is sufficent
@@ -90,5 +89,5 @@ t_{n+1}\,(a,b,\alpha)  & = & (a , b, t_n\,\alpha) \\
 % inside Type Theory.
 
 %%% Local Variables:
-%%% TeX-master: "weakomega2"
+%%% TeX-master: "weakomega-csl"
 %%% End:
