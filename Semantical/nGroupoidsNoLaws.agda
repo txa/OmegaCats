@@ -7,8 +7,10 @@ open import Data.Product renaming (_×_ to _|×|_ ; <_,_> to |<_,_>| ; proj₁ t
 
 record nGroupoid (n : ℕ) : Set₁ 
 
-_⇒_ : ∀ {n} → nGroupoid n → nGroupoid n → Set
-infix 3 _⇒_
+_⇒set_ : ∀ {n} → nGroupoid n → nGroupoid n → Set
+infix 3 _⇒set_
+
+_⇒_ : ∀ {n} → nGroupoid n → nGroupoid n → nGroupoid n
 
 ⊤ : ∀ {n} → nGroupoid n
 
@@ -33,29 +35,33 @@ record n+1Groupoid (n : ℕ) where
   field
     obj : Set
     hom : obj → obj → nGroupoid n
-    id : (a : obj) → ⊤ ⇒ hom a a
-    _∘_ : ∀ {a b c} → hom b c × hom a b ⇒ hom a c 
-    _⁻¹ : ∀ {a b} → hom a b ⇒ hom b a 
+    id : (a : obj) → ⊤ ⇒set hom a a
+    _∘_ : ∀ {a b c} → hom b c × hom a b ⇒set hom a c 
+    _⁻¹ : ∀ {a b} → hom a b ⇒set hom b a 
 
 $obj {zero} _ = |⊤|
 $obj {suc n} G = n+1Groupoid.obj (↓ G)
 
-record _⇒n+1_ {n}(A B : n+1Groupoid n) : Set where
+record _⇒setn+1_ {n}(A B : n+1Groupoid n) : Set where
   open n+1Groupoid
   field 
     obj→ : obj A → obj B
-    hom→ : {a a' : obj A} → hom A a a' ⇒ hom B (obj→ a) (obj→ a')
+    hom→ : {a a' : obj A} → hom A a a' ⇒set hom B (obj→ a) (obj→ a')
 
-_⇒_ {zero} A B = |⊤|
-_⇒_ {suc n} A B = _⇒n+1_ {n} (↓ A) (↓ B)
+_⇒set_ {zero} A B = |⊤|
+_⇒set_ {suc n} A B = _⇒setn+1_ {n} (↓ A) (↓ B)
 
-_o_ : ∀ {n}{A B C : nGroupoid n} → (B ⇒ C) → (A ⇒ B) → (A ⇒ C)
+Id : ∀ {n}{A : nGroupoid n} → A ⇒set A
+Id {zero} = tt
+Id {suc n} = record { obj→ = λ x → x; hom→ = Id }
+
+_o_ : ∀ {n}{A B C : nGroupoid n} → (B ⇒set C) → (A ⇒set B) → (A ⇒set C)
 _o_ {zero} f g = tt
-_o_ {suc n} f g = let open _⇒n+1_
+_o_ {suc n} f g = let open _⇒setn+1_
                   in record { obj→ = λ x → obj→ f (obj→ g x); 
                               hom→ = hom→ f o hom→ g }
 
-!⊤ : ∀ {n}{A : nGroupoid n} → A ⇒ ⊤
+!⊤ : ∀ {n}{A : nGroupoid n} → A ⇒set ⊤
 
 ⊤ {zero} = ↑ (lift _)
 ⊤ {suc n} = ↑ (record { obj = |⊤|; 
@@ -69,11 +75,11 @@ _o_ {suc n} f g = let open _⇒n+1_
                        hom→ = !⊤ }
 
 
-<_,_> : ∀ {n}{A B C : nGroupoid n} → (A ⇒ B) → (A ⇒ C) → (A ⇒ B × C)
+<_,_> : ∀ {n}{A B C : nGroupoid n} → (A ⇒set B) → (A ⇒set C) → (A ⇒set B × C)
 
-proj₁ : ∀ {n}{A B : nGroupoid n} → (A × B ⇒ A)
+proj₁ : ∀ {n}{A B : nGroupoid n} → (A × B ⇒set A)
 
-proj₂ : ∀ {n}{A B : nGroupoid n} → (A × B ⇒ B)
+proj₂ : ∀ {n}{A B : nGroupoid n} → (A × B ⇒set B)
 
 _×_ {zero} A B = ↑ (lift _)
 _×_ {suc n} A B = let open n+1Groupoid 
@@ -86,7 +92,7 @@ _×_ {suc n} A B = let open n+1Groupoid
 
 
 <_,_> {zero} _ _ = tt
-<_,_> {suc n} f g = let open _⇒n+1_ 
+<_,_> {suc n} f g = let open _⇒setn+1_ 
                     in record { obj→ = |< obj→ f , obj→ g >|; 
                                 hom→ = < hom→ f , hom→ g > }
 
@@ -97,3 +103,11 @@ proj₁ {suc n} = record { obj→ = |proj₁|;
 proj₂ {zero} = tt
 proj₂ {suc n} = record { obj→ = |proj₂|; 
                          hom→ = proj₂ }
+
+_⇒hom_ : ∀ {n}{A B : nGroupoid (suc n)}(f g : A ⇒set B) → nGroupoid n
+_⇒hom_ {zero} f g = ↑ (lift tt)
+_⇒hom_ {suc n} f g = ↑ {!_⇒setn+1_.obj→ f!}
+
+_⇒_ {zero} A B = ↑ (lift tt)
+_⇒_ {suc n} A B = ↑ (record { obj = A ⇒set B; 
+                              hom = _⇒hom_; id = {!!}; _∘_ = {!!}; _⁻¹ = {!!} })
