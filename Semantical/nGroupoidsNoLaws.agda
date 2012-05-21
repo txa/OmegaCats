@@ -14,12 +14,30 @@ _⇒_ : ∀ {n} → nGroupoid n → nGroupoid n → nGroupoid n
 
 ⊤ : ∀ {n} → nGroupoid n
 
+!⊤ : ∀ {n}{A : nGroupoid n} → A ⇒set ⊤
+
 _×_ : ∀ {n} → nGroupoid n → nGroupoid n → nGroupoid n
 infix 4 _×_
+
+<_,_> : ∀ {n}{A B C : nGroupoid n} → (A ⇒set B) → (A ⇒set C) → (A ⇒set B × C)
+
+proj₁ : ∀ {n}{A B : nGroupoid n} → (A × B ⇒set A)
+
+proj₂ : ∀ {n}{A B : nGroupoid n} → (A × B ⇒set B)
+
+Π : ∀ {n}(X : Set)(F : X → nGroupoid n) → nGroupoid n
+
+<_>Π : ∀ {n}{X : Set}{A : nGroupoid n}{F : X → nGroupoid n} → ((x : X) → A ⇒set F x) → A ⇒set Π X F
+
+projΠ : ∀ {n}{X : Set}{F : X → nGroupoid n} →  (x : X) → Π X F ⇒set F x
+
+{- definition of nGroupoids -}
 
 $obj : ∀ {n} → nGroupoid n → Set
 
 record n+1Groupoid (n : ℕ) : Set₁
+
+record _⇒setn+1_ {n}(A B : n+1Groupoid n) : Set
 
 nGroupoid' : ℕ → Set₁
 nGroupoid' zero = Lift |⊤| 
@@ -42,26 +60,42 @@ record n+1Groupoid (n : ℕ) where
 $obj {zero} _ = |⊤|
 $obj {suc n} G = n+1Groupoid.obj (↓ G)
 
-record _⇒setn+1_ {n}(A B : n+1Groupoid n) : Set where
+
+{- exponentials -}
+
+Id : ∀ {n}{A : nGroupoid n} → A ⇒set A
+
+_o_ : ∀ {n}{A B C : nGroupoid n} → (B ⇒set C) → (A ⇒set B) → (A ⇒set C)
+
+record _⇒setn+1_ {n}(A B : n+1Groupoid n) where
   open n+1Groupoid
   field 
     obj→ : obj A → obj B
     hom→ : {a a' : obj A} → hom A a a' ⇒set hom B (obj→ a) (obj→ a')
 
+
 _⇒set_ {zero} A B = |⊤|
 _⇒set_ {suc n} A B = _⇒setn+1_ {n} (↓ A) (↓ B)
 
-Id : ∀ {n}{A : nGroupoid n} → A ⇒set A
+_⇒_ {zero} A B = ↑ (lift tt)
+_⇒_ {suc n} A B = let open n+1Groupoid
+                      open _⇒setn+1_
+                   in ↑ (record { obj = A ⇒set B; 
+                                  hom = λ f g → Π ($obj A) (λ a → hom (↓ B) (obj→ f a) (obj→ g a)); 
+                                  id = λ f → < (λ a → id (↓ B) (obj→ f a)) >Π;
+                                  _∘_ = < (λ a → _∘_ (↓ B) o < projΠ a o proj₁ , projΠ a o proj₂ >) >Π; 
+                                  _⁻¹ = < (λ a → (_⁻¹ (↓ B)) o projΠ a ) >Π })
+
 Id {zero} = tt
 Id {suc n} = record { obj→ = λ x → x; hom→ = Id }
 
-_o_ : ∀ {n}{A B C : nGroupoid n} → (B ⇒set C) → (A ⇒set B) → (A ⇒set C)
 _o_ {zero} f g = tt
 _o_ {suc n} f g = let open _⇒setn+1_
                   in record { obj→ = λ x → obj→ f (obj→ g x); 
                               hom→ = hom→ f o hom→ g }
 
-!⊤ : ∀ {n}{A : nGroupoid n} → A ⇒set ⊤
+{- finite products -}
+{- refactor using infinite products -}
 
 ⊤ {zero} = ↑ (lift _)
 ⊤ {suc n} = ↑ (record { obj = |⊤|; 
@@ -74,12 +108,6 @@ _o_ {suc n} f g = let open _⇒setn+1_
 !⊤ {suc n} = record { obj→ = λ _ → tt; 
                        hom→ = !⊤ }
 
-
-<_,_> : ∀ {n}{A B C : nGroupoid n} → (A ⇒set B) → (A ⇒set C) → (A ⇒set B × C)
-
-proj₁ : ∀ {n}{A B : nGroupoid n} → (A × B ⇒set A)
-
-proj₂ : ∀ {n}{A B : nGroupoid n} → (A × B ⇒set B)
 
 _×_ {zero} A B = ↑ (lift _)
 _×_ {suc n} A B = let open n+1Groupoid 
@@ -104,10 +132,26 @@ proj₂ {zero} = tt
 proj₂ {suc n} = record { obj→ = |proj₂|; 
                          hom→ = proj₂ }
 
-_⇒hom_ : ∀ {n}{A B : nGroupoid (suc n)}(f g : A ⇒set B) → nGroupoid n
-_⇒hom_ {zero} f g = ↑ (lift tt)
-_⇒hom_ {suc n} f g = ↑ {!_⇒setn+1_.obj→ f!}
+{- infinite products -}
 
-_⇒_ {zero} A B = ↑ (lift tt)
-_⇒_ {suc n} A B = ↑ (record { obj = A ⇒set B; 
-                              hom = _⇒hom_; id = {!!}; _∘_ = {!!}; _⁻¹ = {!!} })
+
+Π {zero} X F = ↑ (lift tt)
+Π {suc n} X F = ↑ let open n+1Groupoid
+                   in record { obj = (x : X) → obj (↓ (F x)) ; 
+                               hom = λ f g → Π X (λ x → hom (↓ (F x)) (f x) (g x)); 
+                               id = λ f → < (λ x → id (↓ (F x)) (f x)) >Π;
+                               _∘_ = < (λ x → _∘_ (↓ (F x)) o < projΠ x o proj₁ , projΠ x o proj₂ >) >Π; 
+                               -- refactor using functor laws
+                               _⁻¹ = < (λ x → (_⁻¹ (↓ (F x))) o projΠ x) >Π }
+
+
+<_>Π {zero} _ =  tt
+<_>Π {suc n} f =  let open _⇒setn+1_ 
+                    in record { obj→ = λ a x → obj→ (f x) a; 
+                                hom→ = < (λ x → hom→ (f x)) >Π }
+
+projΠ {zero} x = tt
+projΠ {suc n} x = record { obj→ = λ f → f x; 
+                           hom→ = projΠ x }
+
+
