@@ -31,9 +31,12 @@ _o_ {A} = Groupoid._∘_ A
 lneutr≡ : {A : Set}{x y : A} (α : x ≡ y) → trans α refl ≡ α
 lneutr≡ refl = refl
 
+rneutr≡ : {A : Set}{x y : A} (α : x ≡ y) → trans refl α ≡ α
+rneutr≡ refl = refl
+
 assoc≡ : {A : Set}{w x y z : A} (α : y ≡ z) (β : x ≡ y) (δ : w ≡ x) 
   → trans δ (trans β α) ≡ trans (trans δ β) α
-assoc≡ α β refl = refl
+assoc≡ refl refl refl = refl
 
 linv≡ : {A : Set}{x y : A} (α : x ≡ y) → trans α (sym α) ≡ refl
 linv≡ refl = refl
@@ -49,7 +52,7 @@ rinv≡ refl = refl
         _∘_ = λ α β → trans β α;
         _⁻¹ = sym;
         lneutr = lneutr≡;
-        rneutr = λ α → refl;
+        rneutr = rneutr≡;
         assoc = assoc≡;
         linv = linv≡;
         rinv = rinv≡ }
@@ -65,7 +68,7 @@ record _⇒_ (A B : Groupoid) : Set where
 
 resp∘ : {A B : Set}{f : A → B}{a b c : A} (α : b ≡ c) (β : a ≡ b) →
       cong f (trans β α) ≡ trans (cong f β) (cong f α)
-resp∘ α refl = refl
+resp∘ refl refl = refl
 
 ∇M : ∀ {A B} → (A → B) → ∇ A ⇒ ∇ B
 ∇M f = record { fun = f; 
@@ -74,14 +77,20 @@ resp∘ α refl = refl
                 resp∘ = resp∘ }
 
 {-
-A ▷ X iff ∀ {Y} → A ⇒ ∇ Y ~ X → Y 
+Q A ≃ X iff ∀ {Y} → A ⇒ ∇ Y ~ X → Y 
 -}
 
-record _▷_ (A : Groupoid)(X : Set) : Set where
+record Q_≃_ (A : Groupoid)(X : Set) : Set where
   open Groupoid A
   field
     ⟦_⟧ : set → X
     ⟦_⟧~ : ∀ {a a'} → a ~ a' → ⟦ a ⟧ ≡ ⟦ a' ⟧
-    ⟦_⟧~id : ∀ {a} → ⟦ id {a} ⟧~ ≡ refl
+    ⟦_⟧~id : ∀ {a} → refl ≡ ⟦ id {a} ⟧~
     ⟦_⟧~∘ : ∀ {a b c} (α : [ A ] b ~ c) (β : [ A ] a ~ b)
-            →  ⟦ α ∘ β ⟧~ ≡ trans ⟦ β ⟧~ ⟦ α ⟧~
+            →  trans ⟦ β ⟧~ ⟦ α ⟧~ ≡ ⟦ α ∘ β ⟧~
+  record Resp (B : X → Set) : Set where
+    field
+      fun : (a : set) → B ⟦ a ⟧
+      fun~ : ∀ {a a'}(α : a ~ a') → subst B ⟦ α ⟧~ (fun a) ≡ fun a'
+      fun~id : ∀ {a} → fun~ (id {a}) ≡ subst (λ α → subst B α (fun a) ≡ fun a) (⟦_⟧~id {a}) refl
+--      fun~∘ : fun~ (α ∘ β) 
