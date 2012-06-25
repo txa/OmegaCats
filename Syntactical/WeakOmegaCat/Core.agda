@@ -27,9 +27,11 @@ J' P m refl = m
 {- Definition of a syntax for weak ω-categories (incomplete) -}
 
 data Con : Set -- contexts
+data VarCat (Γ : Con) : Set -- Variables in contexts
 data Cat (Γ : Con) :  Set -- categories in contexts
 data Tel {Γ : Con}(C : Cat Γ) :  ℕ → Set -- telescopes are like categories, the index ℕ is there 
 -- to stand for depth in order for us to be able to enforce ballanceness. But is ballancedness important ? 
+data Var : {Γ : Con}(C : VarCat Γ) → Set  -- variables
 data Obj : {Γ : Con}(C : Cat Γ) → Set  -- objects in categories in contexts
 
 
@@ -37,7 +39,13 @@ data Obj : {Γ : Con}(C : Cat Γ) → Set  -- objects in categories in contexts
 {- Context record the existence of objects in some definable category -}
 data Con where
     ε : Con
-    _,_ : (Γ : Con)(C : Cat Γ) → Con
+    _,_ : (Γ : Con)(C : VarCat Γ) → Con
+
+
+
+data VarCat Γ where
+  • : VarCat Γ 
+  _[_,_] : (C : VarCat Γ)(a b : Var C) → VarCat Γ
 
 
 {- A category is either the base category or the hom category of a previosuly constructed category -}
@@ -45,6 +53,7 @@ data Con where
 data Cat Γ where
   • : Cat Γ 
   _[_,_] : (C : Cat Γ)(a b : Obj C) → Cat Γ
+
 
 {- concatenation of a telescope onto a category. A.k.a. "normalisation of telescopes" -}
 _++_ :  ∀ {Γ}{n}(C : Cat Γ) → Tel C n → Cat Γ
@@ -59,7 +68,7 @@ data Tel {Γ} C   where
   • : Tel C zero
   _[_,_] : ∀ {n}(T : Tel C n)(a b : Obj (C ++ T)) → Tel C (suc n)
 
-    
+
 
 -- definition of _++_
 C ++ • = C
@@ -79,11 +88,12 @@ lem-prep≡ : ∀ {Γ}{C : Cat Γ}{n}{a b : Obj C} → (T : Tel (C [ a , b ]) n)
 lem-prep≡ • = refl
 lem-prep≡ {Γ} {C} {(suc n)} {a} {b} (T [ a' , b' ]) = J' (λ {X : Cat Γ} eq → _≡_ {_}{Cat Γ}(T ⇓ [ a' , b' ]) (X [ subst Obj eq a' , subst Obj eq b' ])) 
                                                              refl (lem-prep≡ T)
-wkCat : ∀ {Γ} → (C : Cat Γ) → ∀ D → Cat (Γ , D)
+-- weakening of variable categories
+wkVarCat : ∀ {Γ} → (C : VarCat Γ) → ∀ D → VarCat (Γ , D)
 
-data Var : {Γ : Con}(C : Cat Γ) → Set where
-  vz : ∀ {Γ}{C : Cat Γ} → Var {Γ , C} (wkCat C C)
-  vs : ∀ {Γ}{C : Cat Γ} → Var {Γ} C → (D : Cat Γ) → Var {Γ , D} (wkCat C D)
+data Var where
+  vz : ∀ {Γ}{C : VarCat Γ} → Var {Γ , C} (wkVarCat C C)
+  vs : ∀ {Γ}{C : VarCat Γ} → Var {Γ} C → (D : VarCat Γ) → Var {Γ , D} (wkVarCat C D)
 
 idTel : ∀ {Γ}{C : Cat Γ }(a : Obj C)(n : ℕ) → Tel C n
 itId : ∀ {Γ}{C : Cat Γ}(a : Obj C)(n : ℕ) → Obj (idTel a n ⇓)
@@ -116,7 +126,7 @@ appObj' : ∀ {Γ}{C : Cat Γ}{n}{T U : Tel C n}(fs : T ⇒ U) → (Obj (T ⇓))
 
 id' : ∀ {Γ}{C : Cat Γ }(a : Obj C) → Obj (C [ a , a ]) 
 
--- {-- SPEEDUP --
+
 λTel⇒ : ∀ {Γ}{n}{C : Cat Γ}{a b : Obj C}(T : Tel (C [ a , b ]) n) → ((idTel (id' b) n) ◎ T) ⇒ T
 
 ρTel⇒ : ∀ {Γ}{n}{C : Cat Γ}{a b : Obj C}(T : Tel (C [ a , b ]) n) → (T ◎ idTel (id' a) n) ⇒ T
@@ -127,7 +137,6 @@ id' : ∀ {Γ}{C : Cat Γ }(a : Obj C) → Obj (C [ a , a ])
 
 -- concatenation of Telescopes 
 _‡_ : ∀ {Γ}{m n}{C : Cat Γ}(u : Tel C m)(v : Tel (u ⇓) n) → Tel C (m + n)
-
 
 
 _,_⊚_,_ : ∀ {Γ}{m n}{C : Cat Γ}{a b c : Obj C}
@@ -165,6 +174,7 @@ _,_⊚_,_ {Γ}{m}{suc n}{C}{a}{b}{c} T (T' [ x , x' ]) U (U' [ y , y' ]) = (T , 
 
 
 
+
 -- addition of zero on the right
 lem-runit : ∀ {m} → m ≡ m + 0
 lem-runit {0}     = refl
@@ -177,7 +187,6 @@ lem-sucm+n≡m+sucn {suc m} = cong suc (lem-sucm+n≡m+sucn {m = m})
 -- normalisation lemma
 -- lem-‡norm : ∀ {Γ}{m n}{C : Cat Γ}(u : Tel C m)(v : Tel (u ⇓) n) → ((C ++ u) ++ v) ≡ (C ++ (u ‡ v))
 
-
 _‡_ {Γ}{m}{zero}{C} u • = subst (Tel C) lem-runit u  
 _‡_ {Γ}{m}{suc n}{C} u (T [ a , b ]) = subst (Tel C) (lem-sucm+n≡m+sucn {m = m }{ n = n}) ((u ‡ T) [ subst Obj (lem-‡norm u T) a , subst Obj (lem-‡norm u T) b ]) 
 
@@ -187,12 +196,13 @@ lem-‡norm {Γ} {zero} {suc n} {C} u (v [ a , b ]) = J' (λ {X} eq → _≡_ {_
 lem-‡norm {Γ} {suc m} {suc n} {C} u (v [ a , b ]) = J' (λ eq → ((C ++ u) ++ v) [ a , b ] ≡  C ++ subst (Tel C) (cong suc eq) ((u ‡ v) [ subst Obj (lem-‡norm u v) a , subst Obj (lem-‡norm u v) b ])) (J' (λ {X} eq → _≡_ {_}{Cat Γ}(((C ++ u) ++ v) [ a , b ]) (X [ subst Obj eq a , subst Obj eq b ])) refl (lem-‡norm u v)) (lem-sucm+n≡m+sucn {m}{n})
 
 
-hollow : ∀ {Γ}{C : Cat Γ} → Obj C → Set
+thin : ∀ {Γ}{C : Cat Γ} → Obj C → Set
 
+
+varCat : ∀ {Γ} → VarCat Γ → Cat Γ
 
 data Obj where 
-  var : ∀ {Γ}{C : Cat Γ} → Var C → Obj C
-  wk  : ∀ {Γ}{C : Cat Γ }(A : Obj C) → (D : Cat Γ) → Obj (wkCat C D)
+  var : ∀ {Γ}{C : VarCat Γ} → Var C → Obj (varCat C)
   id : ∀ {Γ}{C : Cat Γ }(a : Obj C) → Obj (C [ a , a ]) 
   comp : ∀ {Γ}{n}{C : Cat Γ}{a b c : Obj C}
            (T : Tel (C [ b , c ]) n)(U : Tel (C [ a , b ]) n)
@@ -223,24 +233,28 @@ data Obj where
                          )])
   ι : ∀ {Γ}{C : Cat Γ}{a b : Obj C}(f : Obj (C [ a , b ])) → Obj ((C [ a , a ]) [ comp • • (inv f) f , id a ])
   κ : ∀ {Γ}{C : Cat Γ}{a b : Obj C}(f : Obj (C [ a , b ])) → Obj ((C [ b , b ]) [ comp • • f (inv f) , id b ])
-  coh : ∀ {Γ}{C : Cat Γ}{a b : Obj C} → (f g : Obj (C [ a , b ])) → hollow f → hollow g → Obj ((C [ a , b ])[ f , g ])
+  coh : ∀ {Γ}{C : Cat Γ}{a b : Obj C} → (f g : Obj (C [ a , b ])) → thin f → thin g → Obj ((C [ a , b ])[ f , g ])
 
-hollow (var y) = ⊥
-hollow (wk A D) = hollow A
-hollow (id a) = ⊤
-hollow (comp T U f g) = hollow f × hollow g
-hollow (α T U V f g h) = ⊤
--- hollow (α⁻ T U V f g h) = ⊤
-hollow (ƛ T f) = ⊤
--- hollow (ƛ⁻ T f) = ⊤
-hollow (ρ T f) = ⊤
--- hollow (ρ⁻ T f) = ⊤
-hollow (χ u₁ t₁₁ t₁₂ u₂ t₂₁ t₂₂ α₁₁ α₁₂ α₂₁ α₂₂) = ⊤
--- hollow (χ⁻ u₁ t₁₁ t₁₂ u₂ t₂₁ t₂₂ α₁₁ α₁₂ α₂₁ α₂₂) = ⊤
-hollow (ι f) = ⊤
-hollow (κ f) = ⊤
-hollow (coh f g y y') = ⊤ 
-hollow (inv f) = hollow f
+-- varCat : ∀ {Γ} → VarCat Γ → Cat Γ
+varCat • = •
+varCat (x [ a , b ]) = varCat x [ var a , var b ] 
+
+
+thin (var y) = ⊥
+thin (id a) = ⊤
+thin (comp T U f g) = thin f × thin g
+thin (α T U V f g h) = ⊤
+-- thin (α⁻ T U V f g h) = ⊤
+thin (ƛ T f) = ⊤
+-- thin (ƛ⁻ T f) = ⊤
+thin (ρ T f) = ⊤
+-- thin (ρ⁻ T f) = ⊤
+thin (χ u₁ t₁₁ t₁₂ u₂ t₂₁ t₂₂ α₁₁ α₁₂ α₂₁ α₂₂) = ⊤
+-- thin (χ⁻ u₁ t₁₁ t₁₂ u₂ t₂₁ t₂₂ α₁₁ α₁₂ α₂₁ α₂₂) = ⊤
+thin (ι f) = ⊤
+thin (κ f) = ⊤
+thin (coh f g y y') = ⊤ 
+thin (inv f) = thin f
 
 
 ƛ⁻ : ∀ {Γ}{n}{C : Cat Γ}{a b : Obj C}(T : Tel (C [ a , b ]) n)(f : Obj (T ⇓))
@@ -266,9 +280,9 @@ lemSuc+ (suc n) m = cong suc (lemSuc+ n m)
 comp' = comp
 id' = id
 
--- definition of wkCat
-wkCat • D = •
-wkCat (C [ a , b ]) D = (wkCat C D) [ wk a D , wk b D ]
+-- definition of wkVarCat -- weakening of VariableCategoriesna
+wkVarCat • D = •
+wkVarCat (C [ a , b ]) D = (wkVarCat C D) [ vs a D , vs b D ]
 
 
 idTel a zero = •
@@ -278,7 +292,7 @@ itId a zero = a
 itId a (suc n) = id (itId a n)
 
 
--- {-- SPEEDUP --
+
 
 -- splitting a telescope
 lem-ℕ-ℕ+toℕ : ∀ {n}{k : Fin (suc n)} → n ≡ n ℕ-ℕ k + toℕ k 
@@ -333,7 +347,9 @@ lem-◎‡⊚ : ∀ {Γ}{m n}{C : Cat Γ}{a b c : Obj C}{T : Tel (C [ b , c ]) m
 
 
 lem-◎‡⊚ {Γ} {n} {zero}{C}{a}{b}{c} T U • • = J' (λ eq → (C [ a , c ]) ++ (subst (Tel (C [ b , c ])) eq T ◎ subst (Tel (C [ a , b ])) eq U) ≡ (C [ a , c ]) ++ (T ◎ U)) refl lem-runit     
-lem-◎‡⊚ {Γ}{n}{suc m}{C}{a}{b}{c} T U (T' [ x , x' ]) (U' [ y , y' ]) = J' (λ {X} eq → 
+lem-◎‡⊚ {Γ}{n}{suc m}{C}{a}{b}{c} T U (T' [ x , x' ]) (U' [ y , y' ]) = {!!}
+{-- SPEEDUP --
+J' (λ {X} eq → 
       _≡_ {_}{Cat Γ}
       ((C [ a , c ]) ++
       (subst (Tel (C [ b , c ])) (lem-sucm+n≡m+sucn {n}{m})
@@ -382,7 +398,7 @@ lem-◎‡⊚ {Γ}{n}{suc m}{C}{a}{b}{c} T U (T' [ x , x' ]) (U' [ y , y' ]) = J
 
 
 
--- SPEEDUP -}
+SPEEDUP -}
 
 comp₀ :  ∀ {Γ}{C : Cat Γ}{a b c : Obj C}
            (f : Obj (C [ b , c ]))(g : Obj (C [ a , b ]))
@@ -439,7 +455,9 @@ appTel-tail fs {a}{b} (T' [ a' , b' ]) = (appTel-tail fs T') [ subst Obj (lem-ap
 
 
 lem-appTel-tail fs • = refl
-lem-appTel-tail {Γ}{C}{suc m}{n}{T}{U} fs {a}{b} (T' [ a' , b' ]) = J' (λ {X} eq → _≡_ {_}{Cat Γ} (((C ++ U) ++ appTel fs ([ a , b ] T')) [
+lem-appTel-tail {Γ}{C}{suc m}{n}{T}{U} fs {a}{b} (T' [ a' , b' ]) = {!!}
+{- SPEEDUP -- 
+  J' (λ {X} eq → _≡_ {_}{Cat Γ} (((C ++ U) ++ appTel fs ([ a , b ] T')) [
       appObj fs ([ a , b ] T') (subst Obj (lem-prep≡ T') a') ,
       appObj fs ([ a , b ] T') (subst Obj (lem-prep≡ T') b') ])
       (X [
@@ -449,12 +467,13 @@ lem-appTel-tail {Γ}{C}{suc m}{n}{T}{U} fs {a}{b} (T' [ a' , b' ]) = J' (λ {X} 
         subst Obj eq
         (appObj fs ([ a , b ] T') (subst Obj (lem-prep≡ T') b'))
         ])) refl (lem-appTel-tail fs T') 
-
+-- SPEEDUP --}
 
 appObj • T' x = subst Obj (lem-appTel•Unit T') x
-appObj {m = m} (fs [ f , g ]) T' x = subst Obj (lem-appTel[] fs f g T') (comp (idTel g m ◎ appTel-tail fs T' ) (idTel f m) 
+appObj {m = m} (fs [ f , g ]) T' x = {!!}
+{-- SPEEDUP subst Obj (lem-appTel[] fs f g T') (comp (idTel g m ◎ appTel-tail fs T' ) (idTel f m) 
                                                                            (comp (idTel g m) (appTel-tail fs T') (itId g m) (subst Obj (lem-appTel-tail fs T') (appObj fs ([ _ , _ ] T') ((subst Obj (lem-prep≡ T') x))) )) (itId f m))  --
-
+-- SPEEDUP --}
 
 
 
@@ -466,8 +485,8 @@ lem-appTel•Unit {Γ}{C}{suc n}(T [ a , b ]) = J' (λ {X} eq → _≡_ {_}{Cat 
 -- lem-appTel[] : ∀ {Γ}{C : Cat Γ}{m n}{T U : Tel C m}{a b : Obj (C ++ T)}{a' b' : Obj (C ++ U)} → 
 --                       (fs : T ⇒ U)(f  : Obj ((C ++ U) [ a' , appObj' fs a ]))(g  : Obj ((C ++ U) [ appObj' fs b , b' ])) → (T' : Tel ((C ++ T) [ a , b ]) n) → (((idTel g n ◎ appTel-tail fs T') ◎ idTel f n ) ⇓ ≡ (appTel (fs [ f , g ]) T' ⇓))
 lem-appTel[] fs f g • = refl
-lem-appTel[] {Γ}{C}{m}{suc n} fs f g (T' [ a₁ , b₁ ]) = 
-                                           J' (λ {X} eq → _≡_ {_}{Cat Γ}(
+lem-appTel[] {Γ}{C}{m}{suc n} fs f g (T' [ a₁ , b₁ ]) =  {!!} 
+{-- SPEEDUP                                 J' (λ {X} eq → _≡_ {_}{Cat Γ}(
                                             (((idTel g _ ◎ appTel-tail fs T') ◎ idTel f _) ⇓) [
                                             comp (idTel g _ ◎ appTel-tail fs T') (idTel f _)
                                             (comp (idTel g _) (appTel-tail fs T') (itId g n)
