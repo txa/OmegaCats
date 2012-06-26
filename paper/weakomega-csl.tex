@@ -14,7 +14,78 @@
 \RequirePackage{stmaryrd} %boxes
 \usepackage{diagxy}
 \usepackage{bussproofs}
-\input{macros.tex}
+
+%% MACROS
+
+\newcommand{\thin}{\mathsf{thin}}
+\newcommand{\dblplus}{+\hspace{-4pt}+}
+\newcommand{\conctel}[2]{#1 \dblplus \, #2}
+\newcommand{\glob}[2]{(\hspace{-2pt}({#1},{#2})\hspace{-2pt})}
+\newcommand{\ditto}{\mathrm{- " -}}
+\newcommand{\mnote}[1]{\marginpar{\footnotesize{#1}}}
+\newcommand{\cell}{\mathsf{cell}}
+\newcommand{\obj}{\mathsf{obj}}
+\newcommand{\Set}{\mathsf{Set}}
+\newcommand{\Glob}{\mathsf{Glob}}
+\newcommand{\Nat}{\mathbb{N}}
+\newcommand{\Con}{\mathsf{Con}}
+\newcommand{\Cat}{\mathsf{Cat}}
+\newcommand{\Obj}{\mathsf{Obj}}
+\newcommand{\Tel}{\mathsf{Tel}}
+\newcommand{\suc}{\mathsf{suc}}
+\newcommand{\dom}{\mathsf{dom}}
+\newcommand{\cod}{\mathsf{cod}}
+\newcommand{\sym}[1]{{#1}^{-1}}
+\newcommand{\refl}[1]{\id~{#1}}
+\newcommand{\trans}[2]{#1 \text{;} #2}
+\newcommand{\domrm}{\mathrm{dom}}
+\newcommand{\codrm}{\mathrm{cod}}
+\newcommand{\appobj}[2]{#1 @ #2}
+\newcommand{\apptel}[2]{#1\overrightarrow{@}#2}
+%\newcommand{\meets}{\mathsf{meets}}
+\newcommand{\meets}{\between}
+\newcommand{\zeromeets}{\mathsf{zero}}
+\newcommand{\sucmeets}[1]{\mathsf{suc}}
+%\newcommand{\telzero}[1]{\langle{#1}\rangle}
+%\newcommand{\telzero}[1]{\diamond}
+\newcommand{\telzero}{\bullet}
+\newcommand{\telsuc}[3]{#1[ {#2},{#3}]}
+\newcommand{\cat}[1]{{#1}\Downarrow}
+\newcommand{\homcat}[3]{{#1}[#2,#3]}
+\newcommand{\suctel}[3]{[ #1 , #2 ] {#3}}
+\newcommand{\budoteq}{\bullet_{\doteq}}
+\newcommand{\homdoteqcat}[3]{{#1}[#2,#3]_{\doteq}}
+\newcommand{\intpr}[1]{\llbracket #1 \rrbracket}
+\newcommand{\id}{\mathsf{id}}
+\newcommand{\idTel}[2]{\mathsf{idTel}\,{#1}\,{#2}}
+\newcommand{\IdCat}[2]{\mathsf{IdCat}\,{#1}\,{#2}}
+\newcommand{\ItId}{\mathsf{ItId}}
+\newcommand{\depth}{\mathsf{depth}}
+\newcommand{\preptele}[3]{\llbracket #1,#2\rrbracket #3}
+\newenvironment{ondrej}{\begin{quote}\footnotesize \textbf{Ondrej:}}{\normalsize\end{quote}}
+\newcommand{\substobj}[1]{\ulcorner #1 \urcorner}
+\newcommand{\Iddd}[2]{{#1}\,\equiv\,{#2}}
+\newcommand{\coh}{\mathsf{coh}}
+\newcommand{\cohCat}{\mathsf{cohCat}}
+\newcommand{\dblline}{}
+\newcommand{\emptycon}{\varepsilon}
+\newcommand{\var}{\mathsf{var}}
+\newcommand{\wk}{\mathsf{wk}}
+\newcommand{\inv}[1]{{#1}^{-1}}
+
+%\renewcommand{\to}{\longrightarrow}
+
+% for glob
+%\newcommand{\obj}{\mathrm{obj}}
+%\newcommand{\hom}{\mathrm{hom}}
+\newcommand{\objto}{\mathrm{obj}^{\rightarrow}}
+\newcommand{\homto}{\mathrm{hom}^{\rightarrow}}
+\newcommand{\Setoid}{\mathrm{Setoid}}
+%\newcommand{\Glob}{\mathrm{Glob}}
+\newcommand{\Prop}{\mathbf{Prop}}
+\newcommand{\Unit}{\mathbf{1}}
+\newcommand{\Idw}{\mathrm{Id}^\omega}
+%% MACROS END
 
 \title{A Syntactical Approach to Weak $\omega$-Groupoids}
 \titlerunning{Weak $\omega$-Groupoids}

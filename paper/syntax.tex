@@ -32,7 +32,7 @@ aspects of a weak $\omega$-groupoid will be introduced later by adding
 additional syntax for objects and other auxiliary syntactic
 components. 
 
-Our framework consists of the following components which are defined
+Our framework consists of the following main components which are defined
 by mutual induction\footnote{This is an instance of an inductive-inductive
 definition in Type Theory, see \cite{alti:catind2}.}:
 \begin{description}
@@ -49,20 +49,23 @@ objects $a,b,c$ and objects in the hom categories $f : a \to b$ and $g
 \UnaryInfC{$\mathsf{Cat}~\Gamma : \mathsf{Set}$}
 \DisplayProof
 \]
-Categories are basically paths within a globular set. The set of
-expressions for categories depends on the context, e.g. we need at
-least to assume that there is one object in the top-level category to
-be able to form any other categories.
+In order to define the valid compositions of cells one needs to know
+their boundaries, i.e. iterated domains and targets in the globular
+case. Category expressions record this data. Semantically categories
+correspond to globular sets within a given top-level globular set.
+The set of expressions for categories depends on a context, e.g. we
+need at least to assume that there is one object in the top-level
+category to be able to form any other categories.
 \item[Objects] 
 \[
 \AxiomC{$C : \mathsf{Cat}~\Gamma$}
 \UnaryInfC{$\mathsf{Obj}~C:\mathsf{Set}$}
 \DisplayProof
 \]
-Given a category we define expressions which identify objects. 
-As indicated above this is the main focus of the forthcoming
-sections. However, a generic instance of objects are variables which
-correspond to projections out of contexts.
+Given a category we define expressions which identify objects lying
+within the category.  As indicated above this is the main focus of the
+forthcoming sections. However, a generic instance of objects are
+variables which correspond to projections out of contexts.
 \[
 \AxiomC{$C : \mathsf{Cat}~\Gamma$}
 \UnaryInfC{$\mathsf{Var}~C : \mathsf{Set}$}
@@ -211,15 +214,14 @@ following data:
 \]
 \end{enumerate}
 subject to the following conditions:
-\begin{align*}
-\intpr{\varepsilon}  & =  1 &\intpr{\mathsf{var}~x}~\gamma  & =  \intpr{x}~\gamma \\
-\intpr{\Gamma , C} & =  \Sigma \gamma : \intpr{\Gamma},\intpr{C} ~ \gamma&\intpr{\wk~a}~(\gamma,b)  & = \intpr{a}~\gamma\\
-\intpr{\bullet}~\gamma & =  G&\intpr{\mathsf{vz}}~(\gamma,a)  & =  a \\
-\intpr{\homcat{C}{a}{b}}~\gamma & =  \mathsf{hom}_{\intpr{C}
-  \gamma}~(\intpr{a} ~ \gamma)~(\intpr{b}~\gamma)&
-\intpr{\mathsf{vs}\,x}~(\gamma,a)  & = \intpr{x}~\gamma
-\end{align*}
-
+\[\begin{array}{lclclcl}
+\intpr{\varepsilon}  & = & 1 &\quad&\intpr{\mathsf{var}~x}~\gamma  & =&  \intpr{x}~\gamma \\
+\intpr{\Gamma , C} & =  &\Sigma \gamma : \intpr{\Gamma},\intpr{C} ~ \gamma&&\intpr{\wk~a}~(\gamma,b)  & = &\intpr{a}~\gamma\\
+\intpr{\bullet}~\gamma & = & G&&\intpr{\mathsf{vz}}~(\gamma,a)  & = & a \\
+\intpr{\homcat{C}{a}{b}}~\gamma & = & \mathsf{hom}_{\intpr{C} \gamma}~(\intpr{a} ~ \gamma)~(\intpr{b}~\gamma)&&
+\intpr{\mathsf{vs}\,x}~(\gamma,a)  & = &\intpr{x}~\gamma
+\end{array}
+\]
 
 %%% Local Variables: 
 %%% mode: latex

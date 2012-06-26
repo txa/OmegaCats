@@ -182,25 +182,25 @@ where
 \UnaryInfC{$\apptel{m}{t'} : \Tel\,(\cat{u})\,n$}
 \DisplayProof
 \qquad
-\AxiomC{$m : t \rightrightarrows u \quad a : \Obj\,(\cat{t} \dblplus {'t})$}
-\UnaryInfC{$\appobj{m}{a} : \Obj\,(\cat{u}\dblplus \apptel{m}{t'})$}
+\AxiomC{$m : t \rightrightarrows u \quad a : \Obj\,(\cat{t} \dblplus {t'})$}
+\UnaryInfC{$\appobj{m}{a} : \Obj\,(\cat{u}\dblplus {\apptel{m}{t'}})$}
 \DisplayProof\]
-\begin{align*}
-\apptel{\telzero}{t}&=t\\
-\apptel{\telsuc{m'}{\alpha}{\beta}}{t} &= \telsuc{(\apptel{m'}{t})}{\appobj{m}{\alpha}}{\appobj{m}{\beta}})
-\end{align*}
+\[\begin{array}{lcl}
+\apptel{\telzero}{t}&=&t\\
+\apptel{\telsuc{m'}{\alpha}{\beta}}{t} &=& \telsuc{(\apptel{m'}{t})}{\appobj{m}{\alpha}}{\appobj{m}{\beta}})
+\end{array}\]
 % 
+$\Phi$ is then a special case of $\appobj{}{}$ for $t' = \telzero$.
 To define $\appobj{}{}$ we need the following auxiliary function,
-among others, which extends a telescope relative to a hom-category on
-the left.
+among others, which extends a telescope on the left.
 \[
 \AxiomC{$t : \Tel~(\homcat{C}{a}{b})~n$}
 \UnaryInfC{$\suctel{a}{b}{t} : \Tel~C ~ (n+1)$}
 \DisplayProof
 \qquad \text{where} \qquad
-\begin{array}{rl}
-\suctel{a}{b}{\telzero}& =~ \telsuc{\telzero}{a}{b}\\
-\suctel{a}{b}{(\telsuc{t}{c}{d})}&=\; \telsuc{(\suctel{a}{b}{t})}{c}{d}
+\begin{array}{lcl}
+\suctel{a}{b}{\telzero}& =& \telsuc{\telzero}{a}{b}\\
+\suctel{a}{b}{(\telsuc{t}{c}{d})}&=& \telsuc{(\suctel{a}{b}{t})}{c}{d}
 \end{array}
 \]
 Note that here $c$ and $d$ don't actually fit into the telescope
@@ -211,9 +211,8 @@ $t$. However, it is straightforward to prove by induction that
 \end{equation}
 % 
 and use the proof to make $c$ and $d$ fit. 
-However, in the interest of clarity of the presentation we hereby just silently assume
-that $c$ and $d$ fit or can be substituted to fit the context. The
-full details can be found in \cite{coreagda}.
+However, in the interest of clarity we left the details out above. The
+full details can be found in \cite{coreagda}. 
 
 We are now in the position do define $\appobj{}{}$ as follows:
 The base case is trivial:
@@ -285,10 +284,11 @@ together with a new constructor, $\lambda$, of $\Obj$:
 \]
 where 
 \[
-\AxiomC{$\overrightarrow{\lambda}\,\bullet ~=~ \bullet
-\qquad 
-\overrightarrow{\lambda}\,(\telsuc{t'}{a}{b}) ~ = ~
-\telsuc{(\overrightarrow{\lambda}\,t')}{\inv{(\lambda\,t'\,a)}}{\lambda\,t'\,b}$}\DisplayProof
+\begin{array}{lcl}
+\overrightarrow{\lambda}\,\bullet &=& \bullet\\
+\overrightarrow{\lambda}\,(\telsuc{t'}{a}{b}) & = &
+\telsuc{(\overrightarrow{\lambda}\,t')}{\inv{(\lambda\,t'\,a)}}{\lambda\,t'\,b}
+\end{array}
 \]
 %
 Here we could define a pair of constructors $\lambda$ and

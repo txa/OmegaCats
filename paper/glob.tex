@@ -5,10 +5,10 @@
 In Type Theory we use the notion of a setoid to describe a set with a
 specific equality. That is a $A : \Setoid$ is given by the
 following data:
-\begin{eqnarray*}
+\[\begin{array}{lcl}
   \obj_A & : & \Set \\
   \hom_A & : & \obj_A \rightarrow \obj_A \rightarrow \Prop
-\end{eqnarray*}
+\end{array}\]
 and proof objects $\id, \sym{-}, \trans{-}{-}$ witnessing that $\hom$ is an
 equivalence relation. Here we write $\Prop$ to denote the class of sets
 which have at most one inhabitant. This restriction is important when
@@ -21,58 +21,59 @@ postulate the laws of an equivalence relation at each level, we also
 need some laws how these proofs interact. On the first level we
 require the laws of a groupoid, e.g. we want that $\trans{\id}{\alpha}$ is
 equal to $\alpha$. Here \emph{is equal} means that they are related by the
-equality relation of a setoid again. Clearly, the structure we are
+equality relation of a setoid again. As demonstrated in
+\cite{berg08:types-are, lumsdaine10:weak-o-categories}, the structure we are
 looking for is a weak $\omega$-groupoid. It is the goal of this paper
 to develop a formalisation of this structure. As a first step let's
 ignore the proof objects (i.e. the data of an equivalence relation and
 the groupoid laws etc).
 We end up with a coinductive definition of a \emph{globular set} $G :
 \Glob$ given by
-\begin{eqnarray*}
+\[\begin{array}{lcl}
   \obj_G & : & \Set \\
   \hom_G & : & \obj_G \rightarrow \obj_G \rightarrow \infty\,\Glob
-\end{eqnarray*}
+\end{array}\]
 Here we use $\infty$ to indicate that $\Glob$ is defined
 coinductively. More formally, $\Glob$ is the terminal coalgebra of
 $\Sigma \obj : \Set. \obj \rightarrow \obj \rightarrow -$. Given globular sets
 $A,B$ a morphism $f : \Glob(A , B)$ between them is given by 
-\begin{eqnarray*}
+\[\begin{array}{lcl}
   \objto_f & : & \obj_A \rightarrow \obj_B \\
   \homto_f & : & \Pi a,b:\obj_A.\Glob(\hom_A\,a\,b,\hom_B(\objto_f\,a,\objto_f\,b))
-\end{eqnarray*}
+\end{array}\]
 Note that this definition exploits the coinductive character of
 $\Glob$. Identity and composition can be defined easily by iterating
 the set-theoretic definitions ad infinitum. As an example we can
 define the terminal object in $\Unit_\Glob : \Glob$ by the equations
-\begin{eqnarray*}
+\[\begin{array}{lcl}
   \obj_{\Unit_\Glob} & = & \Unit_\Set \\
   \hom_{\Unit_\Glob}\,x\,y & = & \Unit_\Glob
-\end{eqnarray*}
+\end{array}\]
 More interestingly, the globular set of identity proofs over a given
 set $A$, $\Idw\,A : \Glob$ can be defined as follows:
-\begin{eqnarray*}
+\[\begin{array}{lcl}
 \obj_{\Idw\,A} & = & A \\
 \hom_{\Idw\,A}\,a\,b & = & \Idw\,(a = b)
-\end{eqnarray*}
+\end{array}\]
 Our definition of globular sets is equivalent to the usual one as a
 presheaf category over the diagram:
 \[
-0 \two^{s_0}_{t_0} 1 \two^{s_1}_{t_1} 2 \dots n \two^{s_n}_{t_n} (n+1) \dots  
+0 \two^{s_0}_{t_0} 1 \two^{s_1}_{t_1} 2 \cdots n \two^{s_n}_{t_n} (n+1) \cdots  
 \]
 with the globular identities:
-\begin{eqnarray*}
-  s_{i+1} \circ s_i & = & s_{i+1} \circ t_i \\
-  t_{i+1} \circ t_i & = & t_{i+1} \circ s_i
-\end{eqnarray*}
+\[\begin{array}{lcl}
+  s_{i+1} \circ s_i & = & t_{i+1} \circ s_i \\
+  t_{i+1} \circ t_i & = & s_{i+1} \circ t_i
+\end{array}\]
 In the example of $\Idw\,A$ the presheaf is given by a family
 $F^A : \Nat \rightarrow \Set$:
-\begin{eqnarray*}
+\[\begin{array}{lcl}
   F^A\,0 & = & A\\
   F^A\,1 & = & \Sigma a,b : A,a = b\\
   F^A\,2 & = & \Sigma a,b : A,\Sigma \alpha,\beta: a = b, \alpha = \beta\\
   \vdots & \vdots & \vdots \\
   F^A\,(n+1) & = & \Sigma a,b:A,F^{a = b}\,n
-\end{eqnarray*}
+\end{array}\]
 and source and target maps $s_i,t_i :  F^A\,(n+1) \rightarrow F^A\,n$ satisfying the globular identities. 
 \[
 \begin{array}{rclcrcl}

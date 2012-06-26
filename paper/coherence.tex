@@ -57,39 +57,39 @@ In summary and full generality:
 
 %
 We formalise the above principle as follows. We define a predicate 
-$\hollow$ on objects
+$\thin$ on objects
 % \[
 % \AxiomC{$x :  \Obj~C$}
-% \UnaryInfC{$\hollow~x~:~\Set$}
+% \UnaryInfC{$\thin~x~:~\Set$}
 % \DisplayProof
 % \]
 % %
-such that $\hollow\,(\id\,f)= \top$ where $\top$ is the one element Set. 
-Moreover each coherence cell is hollow
+such that $\thin\,(\id\,f)= \top$ where $\top$ is the one element Set. 
+Moreover each coherence cell is thin
 \[
 \begin{array}{c}
-\hollow\,(\lambda\,\_\,\_) = \top \quad \hollow(\rho\,\_\,\_)
-  ~=~\top\quad \hollow\,(\alpha,\_\,\_\,\_) = \top
-  \quad\hollow~(\chi\,\_\,\_\,\_\,\_) = \top\\
-\hollow\,(\iota~f) = \top \quad \hollow\,(\kappa~f) = \top
+\thin\,(\lambda\,\_\,\_) = \top \quad \thin(\rho\,\_\,\_)
+  ~=~\top\quad \thin\,(\alpha,\_\,\_\,\_) = \top
+  \quad\thin~(\chi\,\_\,\_\,\_\,\_) = \top\\
+\thin\,(\iota~f) = \top \quad \thin\,(\kappa~f) = \top
 \end{array}
 \]
-Further we close $\hollow$ under weakening, composition and inverses. 
-Finally, we introduce a constructor of $\Obj$ and a clause of $\hollow$:
+Further we close $\thin$ under weakening, composition and inverses. 
+Finally, we introduce a constructor of $\Obj$ and a clause of $\thin$:
 \[
 \AxiomC{$f ~ g : \Obj~\homcat{C}{a}{b}$}
-\AxiomC{$p : \hollow~f$}
-\AxiomC{$q : \hollow~g$}
+\AxiomC{$p : \thin~f$}
+\AxiomC{$q : \thin~g$}
 \TrinaryInfC{$\mathsf{coh}~p~q :
   \Obj~\homcat{\homcat{C}{a}{b}}{f}{g}$}
 \DisplayProof
 \qquad
-\AxiomC{$\hollow\,(\coh\,p\,q) = \top$}
+\AxiomC{$\thin\,(\coh\,p\,q) = \top$}
 \DisplayProof 
 \]
-The last remaining case are variables, which are not hollow:
+The last remaining case are variables, which are not thin:
 \[
-\AxiomC{$\hollow\,(\var\, v) = \bot$}
+\AxiomC{$\thin\,(\var\, v) = \bot$}
 \DisplayProof 
 \]
 

@@ -101,14 +101,14 @@ a\to^{gf}c
 We formalise this as follows.
 
 \subsubsection{Telescopes}
-Firstly, we have to define when two cells are \emph{composable}. To
-this end we introduce \emph{telescopes}.
-Informally, a telescope is a path from a category to one of its
-indirect hom-categories. 
-Formally, telescopes, $\Tel$, are defined below at the same
-time as their \emph{concatenation} onto a category, $\dblplus$, which takes a
-telescope to a category, and therefore allows us to put objects into a
-telescope:
+Datatype $\Obj : \Cat \to \Set$ defines the set of syntactical objects
+lying directly in any category. In order to talk about arbitrary
+$n$-cells of a category, for instance to define their compositions, we
+must introduce \emph{telescopes}.  Informally, a telescope is a
+category in a category.  Formally, telescopes, $\Tel$, are defined
+below at the same time as their \emph{concatenation} onto a category,
+$\dblplus$, which takes a telescope to a category, and therefore
+allows us to put objects into a telescope:
 \[
 \AxiomC{$C : \Cat~\Gamma$}
 \AxiomC{$n : \Nat$}
@@ -129,20 +129,29 @@ arbitrary category $C$ rather than $\bullet$\,:
 \AxiomC{$t : \Tel~C~n \quad a, b : \Obj\,(\conctel{C}{t})$}
 \UnaryInfC{$ \telsuc{t}{a}{b} : \Tel~C~(n+1)$}
 \DisplayProof
+\qquad
+\begin{array}{lcl}
+C ~\dblplus ~\bullet &=& C \\
+C ~\dblplus ~\telsuc{t}{a}{b}
+&=&\homcat{(C \dblplus t)}{a}{b}
+\end{array}
 \]
 %
 Here, we call $n$ the \emph{length of $t$}, and we say any $x :
 \Obj (\conctel{C}{t})$ to be \emph{of depth $n$}.
+
+%
+We say that $t$ \emph{lies in} $C$.
 %
 Note that only the left associative reading of $\dblplus$ makes sense
 so expressions like $C \dblplus\, t \dblplus\, u$ are unambiguous.
 
 We say that an object $x : \Obj~(\conctel{C}{t})$ \emph{lies in (the
-  telescope) $t$}. When $t$ is relative to a category $C$, $x$ is
+  telescope) $t$}. When $t$ lies in $C$, $x$ is
 called an \emph{object relative to $C$.} 
 %
-Alternatively, when the path from $C$ to its subcategory is not
-important we use the following syntactical shorthand:
+Alternatively, when the category $t$ lies in is not important we use
+the following syntactical shorthand:
 \[
 \AxiomC{$C : \Cat~\Gamma \quad t : \Tel~C~n$}
 \UnaryInfC{$\cat{t}\, : \Cat~\Gamma \qquad \cat{t}\,=\,\conctel{C}{t}$}
@@ -170,25 +179,25 @@ $\omega$-category. These are defined mutually recursively with
 their extensions to telescopes:
 %
 \[
-\AxiomC{$
-\alpha : \Obj (t \Downarrow)
-\qquad 
-\beta : \Obj (u \Downarrow)
-$}
-\UnaryInfC{$\beta\circ \alpha : \Obj (u \circ t \Downarrow)$}
-\DisplayProof
-\qquad
 \AxiomC{$t : \Tel~(\homcat{C}{a}{b})~n \qquad u :
   \Tel~(\homcat{C}{b}{c})~n$}
 \UnaryInfC{$u \circ  t  : \Tel~(\homcat{C}{a}{c})$}
 \DisplayProof
+\quad
+\AxiomC{$
+\alpha : \Obj (\homcat{C}{a}{b} \dblplus t)
+\qquad 
+\beta : \Obj (\homcat{C}{b}{c} \dblplus u)
+$}
+\UnaryInfC{$\beta\circ \alpha : \Obj (\homcat{C}{a}{c} \dblplus (u \circ t))$}
+\DisplayProof
 \]
 Where $\circ$ is a new constructor of $\Obj$ and $\circ$ for telescopes 
 is a function defined by cases
-\begin{align*}
-\telzero \circ \telzero & = \telzero\\
-\telsuc{u}{a'}{b'} \circ \telsuc{t}{a}{b} & = \telsuc{(u\circ t) }{a' \circ a}{b' \circ b}
-\end{align*}
+\[\begin{array}{lcl}
+\telzero \circ \telzero & = &\telzero\\
+\telsuc{u}{a'}{b'} \circ \telsuc{t}{a}{b} & = &\telsuc{(u\circ t) }{a' \circ a}{b' \circ b}
+\end{array}\]
 % 
 Any $\alpha$ and $\beta$ as above are said to be \emph{composable}.
 Note that for a fixed category $C$, $\circ$ always defines the
@@ -207,8 +216,7 @@ vertical composition where $C = \homcat{\bullet}{a}{b}$.
 
 
 \subsection{Units}\label{sec:units}
-Any $n$-cell has $n$ compositions and so it should have $n$ units. We
-generate all from a single constructor $\id$ defined as follows:
+We generate all higher units from a single constructor $\id$ defined as follows:
 \[
 \AxiomC{$a : \Obj~C$}
 \UnaryInfC{$\id~a : \Obj ~\homcat{C}{a}{a}$}
@@ -224,11 +232,11 @@ By iteration we obtain the unit for horizontal composition of $n$-cells:
 \]
 Again, an iterated unit is defined at the same time as its
 telescope.
-\begin{align*}
-\idTel{a}{0} &= \telzero &\id^0 a & = a\\
-\idTel{a}{(n+1)}& = \telsuc{(\idTel{a}{n})}{\id^n a}{\id^n a}&\id^{(n+1)}a&= \id\, (\id^n a)
-\end{align*}
-
+\[\begin{array}{lclclcl}
+\idTel{a}{0} &= &\telzero &\qquad&\id^0 a & =& a\\
+\idTel{a}{(n+1)}& = &\telsuc{(\idTel{a}{n})}{\id^n a}{\id^n a}&&\id^{(n+1)}a&= &\id\, (\id^n a)
+\end{array}
+\]
 
 
 
