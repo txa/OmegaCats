@@ -36,42 +36,54 @@ Our framework consists of the following main components which are defined
 by mutual induction\footnote{This is an instance of an inductive-inductive
 definition in Type Theory, see \cite{alti:catind2}.}:
 \begin{description}
-\item[Contexts, Globular Sets \& Variables] 
-\[\mathsf{Con} : \mathsf{Set} \qquad
-\frac{\Gamma~:~\Con}{\GlobSet~\Gamma ~:~\Set}
-\qquad
-\AxiomC{$G : \GlobSet~\Gamma$}
-\UnaryInfC{$\mathsf{Var}~G : \mathsf{Set}$}
-\DisplayProof
+\item[Contexts] 
+\[\mathsf{Con} : \mathsf{Set} 
+% \qquad
+% \frac{\Gamma~:~\Con}{\GlobSet~\Gamma ~:~\Set}
+% \qquad
+% \AxiomC{$G : \GlobSet~\Gamma$}
+% \UnaryInfC{$\mathsf{Var}~G : \mathsf{Set}$}
+% \DisplayProof
 \]
 Contexts serve to formalize the existence of hypothetical objects
-which are specified by the globular set in which they live. E.g. to
+which are specified by the globular set in which they live.  E.g. to
 formalize ordinary composition we have to assume that objects $a,b,c$
 and 1-cells $f : a \to b$ and $g : b \to c$ exist to be able to form
-$g \circ f : a \to c$. 
+$g \circ f : a \to c$.
 \item[Categories] 
 \[
+\frac{\Gamma~:~\Con}{\GlobSet~\Gamma ~:~\Set}
+\qquad
 \AxiomC{$\Gamma : \mathsf{Con}$}
 \UnaryInfC{$\mathsf{Cat}~\Gamma : \mathsf{Set}$}
 \DisplayProof
 \]
 In order to define the valid compositions of cells one needs to know
-their boundaries, i.e. iterated domains and targets in the globular
+their boundaries, i.e. iterated domains and codomains in the globular
 case. Category expressions record this data. 
-% Semantically categories
-% correspond to globular sets within a given top-level globular set.
-The set of expressions for categories depends on a context, e.g. we
+We define two kinds of categories: $\GlobSet$s are categories which
+contain only variables, while $\Cat$s contain all cells freely
+generated from variables. 
+The set of expressions for both kinds of categories depends on a context, e.g. we
 need at least to assume that there is one object in the top-level
 category to be able to form any other categories.
-\item[Objects] 
+\item[Variables \& Objects] 
 \[
+\frac{G : \GlobSet~\Gamma}
+{\mathsf{Var}~G : \mathsf{Set}}
+\qquad
 \AxiomC{$C : \mathsf{Cat}~\Gamma$}
 \UnaryInfC{$\mathsf{Obj}~C:\mathsf{Set}$}
 \DisplayProof
 \]
-Given a category we define expressions which identify objects lying
+$\GlobSet$s contain variables, which are just projections out of the
+context $\Gamma$. On the other hand, 
+given a category we define all expressions which identify objects lying
 within the category.  As indicated above this is the main focus of the
 forthcoming sections. 
+
+
+
 \end{description}
 We now specify the constructors for the various sets (apart from
 objects). We use unnamed variables ala deBruijn, hence contexts are
@@ -102,7 +114,7 @@ sets from nameless variables in contexts.
 \UnaryInfC{$\mathsf{vs}~v : \mathsf{Var}~(\mathsf{wk}~G~G')$}
 \DisplayProof
 \]
-where $\mathsf{wk}$ is weakening defined for globular sets by
+where $\mathsf{wk}$ is weakening defined for categories by
 induction on the structure in the obvious way: 
 \[
 \AxiomC{$G,\,G' : \GlobSet~\Gamma$}
@@ -177,7 +189,9 @@ We also write, as usual, $x : a_n\longrightarrow b_n : \cdots : a_0
 \longrightarrow b_0$ for an $x :
 \Obj~(\bullet[a_0,b_0]\cdots[a_n,b_n])$.  Note that it is essential to
 first introduce $\GlobSet$s and then $\Cat$s with an inclusion
-$\mathsf{var}:\GlobSet~\Gamma \to \Cat~\Gamma$. In this way we make
+\[
+\mathsf{var}:\Sigma(\GlobSet~\Gamma)~\mathsf{Var} \to \Sigma(\Cat~\Gamma)~\Obj\]
+In this way we make
 sure that variables alone form a globular set, i.e. that the domain
 and codomain of a variable is a variable. In particular, that it is not
 possible to introduce a variable between syntactically constructed
