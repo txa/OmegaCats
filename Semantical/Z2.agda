@@ -14,11 +14,18 @@ cong' : ∀{ℓ}{A : Set}(B : A → Set ℓ)(f : (a : A) → B a){a a' : A}(α :
       → subst B α (f a) ≡ f a'
 cong' B f refl = refl
 
+coe : ∀ {A B : Set} → A ≡ B → A → B
+coe refl x = x
+
 _⊕_ : Bool → Bool → Bool
-true ⊕ true = false
-true ⊕ false = true
-false ⊕ true = true
-false ⊕ false = false
+true ⊕ x = not x
+false ⊕ x = x
+
+⊕-assoc : ∀ {a b c} → (a ⊕ b) ⊕ c ≡ a ⊕ (b ⊕ c)
+⊕-assoc {true} {true} {true} = refl
+⊕-assoc {true} {true} {false} = refl
+⊕-assoc {true} {false} = refl
+⊕-assoc {false} = refl
 
 postulate
 
@@ -63,9 +70,30 @@ postulate
                               el f ∎)  
 
 
-{- Define non-trivial family -}
+record ℤ₂→ {ℓ}(B : Set ℓ) : Set ℓ where
+  field
+    el' : B
+    el≡' : (b : Bool) → el' ≡ el'
+    el≡refl' : el≡' false ≡ refl
+    el≡trans' : (b c : Bool) → el≡' (b ⊕ c) ≡ trans (el≡' b) (el≡' c)
 
-P : ℤ₂ → Set
-P = ℤ₂elim (λ _ → Set) (record { el = Bool; 
-                                 el≡ = {!!}; el≡refl = {!!}; el≡trans = {!!} }) 
- 
+open ℤ₂→
+
+ndsubst : ∀{ℓ}{A : Set}{B : Set ℓ}{a a' : A}(α : a ≡ a'){x} → subst (λ _ → B) α x ≡ x
+ndsubst refl = refl
+
+nondep : ∀{ℓ}{B : Set ℓ} → ℤ₂→ B → Πℤ₂ (λ _ → B)
+nondep f = record { el = el' f; 
+                    el≡ = λ b → trans (ndsubst (•≡ b)) (el≡' f b); 
+                    el≡refl = {!el≡refl' f!}; el≡trans = {!!} }
+
+ℤ₂elim' : ∀{ℓ}{B : Set ℓ} → ℤ₂→ B → ℤ₂ → B
+ℤ₂elim' = {!!}
+
+{-
+P : Famℤ₂
+P = record { El = λ x → Bool; 
+             El≡ = λ x x' → x ⊕ x'; 
+             El≡refl = refl; 
+             El≡trans = λ b c → ⊕-assoc {b} {c} }
+-}

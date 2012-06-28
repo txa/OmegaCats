@@ -36,13 +36,32 @@ assoc ε β δ = refl
 assoc (r , α) β δ = cong (λ γ → r , γ) (assoc α β δ)
 --assoc (x , α) β δ rewrite assoc α β δ = {!!}
 
+cong-lem : {A B C : Set}(f : B → C)(g : A → B){a b : A}(α : a ≡ b)
+           → cong f (cong g α) ≡ cong (λ x → f (g x)) α
+cong-lem f g refl = refl
+
+trans-cong-lem : {A  B : Set}(f : A → B){a b c : A}(α : a ≡ b)(β : b ≡ c)
+               → cong f (trans α β) ≡ trans (cong f α) (cong f β)
+trans-cong-lem f refl β = refl
 
 
 tri : ∀ {A}{R : A → A → Set}{a b c}(α : Clos R b c)(β : Clos R a b) 
     → cong (λ γ → γ ∘ β) (rneutr α) ≡ trans (assoc α ε β) (cong (λ γ → α ∘ γ) (lneutr β))
 tri ε β = refl
-tri (x , α) β = {!!}
---tri (x , α) β rewrite tri α β = {!!}
+tri (x , α) β = let open  ≡-Reasoning
+                in begin 
+                      cong (λ γ → γ ∘ β) (rneutr (x , α))
+                    ≡⟨ refl ⟩
+                      cong (λ γ → γ ∘ β) (cong (λ γ → x , γ) (rneutr α))
+                    ≡⟨ cong-lem  (λ γ → γ ∘ β) (λ γ → x , γ) (rneutr α) ⟩
+                      cong (λ γ → (x , γ) ∘ β) (rneutr α)
+                    ≡⟨ sym (cong-lem (λ γ → x , γ)  (λ γ → γ ∘ β) (rneutr α) ) ⟩
+                      cong (λ γ → x , γ) (cong (λ γ → γ ∘ β) (rneutr α))
+                    ≡⟨ cong (cong (λ γ → x , γ)) (tri α β) ⟩
+                      cong (λ γ → x , γ) (trans (assoc α ε β) (cong (λ γ → α ∘ γ) (lneutr β)))
+                    ≡⟨ trans-cong-lem  (λ γ → x , γ) (assoc α ε β) _ ⟩
+                      trans (assoc (x , α) ε β) (cong (_∘_ (x , α)) (lneutr β))
+                    ∎
 
--- q1 : (α ∘ ε) ∘ β ≡ α ∘ β
+
 

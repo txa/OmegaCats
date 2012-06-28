@@ -17,7 +17,7 @@ unconstrained by coherence cells.
 %
 \newcommand{\cC}{\mathcal{C}}
 %
-In the ordinary case, a category, $\mathcal{C}$, defines a partial
+In the ordinary case, a category, $\mathcal{C}$, defines an indexed
 operation of composition on its arrows. Explicitly, for $a$, $b$, $c$
 objects of $\mathcal{C}$, $f$ in $\homcat{\mathcal{C}}{a}{b}$, $g$  in
 $\homcat{\mathcal{C}}{b}{c}$, there is a $gf$ in $\homcat{\mathcal{C}}{a}{c}$.
@@ -101,7 +101,7 @@ a\to^{gf}c
 We formalise this as follows.
 
 \subsubsection{Telescopes}
-Datatype $\Obj : \Cat \to \Set$ defines the set of syntactical objects
+The type $\Obj : \Cat \to \Set$ represents the set of syntactical objects
 lying directly in any category. In order to talk about arbitrary
 $n$-cells of a category, for instance to define their compositions, we
 must introduce \emph{telescopes}.  Informally, a telescope is a
