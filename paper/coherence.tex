@@ -19,7 +19,8 @@ we can compose $\lambda$ after $\alpha$ to obtain witnesses such as:
  all proofs of equality of 1-cells are equal. In the weak
  2-categorical case, equality of 1-cells is not propositional but
  equality of 2-cells is. In other words, equality of 1-cells is
- witnessed by 2-cells which must satisfy new axioms.  For instance:
+ witnessed by 2-cells which must satisfy new axioms.  For instance: 
+%
 \begin{equation}\label{eq:lambda-alpha}
 \bfig
 \qtriangle<750,500>[(g\,\id_{b}) \,f ` g\,(\id_{b}\,f)`g\, f;
@@ -93,7 +94,28 @@ The last remaining case are variables, which are not thin:
 \DisplayProof 
 \]
 
-
+\subsection{The problem with coherence}
+The question of coherence in weak $\omega$-categories is subtle. On
+the one hand, one needs enough coherence to make weakly equivalent all
+cells that should be identities in the strict case. On the other
+hand, too much cells means that too many cells collapse into
+identities. We believe our definition is correct as we are saying in
+the definition of $\mathsf{coh}$ only that all \emph{formal} diagrams
+of coherence cells commute (see \cite{maclane}, \S VII.2, for a
+related discussion). The fact that not all diagrams commute rests on
+the fact that one is not allowed to postulate variables between
+nonvariables, which is achieved by the separation of $\VarCat$ and
+$\Cat$ and the fact that contexts are built from $\VarCat$s. Otherwise
+it would be for instance possible\footnote{We are indebted to an
+  anonymous referee for pointing out this example to us.}  to assume a
+0-cell $a$, and a pair of 2-cells: $x, y : \id~a \rightarrow \id~a : a
+\rightarrow a$. Then it would be possible to construct, by the Eckerman-Hilton
+argument, a cell $\eta : x \circ y \rightarrow y \circ x : \id~a
+\rightarrow \id~a : a \rightarrow a$ which is thin. As $\id~(x\circ
+y)$ is also thin, $\eta\circ\eta$ and $\id (x \circ y)$ would be
+equivalent by $\coh$. However, not every monoidal braided category is
+symmetrical. However note that it is not possible to construct this example in our
+syntactical framework as $(\id~a)$ is not a variable.
 
 
 %%% Local Variables: 
